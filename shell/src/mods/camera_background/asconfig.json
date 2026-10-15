@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "source-path": ["src", "../_shared/src", "../menu_background/src"],
+    "output": "../../../data/ssf2mm/camera_background/mod.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "warnings": true
+  },
+  "mainClass": "CameraBackgroundMod",
+  "config": "air"
+}

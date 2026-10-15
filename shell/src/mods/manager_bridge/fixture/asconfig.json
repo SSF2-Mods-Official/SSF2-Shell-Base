@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "source-path": [".", "../src"],
+    "output": "LaunchScreenFixture.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "warnings": false
+  },
+  "mainClass": "LaunchScreenFixture",
+  "config": "air"
+}

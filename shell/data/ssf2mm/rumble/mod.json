@@ -1,0 +1,9 @@
+{
+	"id": "rumble",
+	"name": "Controller Rumble",
+	"description": "Menu and match rumble. The engine only emits a RUMBLE hook.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "RumbleMod",
+	"enabledByDefault": true
+}

@@ -1,0 +1,1140 @@
+# com/mcleodgaming/ssf2/util/ResourceManager.as
+## class header
+## why: expansion state (slots, costumes, stock/PA art, announcer, nudges) + plaintext manifest (no Utils.d decrypt)
+@@ 12 1 c7570dde85fbc2c1 11
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.engine.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.filesystem.*;
++   import flash.media.*;
++   import flash.system.*;
++
+@@ 21 0 da39a3ee5e6b4b0d 4
++      
++      private static const manifestJSON:Class = ResourceManager_manifestJSON;
++      
++      public static const manifestJSONData:Object = JSON.parse(Base64.decode(new String(new ResourceManager.manifestJSON())));
+@@ 44 0 da39a3ee5e6b4b0d 2
++      public static var DISABLE_MUSIC_AUTO_LOAD:Boolean = false;
++      
+@@ 46 1 6b020c4e5c6b64ea 1
++      public static var m_expansionData:Vector.<Vector.<Object>> = new Vector.<Vector.<Object>>();
+@@ 48 1 e7364482af876cfb 1
++      public static var m_expansionCostumeData:Array = new Array();
+@@ 50 1 acb87b146cebdab1 51
++      public static var m_expansionMetalCostumeData:Array = new Array();
++      
++      public static var m_expansionStatsToResourceId:Object = {};
++      
++      public static var m_pendingExpansionStockFile:Object = {};
++      
++      public static var m_pendingExpansionPAFile:Object = {};
++      
++      public static var m_pendingExpansionCostumesFile:Object = {};
++      
++      public static var m_pendingExpansionSettingsFile:Object = {};
++      
++      public static var m_pendingExpansionAnnouncerFile:Object = {};
++      
++      public static var m_expansionAnnouncerSound:Object = {};
++      
++      public static var m_expansionStockBitmapData:Object = {};
++      
++      public static const UI_LINK_DEBUG:Boolean = true;
++      
++      public static var m_expansionPABitmapData:Object = {};
++      
++      public static var m_rosterSeriesIconSvg:Object = {};
++      
++      public static var m_rosterSeriesIconBlit:Object = {};
++      
++      public static var m_expansionCssPaYNudge:Object = {};
++      
++      public static var m_expansionClassicPaYNudge:Object = {};
++      
++      public static const FALLBACK_STOCK_SIZE:Number = 24;
++      
++      public static const FALLBACK_PA_SIZE:Number = 100;
++      
++      public static const ALIGN_CENTER:String = "center";
++      
++      public static const ALIGN_BOTTOM:String = "bottom";
++      
++      public static const ALIGN_TOP:String = "top";
++      
++      public static const CSS_PA_Y_NUDGE:Number = -12;
++      
++      public static const CLASSIC_PA_Y_NUDGE:Number = -12;
++      
++      public static var m_realExpansionUiLoadCallbacks:Array = null;
++      
++      public static var m_classicDataMerged:Boolean = false;
++      
++      public static var m_activeXpExpansion:int = 0;
++      
++      public static var m_stageExpansions:Array = [];
+## public static function getStageExpansions() : Array
+## why: expansions: stage/character pack discovery, CSS art and costume JSON entry points forwarded to ModHost EXPANSION_RM
+@@ 110 0 da39a3ee5e6b4b0d 165
++      public static function getStageExpansions() : Array
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getStageExpansions"],null) as Array;
++      }
++      
++      public static function discoverDroppedExpansions() : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["discoverDroppedExpansions"],null);
++      }
++      
++      public static function discoverStageExpansions() : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["discoverStageExpansions"],null);
++      }
++      
++      public static function readStageExpansionName(param1:File, param2:String) : String
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["readStageExpansionName",param1,param2],null) as String;
++      }
++      
++      public static function discoverExpansionEntries(param1:File, param2:String) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["discoverExpansionEntries",param1,param2],null);
++      }
++      
++      public static function isExpansionPackFileName(param1:String) : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["isExpansionPackFileName",param1],false));
++      }
++      
++      public static function registerDiscoveredExpansion(param1:String, param2:String, param3:File, param4:File, param5:File = null, param6:File = null, param7:File = null) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["registerDiscoveredExpansion",param1,param2,param3,param4,param5,param6,param7],null);
++      }
++      
++      public static function compareExpansionListingFiles(param1:*, param2:*) : int
++      {
++         return int(ModHost.door(ModPatches.EXPANSION_RM,["compareExpansionListingFiles",param1,param2],0));
++      }
++      
++      public static function sortExpansionDataSlots() : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["sortExpansionDataSlots"],null);
++      }
++      
++      public static function getExpansionSlotSortKey(param1:Vector.<Object>) : String
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getExpansionSlotSortKey",param1],null) as String;
++      }
++      
++      public static function compareExpansionDataSlots(param1:*, param2:*) : int
++      {
++         return int(ModHost.door(ModPatches.EXPANSION_RM,["compareExpansionDataSlots",param1,param2],0));
++      }
++      
++      public static function isExpansionStatsName(param1:String) : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["isExpansionStatsName",param1],false));
++      }
++      
++      public static function getResourceIdForCharacter(param1:String) : String
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getResourceIdForCharacter",param1],null) as String;
++      }
++      
++      public static function getExpansionStockBitmapData(param1:String) : BitmapData
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getExpansionStockBitmapData",param1],null) as BitmapData;
++      }
++      
++      public static function getExpansionPABitmapData(param1:String) : BitmapData
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getExpansionPABitmapData",param1],null) as BitmapData;
++      }
++      
++      public static function getExpansionStockMC(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getExpansionStockMC",param1],null) as MovieClip;
++      }
++      
++      public static function wrapStockBitmapData(param1:BitmapData) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["wrapStockBitmapData",param1],null) as MovieClip;
++      }
++      
++      public static function tryRealExpansionFolderStockMC(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["tryRealExpansionFolderStockMC",param1],null) as MovieClip;
++      }
++      
++      public static function tryInstantiateRealExpansionAssets(param1:String, param2:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["tryInstantiateRealExpansionAssets",param1,param2],null) as MovieClip;
++      }
++      
++      public static function wrapClassicPortraitMC(param1:MovieClip, param2:String = null) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["wrapClassicPortraitMC",param1,param2],null) as MovieClip;
++      }
++      
++      public static function getExpansionPortraitMC(param1:String, param2:String = null) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getExpansionPortraitMC",param1,param2],null) as MovieClip;
++      }
++      
++      public static function getExpansionCharSelectMC(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getExpansionCharSelectMC",param1],null) as MovieClip;
++      }
++      
++      public static function getCssPaYNudge(param1:String) : Number
++      {
++         return Number(ModHost.door(ModPatches.EXPANSION_RM,["getCssPaYNudge",param1],NaN));
++      }
++      
++      public static function getClassicPaYNudge(param1:String) : Number
++      {
++         return Number(ModHost.door(ModPatches.EXPANSION_RM,["getClassicPaYNudge",param1],NaN));
++      }
++      
++      public static function bitmapDataToFittedMC(param1:BitmapData, param2:Number, param3:Number, param4:String = null) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["bitmapDataToFittedMC",param1,param2,param3,param4],null) as MovieClip;
++      }
++      
++      public static function sanitizeExpansionUiLinkages(param1:Object) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["sanitizeExpansionUiLinkages",param1],null);
++      }
++      
++      public static function bindExpansionStatsToResource(param1:Resource, param2:Array) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["bindExpansionStatsToResource",param1,param2],null);
++      }
++      
++      public static function loadExpansionSettingsJson(param1:String, param2:File) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["loadExpansionSettingsJson",param1,param2],null);
++      }
++      
++      public static function loadExpansionCostumesJson(param1:String, param2:File) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["loadExpansionCostumesJson",param1,param2],null);
++      }
++      
++      public static function parseCostumesAsScript(param1:String, param2:String) : Object
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["parseCostumesAsScript",param1,param2],null) as Object;
++      }
++      
++      public static function findMatchingBrace(param1:String, param2:int) : int
++      {
++         return int(ModHost.door(ModPatches.EXPANSION_RM,["findMatchingBrace",param1,param2],0));
++      }
++      
++      public static function tryParseCostumeObjectLiteral(param1:String) : Object
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["tryParseCostumeObjectLiteral",param1],null) as Object;
++      }
++      
++      public static function loadExpansionPng(param1:String, param2:File, param3:Boolean) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["loadExpansionPng",param1,param2,param3],null);
++      }
++      
+## public static function loadPendingExpansions(_:Function = null) : void
+## why: expansions: loadPendingExpansions plus series-icon/CSS-sidecar/UI-template helpers via ModHost; cacheLibrary made public
+@@ 120 1 67d2a82e21773078 1
++      public static function loadPendingExpansions(param1:Function = null) : void
+@@ 122 3 53fe324cfdde0673 88
++         ModHost.door(ModPatches.EXPANSION_RM,["loadPendingExpansions",param1],null);
++      }
++      
++      public static function readExpansionCssCache(param1:String) : Object
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["readExpansionCssCache",param1],null) as Object;
++      }
++      
++      public static function getLiveSeriesIconMC(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getLiveSeriesIconMC",param1],null) as MovieClip;
++      }
++      
++      public static function getRosterSeriesIconMC(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getRosterSeriesIconMC",param1],null) as MovieClip;
++      }
++      
++      public static function vectorIcon(param1:String, param2:* = null, param3:* = null) : *
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["vectorIcon",param1,param2,param3],null);
++      }
++      
++      public static function shouldTraceUiLink(param1:String) : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["shouldTraceUiLink",param1],false));
++      }
++      
++      public static function refreshCssPortraitIfSelected(param1:String) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["refreshCssPortraitIfSelected",param1],null);
++      }
++      
++      public static function expansionPackFolder(param1:Resource) : File
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["expansionPackFolder",param1],null) as File;
++      }
++      
++      public static function applyCssMetaToStats(param1:String, param2:File) : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["applyCssMetaToStats",param1,param2],false));
++      }
++      
++      public static function writableFile(param1:File) : File
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["writableFile",param1],null) as File;
++      }
++      
++      public static function loadRosterSeriesIconSvg(param1:String, param2:File) : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["loadRosterSeriesIconSvg",param1,param2],false));
++      }
++      
++      public static function writeExpansionCssSidecars(param1:Resource, param2:CharacterData, param3:String) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["writeExpansionCssSidecars",param1,param2,param3],null);
++      }
++      
++      public static function captureAndDisposeExpansionCss(param1:Resource) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["captureAndDisposeExpansionCss",param1],null);
++      }
++      
++      public static function hydrateAndExtractExpansionCss(param1:Function) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["hydrateAndExtractExpansionCss",param1],null);
++      }
++      
++      public static function loadRealExpansionUiTemplates(param1:Function = null) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["loadRealExpansionUiTemplates",param1],null);
++      }
++      
++      public static function loadRealExpansionCostumesSidecars() : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["loadRealExpansionCostumesSidecars"],null);
++      }
++      
++      public static function applyClassicJsonPacks() : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["applyClassicJsonPacks"],null);
++      }
++      
++      public static function cacheLibrary(param1:Resource) : void
++      {
++         var _loc2_:int = 0;
++         var _loc3_:Object = param1.getProp("resources");
++         if(Boolean(param1.getProp("audio")))
+## public static function cacheLibrary(_:Resource) : void
+## why: restore lost vanilla warning for deprecated 'audio' prop (empty if body in decompile); locals renamed
+@@ 126 0 da39a3ee5e6b4b0d 1
++            MenuController.debugConsole.alert("Warning: Deprecated \"audio\" prop found in resource \"" + param1.ID + "\". Please remove!");
+@@ 127 1 24e455c96d390e25 1
++         if(Boolean(_loc3_))
+@@ 129 1 6101036fecb75925 1
++            if(Boolean(_loc3_.movieclips))
+@@ 131 1 4226603d40516a19 2
++               _loc2_ = 0;
++               while(_loc2_ < _loc3_.movieclips.length)
+@@ 133 1 7e21cfb07deb3e8e 2
++                  ResourceManager.getLibraryClass(_loc3_.movieclips[_loc2_]);
++                  _loc2_++;
+@@ 136 1 d173c2314ec8ed43 1
++            if(Boolean(_loc3_.sounds))
+@@ 138 1 61586500a0625414 2
++               _loc2_ = 0;
++               while(_loc2_ < _loc3_.sounds.length)
+@@ 140 1 4fba9ae988a91a2f 2
++                  ResourceManager.getLibraryClass(_loc3_.sounds[_loc2_]);
++                  _loc2_++;
+## public static function isRequiredResourceType(_:int) : Boolean
+## why: expansions: treat CHARACTER_EXPANSION/STAGE_EXPANSION resources as required so they load at boot
+@@ 148 1 a880f463e2245692 1
++         return type === Resource.MENU || type === Resource.MISC || type === Resource.AUDIO || type === Resource.MODE || type === Resource.CHARACTER_EXPANSION || type === Resource.STAGE_EXPANSION;
+## public static function addResource(_:Resource) : void
+## why: write add/duplicate/missing-ID resource events to game.log
+@@ 159 1 1525a89f36b14625 1
++            GameLog.write("[ResourceManager] Null resource provided!!!.");
+@@ 163 1 0a8c4d4e2fb01b49 1
++            GameLog.write("[ResourceManager] Error, resource requires an ID in order to be stored.");
+@@ 167 1 9d17b8e4b9891052 1
++            GameLog.write("[ResourceManager] Error, resource " + resource.ID + " has already been added");
+@@ 173 1 7be281a70ee250b8 1
++            GameLog.write("[ResourceManager] Added resource: " + resource.ID);
+## public static function queueResources(_:Array) : void
+## why: game.log queue events, promote already-loaded res, RESOURCE_QUEUED hook; expansion player/loaded-resource doors
+@@ 189 1 48aba739009de545 1
++               GameLog.write("[ResourceManager] Resource could not be found: " + resourceList[i]);
+@@ 203 1 10e9490341c0f104 9
++               if(Boolean(ResourceManager.resourcesHash[resourceList[i]]))
++               {
++                  ResourceManager.promoteResource(ResourceManager.poolHash[resourceList[i]]);
++               }
++               ModHost.runHook(ModHooks.RESOURCE_QUEUED,{
++                  "id":resourceList[i],
++                  "resource":ResourceManager.poolHash[resourceList[i]]
++               });
++               GameLog.write("[ResourceManager] Queued resource: " + resourceList[i]);
+@@ 206 0 da39a3ee5e6b4b0d 10
++      }
++      
++      public static function queuePlayerCharacterResource(param1:Object, param2:int = -1) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["queuePlayerCharacterResource",param1,param2],null);
++      }
++      
++      public static function registerLoadedResource(param1:Resource) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["registerLoadedResource",param1],null);
+## public static function queueRequiredResources() : void
+## why: write queued required resources to game.log
+@@ 218 1 c55b0f3049e5f580 1
++               GameLog.write("[ResourceManager] Queued resource: " + resource.ID);
+## public static function flushAllResources(_:Boolean = false) : void
+## why: write unloaded resources to game.log
+@@ 233 1 fa6a97f595f63d7c 1
++               GameLog.write("[ResourceManager] Unloaded resource: " + resource.ID);
+## public static function shouldDropResource(_:Resource) : Boolean
+## why: memory: decide which resources a flush may drop (only unqueued character/stage/music)
+@@ 238 0 da39a3ee5e6b4b0d 17
++      public static function shouldDropResource(param1:Resource) : Boolean
++      {
++         if(!param1 || !param1.ID)
++         {
++            return false;
++         }
++         if(param1.Type != Resource.CHARACTER && param1.Type != Resource.STAGE && param1.Type != Resource.MUSIC)
++         {
++            return false;
++         }
++         if(Boolean(ResourceManager.queueHash[param1.ID]))
++         {
++            return false;
++         }
++         return true;
++      }
++      
+## public static function flushUnusedResources() : void
+## why: memory: flush through shouldDropResource and log the dropped count to game.log
+@@ 240 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = 0;
+@@ 244 1 9d68f5c2bfa71be9 1
++            if(ResourceManager.shouldDropResource(resource))
+@@ 246 0 da39a3ee5e6b4b0d 1
++               GameLog.write("[ResourceManager] Unloaded resource: " + resource.ID);
+@@ 248 1 fa6a97f595f63d7c 1
++               _loc0_++;
+@@ 251 0 da39a3ee5e6b4b0d 1
++         GameLog.write("[ResourceManager] flush dropped=" + _loc0_);
+## public static function flushLoadQueue() : void
+## why: write load-queue removals to game.log
+@@ 262 1 ea776ab2686498f9 1
++            GameLog.write("[ResourceManager] Removed resource from loading queue: " + resource.ID);
+## public static function pruneLoadQueue() : void
+## why: expansion stages: pick stage music when pruning; game.log; checkMissingEmptyFrameOnes door
+@@ 279 0 da39a3ee5e6b4b0d 4
++               if(resource.Type === Resource.STAGE || resource.Type === Resource.STAGE_EXPANSION)
++               {
++                  ResourceManager.checkMusicToLoad(resource);
++               }
+@@ 282 1 7501b5d808c7d46d 1
++               GameLog.write("[ResourceManager] Removed already loaded resource from loading queue: " + resource.ID);
+@@ 285 0 da39a3ee5e6b4b0d 5
++      }
++      
++      public static function checkMissingEmptyFrameOnes() : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["checkMissingEmptyFrameOnes"],null);
+## public static function load(_:Object) : void
+## why: flushUnused load option, RESOURCE_POOL_READY hook, missing-frame check, game.log, music for loaded expansion stages
+@@ 292 1 63ddd29ab4625813 8
++         if(Boolean(options) && Boolean(options.flushUnused))
++         {
++            ResourceManager.flushUnusedResources();
++         }
++         else
++         {
++            ResourceManager.unloadOldResources();
++         }
+@@ 317 0 da39a3ee5e6b4b0d 1
++                  ModHost.runHook(ModHooks.RESOURCE_POOL_READY,{"multimode":true});
+@@ 319 0 da39a3ee5e6b4b0d 1
++                     checkMissingEmptyFrameOnes();
+@@ 321 1 d413708a9a47c7f7 1
++                  GameLog.write("[ResourceManager] Finished loading all resources.");
+@@ 326 2 f44a6dad0a027193 2
++               GameLog.write("[ResourceManager] Started loading resource: ",ResourceManager.queue[i].ID);
++               if(Boolean(ResourceManager.queue[i].Loaded) && (ResourceManager.queue[i].Type === Resource.STAGE || ResourceManager.queue[i].Type === Resource.STAGE_EXPANSION))
+## public static function checkMusicToLoad(_:Resource) : void
+## why: expansion stages: pick music for STAGE_EXPANSION too; drop dead 'if(false && ...)' block
+@@ 354 1 9fa366eca2051561 0
+@@ 356 2 0a413e773c3e8996 1
++         if(res.Type === Resource.STAGE || res.Type === Resource.STAGE_EXPANSION)
+@@ 369 22 bff9eded5e5a1806 0
+## private static function handleLoaded(_:Resource) : void
+## why: mods: RESOURCE_LOADED/RESOURCE_FAILED hooks and load result lines in game.log
+@@ 406 1 bd7caec935a73c0d 5
++               ModHost.runHook(ModHooks.RESOURCE_LOADED,{
++                  "id":res.ID,
++                  "resource":res
++               });
++               GameLog.write("[ResourceManager] Loaded: ",res.ID);
+@@ 418 0 da39a3ee5e6b4b0d 5
++               ModHost.runHook(ModHooks.RESOURCE_FAILED,{
++                  "id":res.ID,
++                  "resource":res,
++                  "softFail":true
++               });
+@@ 422 0 da39a3ee5e6b4b0d 5
++               ModHost.runHook(ModHooks.RESOURCE_FAILED,{
++                  "id":res.ID,
++                  "resource":res,
++                  "softFail":false
++               });
+@@ 426 1 462f6ffc7bcaaf76 1
++               GameLog.write("[ResourceManager] An error has occured while loading resource: ",res.ID);
+@@ 434 1 df054039aa02e90e 5
++            ModHost.runHook(ModHooks.RESOURCE_LOADED,{
++               "id":res.ID,
++               "resource":res
++            });
++            GameLog.write("[ResourceManager] Loaded: ",res);
+@@ 451 0 da39a3ee5e6b4b0d 5
++            ModHost.runHook(ModHooks.RESOURCE_FAILED,{
++               "id":ResourceManager.queue[ResourceManager._loadIndex].ID,
++               "resource":ResourceManager.queue[ResourceManager._loadIndex],
++               "softFail":true
++            });
+@@ 457 0 da39a3ee5e6b4b0d 5
++            ModHost.runHook(ModHooks.RESOURCE_FAILED,{
++               "id":ResourceManager.queue[ResourceManager._loadIndex].ID,
++               "resource":ResourceManager.queue[ResourceManager._loadIndex],
++               "softFail":false
++            });
+@@ 461 1 8cf2a7bac570290a 1
++            GameLog.write("[ResourceManager] An error has occured while loading resource: ",ResourceManager.queue[ResourceManager._loadIndex].ID);
+## private static function loadNext() : void
+## why: game.log load lines, expansion-stage music, missing-frame check and RESOURCE_POOL_READY hook (sequential load)
+@@ 471 2 9e17fd9c62f5e0e3 2
++            GameLog.write("[ResourceManager] Started loading resource: ",ResourceManager.queue[ResourceManager._loadIndex].ID);
++            if(Boolean(ResourceManager.queue[ResourceManager._loadIndex].Loaded) && (ResourceManager.queue[ResourceManager._loadIndex].Type === Resource.STAGE || ResourceManager.queue[ResourceManager._loadIndex].Type === Resource.STAGE_EXPANSION))
+@@ 493 0 da39a3ee5e6b4b0d 2
++               checkMissingEmptyFrameOnes();
++               ModHost.runHook(ModHooks.RESOURCE_POOL_READY,{"multimode":false});
+@@ 497 1 f8f1f89fd77da263 1
++               GameLog.write("[ResourceManager] Finished loading all resources.");
+@@ 501 1 b8ffe2294e81039c 1
++               GameLog.write("[ResourceManager] Unable to load all resources.");
+## public static function validateResource(_:Resource) : Boolean
+## why: expansion characters: register stats/costumes from expansion SWFs, initModAPI, ModHost GUID override, game.log
+@@ 536 1 7554aa8a830f449d 1
++      public static function validateResource(param1:Resource) : Boolean
+@@ 538 0 da39a3ee5e6b4b0d 3
++         var resource:Resource = null;
++         resource = null;
++         resource = param1;
+@@ 544 0 da39a3ee5e6b4b0d 2
++         var expansionCostume:Array = null;
++         var expansionMetalCostume:Array = null;
+@@ 545 0 da39a3ee5e6b4b0d 2
++         var mappedRes:Resource = null;
++         var guidOk:Boolean = false;
+@@ 557 1 aae22168b5032d57 1
++            diff = int(Version.compare(SSF2API.VERSION_MAJOR,SSF2API.VERSION_MINOR,SSF2API.VERSION_REVISION,cls.VERSION_MAJOR,cls.VERSION_MINOR,cls.VERSION_REVISION));
+@@ 563 1 c38f0275904865d7 1
++                  if(Boolean(Main.DEBUG) && Boolean(MenuController.debugConsole) && Boolean(MenuController.debugConsole.Alerts))
+@@ 571 1 b5fc53ede791121b 1
++               if(Boolean(Main.DEBUG) && Boolean(MenuController.debugConsole) && Boolean(MenuController.debugConsole.Alerts))
+@@ 577 0 da39a3ee5e6b4b0d 49
++         if(Boolean(resource.MC) && "initModAPI" in resource.MC)
++         {
++            try
++            {
++               apiFunc = resource.MC["initModAPI"] as Function;
++               apiFunc(SSF2API);
++               GameLog.write("[ResourceManager] Initialized ModAPI for resource: " + resource.ID);
++            }
++            catch(error:Error)
++            {
++               GameLog.write("[ResourceManager] Warning: Error initializing ModAPI for " + resource.ID + ": " + error.message);
++            }
++         }
++         if(resource.Type == Resource.CHARACTER_EXPANSION)
++         {
++            expansionChars = resource.getProp("characters") || null;
++            expansionCostume = resource.getProp("costume_data");
++            expansionMetalCostume = resource.getProp("metal_costume_data");
++            if(Boolean(expansionChars) && expansionChars.length > 0)
++            {
++               m_expansionData.push(new Vector.<Object>());
++               j = 0;
++               while(j < expansionChars.length)
++               {
++                  if(Boolean(expansionChars[j]) && Boolean(expansionChars[j]["cData"]))
++                  {
++                     sanitizeExpansionUiLinkages(expansionChars[j]["cData"]);
++                  }
++                  m_expansionData[m_expansionData.length - 1].push(expansionChars[j]);
++                  Stats.writeStats(expansionChars[j]);
++                  if(Boolean(expansionCostume) && Boolean(expansionCostume[j]))
++                  {
++                     ResourceManager.m_expansionCostumeData[expansionChars[j]["cData"]["statsName"]] = expansionCostume[j];
++                  }
++                  if(Boolean(expansionMetalCostume) && Boolean(expansionMetalCostume[j]))
++                  {
++                     ResourceManager.m_expansionMetalCostumeData[expansionChars[j]["cData"]["statsName"]] = expansionMetalCostume[j];
++                  }
++                  j++;
++               }
++               bindExpansionStatsToResource(resource,expansionChars);
++               sortExpansionDataSlots();
++               Stats.syncExpansionsFromResources();
++               return true;
++            }
++            GameLog.write("[ResourceManager] Expansion missing characters array: " + resource.Location);
++            unloadResource(resource);
++            return false;
++         }
+@@ 581 1 628322eed4c9d98e 1
++               GameLog.write("ERROR, no matching ID for global " + resource.getProp("id"));
+@@ 587 1 89645e30af78a265 1
++               GameLog.write("ERROR, no GUID for " + resource.getProp("id"));
+@@ 590 1 e0a480db3b628460 3
++            mappedRes = ResourceManager.getResourceByID(resource.getProp("id"));
++            guidOk = resource.getProp("guid") == mappedRes.PassKey;
++            if(!guidOk)
+@@ 592 1 95874d151e1fd2bd 12
++               try
++               {
++                  guidOk = Boolean(ModHost.door(ModPatches.ACCEPT_CHARACTER_GUID,[resource,mappedRes],false));
++               }
++               catch(guidDoorErr:*)
++               {
++                  guidOk = false;
++               }
++            }
++            if(!guidOk)
++            {
++               GameLog.write("ERROR in validation for " + resource.getProp("id") + " with key " + resource.getProp("guid"));
+@@ 603 1 a89641191052cea6 1
++                     GameLog.write("ERROR writing stats for " + resource.getProp("id") + " with key " + resource.getProp("guid"));
+@@ 606 1 10af21ff0bd7d5a0 2
++                  j = 0;
++                  while(j < characters.length)
+@@ 609 0 da39a3ee5e6b4b0d 5
++                     if(Boolean(characters[j]) && Boolean(characters[j]["cData"]) && Boolean(characters[j]["cData"]["statsName"]))
++                     {
++                        refreshCssPortraitIfSelected(String(characters[j]["cData"]["statsName"]));
++                     }
++                     j++;
+@@ 616 0 da39a3ee5e6b4b0d 2
++            expansionCostume = resource.getProp("costume_data");
++            expansionMetalCostume = resource.getProp("metal_costume_data");
+@@ 618 2 5492e5260213b94a 3
++               m_expansionData.push(new Vector.<Object>());
++               j = 0;
++               while(j < expansionChars.length)
+@@ 621 0 da39a3ee5e6b4b0d 4
++                  if(Boolean(expansionChars[j]) && Boolean(expansionChars[j]["cData"]))
++                  {
++                     sanitizeExpansionUiLinkages(expansionChars[j]["cData"]);
++                  }
+@@ 622 0 da39a3ee5e6b4b0d 10
++                  Stats.writeStats(expansionChars[j]);
++                  if(Boolean(expansionCostume) && Boolean(expansionCostume[j]))
++                  {
++                     ResourceManager.m_expansionCostumeData[expansionChars[j]["cData"]["statsName"]] = expansionCostume[j];
++                  }
++                  if(Boolean(expansionMetalCostume) && Boolean(expansionMetalCostume[j]))
++                  {
++                     ResourceManager.m_expansionMetalCostumeData[expansionChars[j]["cData"]["statsName"]] = expansionMetalCostume[j];
++                  }
++                  j++;
+@@ 623 0 da39a3ee5e6b4b0d 3
++               bindExpansionStatsToResource(resource,expansionChars);
++               sortExpansionDataSlots();
++               Stats.syncExpansionsFromResources();
+@@ 624 1 394ff38de5a057f4 1
++            else if(!resource.getProp("stage"))
+@@ 626 1 559c5a870f12c548 1
++               GameLog.write("ERROR, no association for " + resource.Location);
+## public static function unloadResource(_:Resource) : void
+## why: memory: release SWF via SwfRelease, deinitModAPI, keep expansion entries, log Flash memory before/after to game.log
+@@ 634 1 7e65a582546cdb5e 1
++      public static function unloadResource(param1:Resource) : void
+@@ 636 4 5596029337f4d9e9 11
++         var res:Resource = null;
++         var flashBefore:int = 0;
++         var parented:int = 0;
++         var kids:int = 0;
++         var cacheLeft:int = 0;
++         var mc:DisplayObject = null;
++         var _loc2_:* = undefined;
++         var _loc3_:Function = null;
++         res = param1;
++         var _loc4_:int = int(ResourceManager.resources.indexOf(res));
++         if(_loc4_ >= 0)
+@@ 641 0 da39a3ee5e6b4b0d 18
++            flashBefore = int(System.totalMemory);
++            mc = res.MC as DisplayObject;
++            if(Boolean(mc))
++            {
++               if(Boolean(mc.parent))
++               {
++                  parented = 1;
++               }
++               if(mc is DisplayObjectContainer)
++               {
++                  kids = int(DisplayObjectContainer(mc).numChildren);
++               }
++            }
++            mc = null;
++            if(Boolean(res.getLoader()))
++            {
++               SwfRelease.forget(ResourceManager.resourceCache,res.getLoader());
++            }
+@@ 643 2 d596d8cc4fd534ee 15
++               _loc3_ = res.MC["deinitAPI"] as Function;
++               _loc3_();
++            }
++            if(Boolean(res.MC) && "deinitModAPI" in res.MC)
++            {
++               try
++               {
++                  _loc3_ = res.MC["deinitModAPI"] as Function;
++                  _loc3_();
++                  GameLog.write("[ResourceManager] Deinitialized ModAPI for resource: " + res.ID);
++               }
++               catch(error:Error)
++               {
++                  GameLog.write("[ResourceManager] Warning: Error deinitializing ModAPI for " + res.ID + ": " + error.message);
++               }
+@@ 647 0 da39a3ee5e6b4b0d 4
++            if(res.Type === Resource.STAGE_EXPANSION || res.Type === Resource.CHARACTER_EXPANSION)
++            {
++               return;
++            }
+@@ 648 3 8177eb7f2dbf0832 3
++            ResourceManager.resources[_loc4_] = null;
++            ResourceManager.resources.splice(_loc4_,1);
++            for(_loc2_ in ResourceManager.resourceCache)
+@@ 652 1 c62212e81ba2a275 1
++               if(Boolean(ResourceManager.resourceCache[_loc2_]) && ResourceManager.resourceCache[_loc2_].src === res.ID)
+@@ 654 1 19805db259e6bf3f 2
++                  ResourceManager.resourceCache[_loc2_] = null;
++                  delete ResourceManager.resourceCache[_loc2_];
+@@ 661 0 da39a3ee5e6b4b0d 9
++            for(_loc2_ in ResourceManager.resourceCache)
++            {
++               if(Boolean(ResourceManager.resourceCache[_loc2_]) && ResourceManager.resourceCache[_loc2_].src === res.ID)
++               {
++                  cacheLeft++;
++               }
++            }
++            GameLog.write("[ResourceManager] drop id=" + res.ID + " flashBefore=" + (flashBefore >> 20) + " flashAfter=" + (System.totalMemory >> 20) + " parent=" + parented + " kids=" + kids + " cache=" + cacheLeft);
++            setTimeout(ResourceManager.collectUnloaded,1,res.ID,flashBefore);
+@@ 662 0 da39a3ee5e6b4b0d 35
++      }
++      
++      private static function collectUnloaded(param1:String, param2:int) : void
++      {
++         var _loc3_:int = 0;
++         var _loc4_:int = 0;
++         var _loc5_:int = 0;
++         var _loc6_:int = 0;
++         var _loc7_:Resource = null;
++         var _loc8_:* = undefined;
++         try
++         {
++            System.gc();
++         }
++         catch(gcErr:*)
++         {
++         }
++         while(_loc6_ < ResourceManager.pool.length)
++         {
++            _loc7_ = ResourceManager.pool[_loc6_];
++            if(Boolean(_loc7_) && Boolean(_loc7_.MC))
++            {
++               _loc4_++;
++            }
++            if(Boolean(_loc7_) && _loc7_.Type === Resource.CHARACTER && Boolean(_loc7_.Loaded))
++            {
++               _loc3_++;
++            }
++            _loc6_++;
++         }
++         for(_loc8_ in ResourceManager.resourceCache)
++         {
++            _loc5_++;
++         }
++         GameLog.write("[ResourceManager] drop settled id=" + param1 + " flashBefore=" + (param2 >> 20) + " flashSettled=" + (System.totalMemory >> 20) + " loadedChars=" + _loc3_ + " poolMovies=" + _loc4_ + " cacheKeys=" + _loc5_);
+## private static function unloadOldResources() : void
+## why: memory: raise localhost character cache to 6 and unload in a while loop until each type is under its cap
+@@ 679 1 93b0119c794b106a 1
++         var CHARACTER_LIMIT:int = !Main.LOCALHOST ? 12 : 6;
+@@ 703 1 62f0493b25dacc2b 1
++                  while(totals[key] > STAGE_LIMIT)
+@@ 710 1 df1e5bc9f026d83d 1
++                  while(totals[key] > MUSIC_LIMIT)
+## private static function promoteResource(_:Resource) : void
+## why: fix decompile/vanilla bug: 'return' made promoteResource a no-op; 'break' lets it reorder
+@@ 727 1 705c9a146d96af2e 1
++               break;
+## public static function instantiateLibraryClass(_:String) : MovieClip
+## why: expansions: instantiate library classes and safe UI icons via ModHost
+@@ 746 0 da39a3ee5e6b4b0d 10
++      public static function instantiateLibraryClass(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["instantiateLibraryClass",param1],null) as MovieClip;
++      }
++      
++      public static function getSafeUiIconMC(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getSafeUiIconMC",param1],null) as MovieClip;
++      }
++      
+## public static function getLibraryMC(_:String) : MovieClip
+## why: expansions: CSS/stock/classic art for expansion characters (xp_*, *_stock) via ModHost, UI-link misses to game.log
+@@ 748 0 da39a3ee5e6b4b0d 39
++         var _loc2_:MovieClip = null;
++         var _loc0_:MovieClip = null;
++         var _loc1_:String = null;
++         _loc0_ = tryGetLibraryMCPatch(mcName);
++         if(Boolean(_loc0_))
++         {
++            if(shouldTraceUiLink(mcName))
++            {
++               GameLog.write("[ResourceManager] getLibraryMC patch HIT " + mcName);
++            }
++            return _loc0_;
++         }
++         if(Boolean(mcName) && mcName.indexOf("_stock") == mcName.length - "_stock".length)
++         {
++            _loc1_ = mcName.substring(0,mcName.length - "_stock".length);
++            _loc2_ = tryInstantiateRealExpansionAssets(_loc1_,"stock");
++            if(Boolean(_loc2_))
++            {
++               if(shouldTraceUiLink(mcName))
++               {
++                  GameLog.write("[ResourceManager] getLibraryMC assets HIT " + mcName);
++               }
++               return _loc2_;
++            }
++            _loc2_ = tryRealExpansionFolderStockMC(_loc1_);
++            if(Boolean(_loc2_))
++            {
++               if(shouldTraceUiLink(mcName))
++               {
++                  GameLog.write("[ResourceManager] getLibraryMC stock.png HIT " + mcName);
++               }
++               return _loc2_;
++            }
++         }
++         _loc0_ = tryExpansionLibraryMC(mcName);
++         if(Boolean(_loc0_))
++         {
++            return _loc0_;
++         }
+@@ 751 1 6412b76fb401e2a4 41
++            _loc2_ = new myClass() as MovieClip;
++            if(Boolean(_loc2_))
++            {
++               return _loc2_;
++            }
++         }
++         if(mcName == "xp_classic" || mcName == "xp_classic_trophy" || Boolean(mcName && mcName.indexOf("xp_") == 0) && Boolean(mcName.indexOf("_classic") > 0))
++         {
++            _loc1_ = resolveXpStatsNameForLibrary();
++            _loc0_ = wrapClassicPortraitMC(getExpansionPortraitMC(_loc1_,ALIGN_BOTTOM),_loc1_);
++            if(Boolean(_loc0_))
++            {
++               return _loc0_;
++            }
++            return tryGetPlaceholderClassic();
++         }
++         if(mcName == "xp_stock" || mcName == "xp_icon")
++         {
++            _loc2_ = getExpansionStockMC(resolveXpStatsNameForLibrary());
++            if(Boolean(_loc2_))
++            {
++               return _loc2_;
++            }
++            myClass = ResourceManager.getLibraryClass("random_stock");
++            if(Boolean(myClass))
++            {
++               return new myClass() as MovieClip;
++            }
++         }
++         if(mcName == "friend_mc")
++         {
++            return new MovieClip();
++         }
++         _loc2_ = tryGetLibraryMCPatch(mcName);
++         if(Boolean(_loc2_))
++         {
++            return _loc2_;
++         }
++         if(shouldTraceUiLink(mcName))
++         {
++            GameLog.write("[ResourceManager] getLibraryMC MISS " + mcName);
+@@ 754 0 da39a3ee5e6b4b0d 20
++      }
++      
++      public static function tryGetLibraryMCPatch(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["tryGetLibraryMCPatch",param1],null) as MovieClip;
++      }
++      
++      public static function tryGetPlaceholderClassic() : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["tryGetPlaceholderClassic"],null) as MovieClip;
++      }
++      
++      public static function resolveXpStatsNameForLibrary() : String
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["resolveXpStatsNameForLibrary"],null) as String;
++      }
++      
++      public static function tryExpansionLibraryMC(param1:String) : MovieClip
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["tryExpansionLibraryMC",param1],null) as MovieClip;
+## public static function getLibraryClass(_:String) : Class
+## why: expansions: find library classes in any loaded pack SWF's ApplicationDomain
+@@ 789 0 da39a3ee5e6b4b0d 14
++            if(!retClass)
++            {
++               i = 0;
++               while(i < ResourceManager.pool.length)
++               {
++                  if(Boolean(ResourceManager.pool[i]) && Boolean(ResourceManager.pool[i].Loaded) && Boolean(ResourceManager.pool[i].MC) && Boolean(ResourceManager.pool[i].MC.loaderInfo) && Boolean(ResourceManager.pool[i].MC.loaderInfo.applicationDomain) && Boolean(ResourceManager.pool[i].MC.loaderInfo.applicationDomain.hasDefinition(className)))
++                  {
++                     retClass = ResourceManager.pool[i].MC.loaderInfo.applicationDomain.getDefinition(className) as Class;
++                     retResourceID = ResourceManager.pool[i].ID;
++                     break;
++                  }
++                  i++;
++               }
++            }
+## public static function getLibrarySound(_:String) : Sound
+## why: expansions: play announcer sounds from expansion packs
+@@ 802 0 da39a3ee5e6b4b0d 6
++         var _loc0_:Sound = null;
++         _loc0_ = tryGetExpansionAnnouncerSound(soundName);
++         if(Boolean(_loc0_))
++         {
++            return _loc0_;
++         }
+@@ 808 0 da39a3ee5e6b4b0d 20
++      }
++      
++      public static function getExpansionAnnouncerId(param1:String) : String
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getExpansionAnnouncerId",param1],null) as String;
++      }
++      
++      public static function tryGetExpansionAnnouncerSound(param1:String) : Sound
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["tryGetExpansionAnnouncerSound",param1],null) as Sound;
++      }
++      
++      public static function tryLoadExpansionAnnouncerFromFolder(param1:String, param2:File) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["tryLoadExpansionAnnouncerFromFolder",param1,param2],null);
++      }
++      
++      public static function loadExpansionAnnouncer(param1:String, param2:File) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["loadExpansionAnnouncer",param1,param2],null);
+## public static function resolveCostumeStatsName(_:String) : String
+## why: expansions: costume stats-name alias, merged vanilla+expansion costume lists, team metal slots via ModHost
+@@ 826 0 da39a3ee5e6b4b0d 20
++      public static function resolveCostumeStatsName(param1:String) : String
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["resolveCostumeStatsName",param1],null) as String;
++      }
++      
++      public static function getMergedCostumeList(param1:String) : Array
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["getMergedCostumeList",param1],null) as Array;
++      }
++      
++      public static function buildSelectableTeamMetalSlots(param1:String, param2:Object) : Array
++      {
++         return ModHost.door(ModPatches.EXPANSION_RM,["buildSelectableTeamMetalSlots",param1,param2],null) as Array;
++      }
++      
++      public static function metalCostumeHasPalette(param1:Object) : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["metalCostumeHasPalette",param1],false));
++      }
++      
+## public static function getAllCostumes(_:String, _:String, _:Boolean = false) : Array
+## why: expansions: read costumes from the merged list (vanilla + expansion)
+@@ 831 1 02491ff18dff5218 2
++         var costumeList:Array = [];
++         costumeList[charName] = getMergedCostumeList(charName);
+## public static function getCostumeCount(_:String) : int
+## why: expansions: count costumes from the merged list with stats-name alias
+@@ 864 1 02491ff18dff5218 3
++         var costumeList:Array = [];
++         charName = resolveCostumeStatsName(charName);
++         costumeList[charName] = getMergedCostumeList(charName);
+## public static function getCostume(_:String, _:String, _:int = -1) : Object
+## why: expansions: merged costume lookup, default costume when none, paletteSwapPA fallback, LEFTOVER_BASE_RECOLOR patch
+@@ 882 1 f3d5d85f71931c13 1
++      public static function getCostume(param1:String, param2:String, param3:int = -1) : Object
+@@ 884 7 f454a9bef40f22ec 9
++         var _loc4_:Object = null;
++         var _loc5_:int = 0;
++         var _loc6_:int = 0;
++         var _loc7_:Object = null;
++         var _loc8_:Array = [];
++         param1 = resolveCostumeStatsName(param1);
++         _loc8_[param1] = getMergedCostumeList(param1);
++         var _loc9_:int = getCostumeCount(param1);
++         if(param3 < -1)
+@@ 892 1 2da65e276ef8399b 5
++            param3 = -1;
++         }
++         if(_loc8_ != null)
++         {
++            if(Boolean(_loc8_) && _loc8_[param1] != null)
+@@ 894 2 871e5f98e466419d 2
++               _loc4_ = null;
++               if(param3 >= _loc9_ - 1)
+@@ 897 1 b9a06338457eda72 1
++                  param3 = -1;
+@@ 899 1 080103dc65f39e95 3
++               _loc5_ = 0;
++               _loc6_ = 0;
++               while(_loc5_ < _loc8_[param1].length)
+@@ 901 1 1d8cfef671501899 1
++                  if(param2 != null)
+@@ 903 1 ffa29b43d542057c 1
++                     if(Boolean(_loc8_[param1][_loc5_]) && Boolean(_loc8_[param1][_loc5_]["team"]) && _loc8_[param1][_loc5_]["team"] == param2)
+@@ 905 1 8f0599a6d3ee1bd1 1
++                        _loc7_ = _loc8_[param1][_loc5_];
+@@ 909 1 eaac6567d79fd4d0 1
++                  else if(!Boolean(_loc8_[param1][_loc5_]["team"]))
+@@ 911 1 40bbcc952b5998ba 1
++                     if(!(param3 >= 0 && Boolean(_loc8_[param1][_loc5_]["base"])))
+@@ 913 1 68a98d59c2d86c91 1
++                        if(param3 == _loc6_)
+@@ 915 1 3d8bb07260a48548 1
++                           _loc7_ = _loc8_[param1][_loc5_];
+@@ 918 1 a9e3d77ce8f0d745 1
++                        if(param3 === -1 && Boolean(_loc8_[param1][_loc5_]["base"]))
+@@ 920 1 3d8bb07260a48548 1
++                           _loc7_ = _loc8_[param1][_loc5_];
+@@ 923 1 8d6af7d676df4cc3 1
++                        _loc6_++;
+@@ 926 0 da39a3ee5e6b4b0d 1
++                  _loc5_++;
+@@ 929 1 7cb1ed607ba33a8f 19
++         if(_loc7_ == null && param2 == null)
++         {
++            return Utils.getCostumeObject({});
++         }
++         if(_loc7_ == null)
++         {
++            return null;
++         }
++         _loc7_ = Utils.cloneObject(_loc7_);
++         if(Boolean(_loc7_) && Boolean(!_loc7_.paletteSwapPA) && Boolean(_loc7_.paletteSwap))
++         {
++            _loc7_.paletteSwapPA = _loc7_.paletteSwap;
++         }
++         return ModHost.applyPatch(ModPatches.LEFTOVER_BASE_RECOLOR,[param1,_loc7_],leftoverBaseRecolorDefault);
++      }
++      
++      private static function leftoverBaseRecolorDefault(param1:String, param2:Object) : Object
++      {
++         return param2;
+## public static function getMetalCostume(_:String) : Object
+## why: expansions: resolve alias; expansion characters get no vanilla default metal costume
+@@ 935 0 da39a3ee5e6b4b0d 1
++         charName = resolveCostumeStatsName(charName);
+@@ 939 1 c686286fb798ce67 5
++         if(isExpansionStatsName(charName))
++         {
++            return null;
++         }
++         if(Boolean(costumeObj) && Boolean(costumeObj["default"]))
+## public static function getExpansionCharacter(_:int) : Vector.<Object>
+## why: expansions: m_expansionData holds character objects (Vector.<Object>) instead of Vector.<Function>
+@@ 946 1 7c2643de5f7b59ed 1
++      public static function getExpansionCharacter(param1:int) : Vector.<Object>
+@@ 948 1 e857377e54f8da08 1
++         return param1 >= 0 && param1 < m_expansionData.length && m_expansionData.length > 0 ? m_expansionData[param1] : null;
+## public static function getExpansionCharacterObject(_:int, _:Number) : Object
+## why: expansions: active XP expansion and target-test-capable expansion navigation via ModHost
+@@ 954 0 da39a3ee5e6b4b0d 35
++      }
++      
++      public static function setActiveXpExpansion(param1:Number) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["setActiveXpExpansion",param1],null);
++      }
++      
++      public static function get ActiveXpExpansion() : int
++      {
++         return int(ModHost.door(ModPatches.EXPANSION_RM,["get_ActiveXpExpansion"],0));
++      }
++      
++      public static function expansionHasTargetTest(param1:String) : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["expansionHasTargetTest",param1],false));
++      }
++      
++      public static function anyExpansionHasTargetTest() : Boolean
++      {
++         return Boolean(ModHost.door(ModPatches.EXPANSION_RM,["anyExpansionHasTargetTest"],false));
++      }
++      
++      public static function getNextExpansionWithTargetTest(param1:Number) : Number
++      {
++         return Number(ModHost.door(ModPatches.EXPANSION_RM,["getNextExpansionWithTargetTest",param1],NaN));
++      }
++      
++      public static function getPrevExpansionWithTargetTest(param1:Number) : Number
++      {
++         return Number(ModHost.door(ModPatches.EXPANSION_RM,["getPrevExpansionWithTargetTest",param1],NaN));
++      }
++      
++      public static function getFirstExpansionWithTargetTest() : Number
++      {
++         return Number(ModHost.door(ModPatches.EXPANSION_RM,["getFirstExpansionWithTargetTest"],NaN));
+## public static function getPrevExpansionCharacter(_:Number) : Number
+## why: fix vanilla wrap bug ('param1 < length' always true) and add costume append/register doors
+@@ 969 1 fcf278579a3ce325 1
++         if(idNumber < 0)
+@@ 973 0 da39a3ee5e6b4b0d 4
++         if(idNumber < 0)
++         {
++            idNumber = 0;
++         }
+@@ 974 0 da39a3ee5e6b4b0d 10
++      }
++      
++      public static function appendExpansionCostumes() : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["appendExpansionCostumes"],null);
++      }
++      
++      public static function registerExpansionCostumeData(param1:String, param2:Array) : void
++      {
++         ModHost.door(ModPatches.EXPANSION_RM,["registerExpansionCostumeData",param1,param2],null);

@@ -1,0 +1,402 @@
+# com/mcleodgaming/ssf2/Main.as
+## class header
+## why: Discord SDK ANE, ModHost import, debug on by default (lazy debug), drop Google Analytics tracker/GAID
+@@ 39 0 da39a3ee5e6b4b0d 14
++   import com.jotard.ane.*;
++   import com.mcleodgaming.mgn.net.*;
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.external.*;
++   import flash.geom.*;
++   import flash.system.*;
++   import flash.text.*;
++   import flash.ui.*;
++   import flash.utils.Timer;
++   import mx.utils.*;
++
+@@ 53 1 ad52c7c889b6ddde 7
++      public static var m_sdk:DiscordGameSDK;
++      
++      public static var m_sdkTimer:Timer;
++      
++      public static var m_onlineChar:String;
++      
++      public static var m_onlineName:String;
+@@ 56 0 da39a3ee5e6b4b0d 2
++      
++      private static var m_initGameStarted:Boolean = false;
+@@ 69 1 06f1460ce33b5d42 1
++      private static const DEBUGCONST:Boolean = true;
+@@ 71 1 7f33c1d2a8a77b51 1
++      private static var m_lazyDebug:Boolean = true;
+@@ 73 1 9a60e8be76b102e4 3
++      public static var FORCEDEBUGOFF:Boolean = false;
++      
++      public static var DEBUGAUTHED:Boolean = true;
+@@ 83 1 554d011b51d9ec8b 1
++      private static var m_pendingDiscordJoin:Object = null;
+## public function Main()
+## why: boot on ADDED_TO_STAGE so Main works when stage is null at construction (body moved to startWithStage)
+@@ 87 1 a5dc3bfd276bea6f 0
+@@ 106 28 5f4f33d63eb62305 1
++         if(Boolean(stage))
+@@ 135 17 a7d4873a75fbd871 6
++            this.startWithStage();
++         }
++         else
++         {
++            addEventListener(Event.ADDED_TO_STAGE,this.onAddedToStageBoot);
++         }
+## private static function handleGlobalKeypress(_:KeyboardEvent) : void
+## why: mods: ModHost.dispatchKey first; F5 toggles lazy debug and the FPS counter
+@@ 177 0 da39a3ee5e6b4b0d 4
++         if(ModHost.dispatchKey(e))
++         {
++            return;
++         }
+@@ 190 0 da39a3ee5e6b4b0d 17
++         }
++         if(e.keyCode === 116)
++         {
++            m_lazyDebug = !m_lazyDebug;
++            MultiplayerManager.notify("Lazy Debug toggled: " + m_lazyDebug);
++            if(GameController.constantDebugger != null)
++            {
++               GameController.constantDebugger.updateVisibility();
++            }
++            if(GameController.stageData != null)
++            {
++               if(!m_lazyDebug)
++               {
++                  GameController.stageData.createFPSTimer();
++               }
++               GameController.stageData.setFPSTimerVisible(!m_lazyDebug);
++            }
+## private static function resourceLoadProgress(_:Number) : void
+## why: boot: progress leaves room for costume sync; boot ModHost, wait for mods, load expansion UI/classic packs
+@@ 330 2 1fe8ba174e091165 58
++         var _loc0_:Number = 100 * (1 / 20) + 15 / 20 * percent;
++         Main.preloader.pCent.text = "" + Math.floor(_loc0_);
++         Main.preloader.progressBar.scaleX = Math.floor(_loc0_);
++      }
++      
++      private static function costumeSyncProgress(param1:Number) : void
++      {
++         var _loc2_:Number = 80 + 20 * param1 / 100;
++         if(_loc2_ > 100)
++         {
++            _loc2_ = 100;
++         }
++         if(Boolean(Main.preloader))
++         {
++            Main.preloader.pCent.text = "" + Math.floor(_loc2_);
++            Main.preloader.progressBar.scaleX = Math.floor(_loc2_);
++         }
++      }
++      
++      private static function onCoreResourcesComplete() : void
++      {
++         var _local_2:* = undefined;
++         try
++         {
++            while(SaveDataMigrations.postLoadMigrations.length > 0)
++            {
++               _local_2 = SaveDataMigrations.postLoadMigrations;
++               _local_2[0]();
++               SaveDataMigrations.postLoadMigrations.splice(0,1);
++            }
++         }
++         catch(migErr:*)
++         {
++            SaveData.corrupted = true;
++         }
++         Stats.init();
++         ItemsListData.init();
++         ModHost.runHook(ModHooks.BOOT_AFTER_RESOURCES,{});
++         ModHost.runHook(ModHooks.BOOT_START,{});
++         ModHost.boot();
++         ModHost.runHook(ModHooks.AFTER_BOOT,{});
++         ModHost.whenBootModsReady(function():void
++         {
++            ModHost.loadRealExpansionUiTemplates(function():void
++            {
++               try
++               {
++                  ModHost.applyClassicJsonPacks();
++               }
++               catch(classicErr:*)
++               {
++               }
++               MenuController.init();
++               UnlockController.init();
++               MultiplayerManager.makeNotifier();
++               initGame();
++            });
++         });
+## private static function initGame() : void
+## why: palette sync door during load, reentry guard, append expansion costumes, init Discord SDK; drop analytics
+@@ 336 2 de1679688903bcc5 3
++         var _loc1_:uint = 0;
++         var _loc0_:* = undefined;
++         if(!m_initGameStarted)
+@@ 339 1 8979fc85ab51321f 3
++            m_initGameStarted = true;
++            _loc0_ = ModHost.door(ModPatches.PALETTE_SYNC_DURING_LOAD,[costumeSyncProgress,initGame],false);
++            if(_loc0_ == true)
+@@ 341 2 962f7d453c3f684a 1
++               return;
+@@ 345 1 8fed3858d91967fc 2
++         ROOT.loaderInfo.removeEventListener(Event.COMPLETE,ROOT.onRootLoadComplete);
++         if(Boolean(Main.preloader))
+@@ 347 1 507a2669afa718c0 2
++            Main.preloader.pCent.text = "100";
++            Main.preloader.progressBar.scaleX = 100;
+@@ 349 18 c63a5f7e3504750d 1
++         if(Boolean(Main.preloader) && Boolean(Main.preloader.parent))
+@@ 384 0 da39a3ee5e6b4b0d 43
++         }
++         ResourceManager.appendExpansionCostumes();
++         try
++         {
++            m_sdk = new DiscordGameSDK();
++            if(Boolean(m_sdk))
++            {
++               m_sdk.initialize("1377619298104901703",{});
++               try
++               {
++                  m_sdk.addEventListener("ON_ACTIVITY_JOIN_REQUEST",Main.handleDiscordJoinRequest);
++               }
++               catch(e:Error)
++               {
++               }
++               try
++               {
++                  m_sdk.addEventListener("ON_ACTIVITY_INVITE",Main.handleDiscordInvite);
++               }
++               catch(e:Error)
++               {
++               }
++               try
++               {
++                  m_sdk.addEventListener("ON_ACTIVITY_JOIN",Main.handleDiscordJoin);
++               }
++               catch(e:Error)
++               {
++               }
++               m_sdkTimer = new Timer(1000);
++               m_sdkTimer.addEventListener(TimerEvent.TIMER,Main.updateDiscordSDK);
++               m_sdkTimer.start();
++               _loc1_ = uint(new Date().time / 1000);
++               m_sdk.updateActivity({
++                  "details":"Starting up",
++                  "partyCurrentSize":0,
++                  "partyMaxSize":0,
++                  "timestampStart":_loc1_.toString()
++               });
++            }
++         }
++         catch(e:Error)
++         {
+## public static function get DEBUG() : Boolean
+## why: lazy debug: DEBUG is on with DEBUGCONST or the F5 lazy toggle
+@@ 427 1 8407424eed46e04a 6
++         return (Boolean(DEBUGCONST) || Boolean(m_lazyDebug)) && !FORCEDEBUGOFF;
++      }
++      
++      public static function get LAZYDEBUG() : Boolean
++      {
++         return m_lazyDebug;
+## public static function turnOffDebug() : void
+## why: Discord join/invite handlers, and startWithStage (vanilla boot plus already-loaded root check)
+@@ 443 0 da39a3ee5e6b4b0d 185
++      }
++      
++      private static function updateDiscordSDK(param1:TimerEvent) : void
++      {
++         if(Boolean(m_sdk))
++         {
++            m_sdk.runCallbacks();
++         }
++      }
++      
++      public static function handleDiscordJoin(param1:DiscordEvent) : void
++      {
++         var joinSecret:String = null;
++         var joinData:Object = null;
++         joinSecret = param1.data as String;
++         if(!joinSecret || joinSecret.length == 0)
++         {
++            MultiplayerManager.notify("Invalid Discord invite data");
++            return;
++         }
++         try
++         {
++            joinData = JSON.parse(joinSecret);
++            m_pendingDiscordJoin = {
++               "room_key":joinData.k,
++               "room_code":joinData.c,
++               "room_password":joinData.p || "",
++               "room_capacity":joinData.m || 4,
++               "timestamp":new Date().time
++            };
++            MultiplayerManager.notify("Discord invite received! Preparing to join room...");
++            if(!MultiplayerManager.Connected)
++            {
++               if(!MenuController.onlineMenu.isOnscreen())
++               {
++                  MenuController.disposeAllMenus();
++                  MenuController.onlineMenu.show();
++               }
++            }
++            else
++            {
++               processDiscordJoin();
++            }
++         }
++         catch(error:Error)
++         {
++            MultiplayerManager.notify("Invalid Discord invite format: " + error.message);
++         }
++      }
++      
++      public static function handleDiscordJoinRequest(param1:DiscordEvent) : void
++      {
++         var _loc3_:Object = null;
++         var _loc4_:OnlinePromptMenu = null;
++         try
++         {
++            _loc3_ = JSON.parse(param1.data as String);
++            _loc4_ = MenuController.onlinePromptMenu;
++            _loc4_.message = StringUtil.substitute("{0} from Discord wants to join your online lobby.\nAccept?",_loc3_.username);
++            _loc4_.onAccept = Main.acceptDiscordJoinRequest;
++            _loc4_.onDismiss = Main.rejectDiscordJoinRequest;
++            _loc4_.data = Utils.cloneObject(_loc3_);
++            if(!_loc4_.isOnscreen())
++            {
++               _loc4_.show();
++            }
++         }
++         catch(error:Error)
++         {
++         }
++      }
++      
++      public static function handleDiscordInvite(param1:DiscordEvent) : void
++      {
++         MultiplayerManager.notify("Discord invite sent!");
++      }
++      
++      private static function acceptDiscordJoinRequest() : void
++      {
++         var _loc1_:OnlinePromptMenu = MenuController.onlinePromptMenu;
++         if(Boolean(m_sdk) && Boolean(_loc1_.data) && Boolean(_loc1_.data.id))
++         {
++            m_sdk.sendRequestReply(_loc1_.data.id,1);
++         }
++         _loc1_.removeSelf();
++      }
++      
++      private static function rejectDiscordJoinRequest() : void
++      {
++         var _loc1_:OnlinePromptMenu = MenuController.onlinePromptMenu;
++         if(Boolean(m_sdk) && Boolean(_loc1_.data) && Boolean(_loc1_.data.id))
++         {
++            m_sdk.sendRequestReply(_loc1_.data.id,0);
++         }
++         _loc1_.removeSelf();
++      }
++      
++      public static function processDiscordJoin() : void
++      {
++         var _loc1_:String = null;
++         var _loc2_:String = null;
++         var _loc3_:Object = null;
++         if(Boolean(m_pendingDiscordJoin) && Boolean(MultiplayerManager.Connected))
++         {
++            _loc1_ = m_pendingDiscordJoin.room_key;
++            _loc2_ = m_pendingDiscordJoin.room_password || "";
++            _loc3_ = m_pendingDiscordJoin;
++            m_pendingDiscordJoin = null;
++            if(Boolean(MenuController.pleaseWaitMenu))
++            {
++               MenuController.pleaseWaitMenu.show();
++            }
++            MultiplayerManager.notify("Requesting to join room from Discord invite...");
++            MultiplayerManager.requestToJoinRoom(_loc1_,_loc2_);
++         }
++      }
++      
++      public static function get hasPendingDiscordJoin() : Boolean
++      {
++         return m_pendingDiscordJoin != null;
++      }
++      
++      private function onAddedToStageBoot(param1:Event) : void
++      {
++         removeEventListener(Event.ADDED_TO_STAGE,this.onAddedToStageBoot);
++         this.startWithStage();
++      }
++      
++      private function startWithStage() : void
++      {
++         var myMenu:ContextMenu = null;
++         stage.align = "";
++         stage.scaleMode = StageScaleMode.SHOW_ALL;
++         this.x = 0;
++         this.y = 0;
++         stage.showDefaultContextMenu = false;
++         stage.stageFocusRect = false;
++         myMenu = new ContextMenu();
++         myMenu.hideBuiltInItems();
++         this.contextMenu = myMenu;
++         makeClassStringArr();
++         ResourceManager.init();
++         MouseTracker.initializeMouseClass();
++         MouseTracker.setAutoHide(ROOT.stage,true);
++         Key.initializeKeyClass();
++         Key.beginCapture(ROOT.stage);
++         SpecialMode.init();
++         MultiplayerManager.init();
++         stage.addEventListener(Event.RESIZE,this.resizeListener);
++         Main.initResources();
++         m_randCharList = new Vector.<CharacterData>();
++         m_randMusicIndex = 0;
++         this.stage.quality = SaveData.Quality.display_quality;
++         wideScreenScrollRect();
++         setFullScreenMode(SaveData.Quality.fullscreen_quality);
++         ROOT.stage.addEventListener(Event.FULLSCREEN,fixMenu);
++         ROOT.loaderInfo.addEventListener(ProgressEvent.PROGRESS,ROOT.onRootLoadProgress);
++         ROOT.loaderInfo.addEventListener(Event.COMPLETE,ROOT.onRootLoadComplete);
++         if(ROOT.loaderInfo.bytesLoaded > 0 && ROOT.loaderInfo.bytesLoaded >= ROOT.loaderInfo.bytesTotal)
++         {
++            ROOT.onRootLoadComplete(null);
++         }
++         ROOT.stage.addEventListener(KeyboardEvent.KEY_DOWN,handleGlobalKeypress);
++         ROOT.stage.nativeWindow.addEventListener(NativeWindowDisplayStateEvent.DISPLAY_STATE_CHANGE,windowStateChanged);
++         setTimeout(function():void
++         {
++            var _loc1_:* = undefined;
++            var _loc2_:int = 0;
++            var _loc3_:int = 0;
++            var _loc4_:Vector.<Gamepad> = GamepadManager.getGamepads();
++            for(_loc1_ in SaveData.PortInputs)
++            {
++               _loc2_ = 0;
++               while(_loc2_ < _loc4_.length)
++               {
++                  if(SaveData.PortInputs[_loc1_] === _loc4_[_loc2_].Name + " " + _loc4_[_loc2_].Port && Boolean(SaveData.Gamepads[_loc4_[_loc2_].Name]))
++                  {
++                     _loc3_ = int(parseInt(_loc1_));
++                     SaveData.Controllers[_loc3_ - 1].GamepadInstance = _loc4_[_loc2_];
++                     _loc4_[_loc2_].importControls(SaveData.Gamepads[_loc4_[_loc2_].Name].ports["port" + _loc4_[_loc2_].Port]);
++                  }
++                  _loc2_++;
++               }
++            }
++         },1000);
+## protected function onRootLoadComplete(_:Event) : void
+## why: boot: core resource completion goes to onCoreResourcesComplete (ModHost boot) instead of initGame
+@@ 465 1 3b4c8a5c6cc28f5f 1
++            "oncomplete":onCoreResourcesComplete

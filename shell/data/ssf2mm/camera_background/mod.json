@@ -1,0 +1,9 @@
+{
+	"id": "camera_background",
+	"name": "Camera Background",
+	"description": "Stage Select Shield picks another stage\u0027s camera backgrounds for the match. Shield again or Special clears.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "CameraBackgroundMod",
+	"enabledByDefault": true
+}

@@ -1,0 +1,24 @@
+# com/mcleodgaming/ssf2/engine/AI.as
+## class header
+## why: ModHost import for the AI hook
+@@ 10 0 da39a3ee5e6b4b0d 2
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.geom.*;
+## public function getAction() : void
+## why: AI_DECIDE hook lets mods override the CPU's chosen action
+@@ 624 0 da39a3ee5e6b4b0d 15
++         }
++         if(!ModHost.hasHook(ModHooks.AI_DECIDE))
++         {
++            return;
++         }
++         var _loc0_:Object = {
++            "ai":this,
++            "action":this.m_action,
++            "player":this.m_playerClassInstance,
++            "stage":this.STAGEDATA
++         };
++         ModHost.runHook(ModHooks.AI_DECIDE,_loc0_);
++         if(!isNaN(_loc0_.action) && _loc0_.action != this.m_action)
++         {
++            this.m_action = int(_loc0_.action);

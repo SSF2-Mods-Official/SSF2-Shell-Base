@@ -1,0 +1,24 @@
+# com/mcleodgaming/ssf2/controllers/SelectHand.as
+## class header
+## why: controller: track which controller clicked last (used for menu rumble)
+@@ 12 0 da39a3ee5e6b4b0d 5
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.events.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.geom.*;
+@@ 54 0 da39a3ee5e6b4b0d 2
++      protected var m_lastControllerIndex:int = -1;
++      
+## public function SelectHand(_:MovieClip, _:Vector.<HandButton>, _:Function)
+## why: controller: expose lastControllerIndex to StageButton/menus for rumble
+@@ 87 0 da39a3ee5e6b4b0d 5
++      }
++      
++      public function get lastControllerIndex() : int
++      {
++         return this.m_lastControllerIndex;
+## protected function checkHit(_:Event) : void
+## why: controller: record the controller index that clicked a button
+@@ 343 0 da39a3ee5e6b4b0d 1
++                        this.m_lastControllerIndex = j;

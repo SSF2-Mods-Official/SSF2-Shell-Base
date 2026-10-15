@@ -1,0 +1,22 @@
+# com/mcleodgaming/ssf2/engine/AttackDamage.as
+## public function importAttackDamageData(_:Object) : void
+## why: mod attack data: skip unknown keys safely (property lookup threw on bad mod data)
+@@ 1201 0 da39a3ee5e6b4b0d 3
++         var slot:* = undefined;
++         var ok:Boolean = false;
++         var self:AttackDamage = this;
+@@ 1204 1 7df2c7494663c27c 3
++            ok = false;
++            slot = undefined;
++            try
+@@ 1206 1 0bd6e6643ec31188 2
++               slot = self["m_" + obj];
++               ok = slot !== undefined;
+@@ 1208 1 b6c037d7f2deb29f 1
++            catch(err:*)
+@@ 1210 1 cace8b5561735436 5
++               ok = false;
++            }
++            if(ok)
++            {
++               self["m_" + obj] = data[obj];

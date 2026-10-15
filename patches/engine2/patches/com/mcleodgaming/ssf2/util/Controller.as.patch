@@ -1,0 +1,19 @@
+# com/mcleodgaming/ssf2/util/Controller.as
+## class header
+## why: ModHost import
+@@ 4 0 da39a3ee5e6b4b0d 2
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.modhost.*;
+## public function IsDown(_:String, _:Boolean = false) : Boolean
+## why: ModHost: IsDown returns false while a mod blocks input unless the caller forces it
+@@ 202 1 2b4f35a9a697fc30 1
++      public function IsDown(param1:String, param2:Boolean = false) : Boolean
+@@ 204 0 da39a3ee5e6b4b0d 4
++         if(!param2 && Boolean(ModHost.isInputBlocked()))
++         {
++            return false;
++         }
+@@ 206 1 bc033dfdbddb1cfc 1
++            return this.m_gamepad.isPressed(param1);
+@@ 208 1 099ffe5a5877afd5 1
++         return this.m_keyboard.isPressed(param1);

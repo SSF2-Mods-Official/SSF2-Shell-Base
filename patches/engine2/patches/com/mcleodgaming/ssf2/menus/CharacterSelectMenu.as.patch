@@ -1,0 +1,710 @@
+# com/mcleodgaming/ssf2/menus/CharacterSelectMenu.as
+## class header
+## why: ModHost import + m_replayLoadArmed flag so a replay load is only queued once
+@@ 20 1 c7570dde85fbc2c1 10
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.events.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.geom.*;
++   import flash.text.*;
++
+@@ 52 0 da39a3ee5e6b4b0d 2
++      private var m_replayLoadArmed:Boolean = false;
++      
+## public function CharacterSelectMenu(_:String)
+## why: CSS: skip cxp/xp placeholder cells when building select icons from the mappings roster
+@@ 56 1 63d605040adaa2b9 1
++      public function CharacterSelectMenu(param1:String)
+@@ 58 3 ac77d3d3e6c97532 3
++         var _loc2_:* = 0;
++         var _loc3_:int = 0;
++         var _loc4_:MovieClip = null;
+@@ 63 1 afa4593a31bdf203 1
++         m_subMenu = ResourceManager.getLibraryMC(param1);
+@@ 81 3 0bbecf3b26de0549 3
++         var _loc5_:Object = ResourceManager.getResourceByID("mappings").getProp("metadata");
++         var _loc6_:Object = _loc5_.character_select_screen.rows;
++         var _loc7_:Array = Utils.flatten(_loc6_ as Array);
+@@ 86 1 0969af02c8a7f8cb 2
++         _loc2_ = 0;
++         while(_loc2_ < this.CharSelectionIconsMC.numChildren)
+@@ 88 1 20aea4eecd8bbccf 1
++            if(this.CharSelectionIconsMC.getChildAt(_loc2_) is MovieClip)
+@@ 90 3 a4fd25b3cc514db6 34
++               _loc4_ = MovieClip(this.CharSelectionIconsMC.getChildAt(_loc2_));
++               _loc4_.parent.removeChild(_loc4_);
++               _loc2_--;
++            }
++            _loc2_++;
++         }
++         _loc2_ = 0;
++         while(_loc2_ < _loc7_.length)
++         {
++            if(_loc7_[_loc2_] === "cxp" || _loc7_[_loc2_] === "xp")
++            {
++               _loc2_++;
++            }
++            else
++            {
++               if(Boolean(_loc5_.character[_loc7_[_loc2_]]) || _loc7_[_loc2_] === "random")
++               {
++                  _loc4_ = ResourceManager.getLibraryMC(_loc7_[_loc2_] + "_select");
++                  if(Boolean(_loc4_))
++                  {
++                     _loc4_.characterID = _loc4_.characterID || _loc7_[_loc2_];
++                     if(Boolean(_loc4_.characterID))
++                     {
++                        this.m_charMCHash[_loc4_.characterID] = _loc4_;
++                     }
++                     else
++                     {
++                        this.m_charMCHash[_loc7_[_loc2_]] = _loc4_;
++                     }
++                     _loc4_.gotoAndStop(1);
++                     this.CharSelectionIconsMC.addChild(_loc4_);
++                  }
++               }
++               _loc2_++;
+@@ 95 22 b89abce9551ca4ed 1
++         this.displayObjectTable = new DisplayObjectTable(new Rectangle(_loc5_.character_select_screen.position.x,_loc5_.character_select_screen.position.y,_loc5_.character_select_screen.icon_size.width,_loc5_.character_select_screen.icon_size.height));
+## protected function updateIcons() : void
+## why: CSS: skip cxp/xp cells, add select icons for mapped expansion fighters, scale icons to mappings icon_size
+@@ 287 4 e3b4b700ee221e5f 4
++         var _loc1_:int = 0;
++         var _loc2_:int = 0;
++         var _loc3_:* = undefined;
++         var _loc4_:Object = ResourceManager.getResourceByID("mappings").getProp("metadata");
+@@ 292 2 9b868c9b921028a3 3
++         var _loc5_:Object = _loc4_.character_select_screen.rows;
++         _loc1_ = 0;
++         while(_loc1_ < _loc5_.length)
+@@ 295 1 c71584acd0d65a57 2
++            _loc2_ = 0;
++            while(_loc2_ < _loc5_[_loc1_].length)
+@@ 297 1 b5ac5c05d57201a6 1
++               if(_loc5_[_loc1_][_loc2_] === "cxp" || _loc5_[_loc1_][_loc2_] === "xp")
+@@ 299 2 0033e35089897668 10
++                  _loc2_++;
++               }
++               else
++               {
++                  if(Boolean(this.m_charMCHash[_loc5_[_loc1_][_loc2_]]))
++                  {
++                     m_subMenu.charSelection.charSelect.addChild(this.m_charMCHash[_loc5_[_loc1_][_loc2_]]);
++                     this.displayObjectTable.insertObject(_loc1_,this.m_charMCHash[_loc5_[_loc1_][_loc2_]]);
++                  }
++                  _loc2_++;
+@@ 303 0 da39a3ee5e6b4b0d 1
++            _loc1_++;
+@@ 304 0 da39a3ee5e6b4b0d 1
++         this.ensureMappedSelectIcons();
+@@ 306 1 f0ecb34642043422 1
++            for(_loc3_ in this.m_charMCHash)
+@@ 308 1 e17c726016b1f56b 1
++               if(SaveData.Unlocks[_loc3_] === false)
+@@ 310 1 7ef724c646f3ad5e 1
++                  this.m_charMCHash[_loc3_].visible = false;
+@@ 312 1 a0e16f8c81dd1af5 1
++               else if(SaveData.Unlocks[_loc3_] === true)
+@@ 314 1 641a1079bb5edd63 1
++                  this.m_charMCHash[_loc3_].visible = true;
+@@ 320 0 da39a3ee5e6b4b0d 69
++         this.applyCssIconScale();
++      }
++      
++      protected function ensureMappedSelectIcons() : void
++      {
++         var _loc1_:Object = null;
++         var _loc2_:Object = null;
++         var _loc3_:Array = null;
++         var _loc4_:int = 0;
++         var _loc5_:String = null;
++         var _loc6_:MovieClip = null;
++         var _loc7_:int = 0;
++         _loc1_ = ResourceManager.getResourceByID("mappings").getProp("metadata");
++         if(!_loc1_ || !_loc1_.character_select_screen || !_loc1_.character_select_screen.rows)
++         {
++            return;
++         }
++         _loc2_ = _loc1_.character_select_screen.rows;
++         _loc3_ = Utils.flatten(_loc2_ as Array);
++         _loc7_ = Math.max(0,_loc2_.length - 1);
++         _loc4_ = 0;
++         while(_loc4_ < _loc3_.length)
++         {
++            _loc5_ = String(_loc3_[_loc4_]);
++            if(_loc5_ == "cxp" || _loc5_ == "xp")
++            {
++               _loc4_++;
++            }
++            else
++            {
++               if(Boolean(_loc5_) && Boolean(_loc1_.character[_loc5_]) && !this.m_charMCHash[_loc5_])
++               {
++                  _loc6_ = ResourceManager.getLibraryMC(_loc5_ + "_select");
++                  if(Boolean(_loc6_))
++                  {
++                     _loc6_.characterID = _loc6_.characterID || _loc5_;
++                     _loc6_.gotoAndStop(1);
++                     this.m_charMCHash[_loc5_] = _loc6_;
++                     this.CharSelectionIconsMC.addChild(_loc6_);
++                     m_subMenu.charSelection.charSelect.addChild(_loc6_);
++                     this.displayObjectTable.insertObject(_loc7_,_loc6_);
++                  }
++               }
++               _loc4_++;
++            }
++         }
++      }
++      
++      protected function applyCssIconScale() : void
++      {
++         var _loc1_:Object = null;
++         var _loc2_:Number = Number(NaN);
++         var _loc3_:Number = Number(NaN);
++         _loc1_ = ResourceManager.getResourceByID("mappings").getProp("metadata");
++         if(!_loc1_ || !_loc1_.character_select_screen || !_loc1_.character_select_screen.icon_size)
++         {
++            return;
++         }
++         _loc2_ = Number(_loc1_.character_select_screen.icon_size.width);
++         _loc3_ = Number(_loc1_.character_select_screen.icon_size.height);
++         if(Boolean(isNaN(_loc2_)) || Boolean(isNaN(_loc3_)) || _loc2_ <= 0 || _loc3_ <= 0)
++         {
++            return;
++         }
++         if(_loc2_ == 42 && _loc3_ == 42)
++         {
++            return;
++         }
++         this.displayObjectTable.scaleAll(_loc2_ / 42,_loc3_ / 42);
+## public function reset() : void
+## why: ModHost: build the CSS Game via ModHost.create so mods can substitute the Game class
+@@ 328 1 3be0756920dd5aea 0
+@@ 330 1 a65d5f716113cbab 1
++         this.m_game = ModHost.create(Game,[this.m_playerLimit,this.gameMode]) as Game;
+## public function incLevel(_:int) : void
+## why: CSS: guard CPU level bump against missing port/settings and log to game.log instead of crashing
+@@ 473 1 f3f9959faa8691e0 18
++         var setting:* = null;
++         try
++         {
++            if(!this.m_game || !this.m_game.PlayerSettings || id < 1 || id > this.m_game.PlayerSettings.length)
++            {
++               return;
++            }
++            setting = this.m_game.PlayerSettings[id - 1];
++            if(!setting)
++            {
++               return;
++            }
++            this.setLevel(id,setting.level + 1);
++         }
++         catch(err:*)
++         {
++            GameLog.write("[css] incLevel swallowed " + err);
++         }
+## override public function manageMenuMappings(_:Event) : void
+## why: CSS: ignore menu input while the palette/costume picker overlay is open
+@@ 633 0 da39a3ee5e6b4b0d 9
++      override public function manageMenuMappings(param1:Event) : void
++      {
++         if(MenuController.paletteUiBlocksCss())
++         {
++            return;
++         }
++         super.manageMenuMappings(param1);
++      }
++      
+## protected function nextCostume_CLICK(_:MouseEvent) : void
+## why: palette_maker: costume button opens the costume picker; cycles like vanilla when the mod is off
+@@ 646 1 367dd7019ce7a174 8
++            if(Boolean(ModHost.isModEnabled("palette_maker")) && Boolean(MenuController.costumeSelectorDisplay) && !this.m_game.LevelData.teams)
++            {
++               this.costumeSelectorDisplay(clickedMC.pid - 1);
++            }
++            else
++            {
++               this.nextCostume(clickedMC.pid,true);
++            }
+@@ 648 0 da39a3ee5e6b4b0d 60
++      }
++      
++      protected function costumeSelectorDisplay(param1:int) : void
++      {
++         var cssMenu:CharacterSelectMenu = null;
++         var pid:int = 0;
++         pid = 0;
++         cssMenu = null;
++         pid = param1;
++         var selectedCharacter:String = null;
++         var expansionNum:Number = Number(NaN);
++         selectedCharacter = null;
++         expansionNum = Number(NaN);
++         var setting:Object = null;
++         selectedCharacter = null;
++         expansionNum = Number(NaN);
++         var costumeStatsName:String = null;
++         if(!this.m_game || !this.m_game.PlayerSettings || pid < 0 || pid >= this.m_game.PlayerSettings.length)
++         {
++            SoundQueue.instance.playSoundEffect("menu_error");
++            return;
++         }
++         setting = this.m_game.PlayerSettings[pid];
++         if(!setting)
++         {
++            SoundQueue.instance.playSoundEffect("menu_error");
++            return;
++         }
++         selectedCharacter = setting.character;
++         expansionNum = Number(setting.expansion);
++         costumeStatsName = selectedCharacter;
++         if(selectedCharacter == "xp")
++         {
++            costumeStatsName = Stats.resolveExpansionStatsName(expansionNum);
++            if(!costumeStatsName)
++            {
++               SoundQueue.instance.playSoundEffect("menu_error");
++               return;
++            }
++         }
++         MenuController.costumeSelectorDisplay.returnToLocalListOnVaultExit = true;
++         ModHost.door(ModPatches.PALETTE_ENSURE_CSS_NO_RECOLOR_SETTING_LOADED,[],undefined);
++         MenuController.costumeSelectorDisplay.setCharacter(costumeStatsName,pid,true,ModHost.door(ModPatches.PALETTE_CSS_SHOW_NO_RECOLOR_WHEN_NO_BASE,[],false) && !ModHost.door(ModPatches.PALETTE_HAS_CODED_BASE_COSTUME,[costumeStatsName],false),true);
++         cssMenu = this;
++         MenuController.costumeSelectorDisplay.onClickContainer = function():*
++         {
++            var _loc1_:int = int(MenuController.costumeSelectorDisplay.getSelectedCostume());
++            m_game.PlayerSettings[pid].costume = _loc1_;
++            updateSeriesIconColors();
++            ModHost.runHook(ModHooks.CSS_CHANGE_COSTUME_INDEX,{
++               "port":pid + 1,
++               "costume":_loc1_,
++               "menu":cssMenu
++            });
++            SoundQueue.instance.playSoundEffect("menu_select");
++         };
++         MenuController.costumeSelectorDisplay.onCloseMenu = function():*
++         {
++            SoundQueue.instance.playSoundEffect("menu_back");
++         };
+## public function onGamepadButtonPressed(_:GamepadEvent) : void
+## why: ModHost: CSS_READY_CONFIRM hook lets mods cancel the gamepad ready/start confirm
+@@ 704 0 da39a3ee5e6b4b0d 8
++         if(ModHost.runHook(ModHooks.CSS_READY_CONFIRM,{
++            "cancel":false,
++            "menu":this,
++            "source":"gamepad"
++         }))
++         {
++            return;
++         }
+## private function onKeyPressed(_:KeyboardEvent) : void
+## why: ModHost: CSS_READY_CONFIRM hook lets mods cancel the keyboard ready/start confirm
+@@ 712 0 da39a3ee5e6b4b0d 8
++         if(ModHost.runHook(ModHooks.CSS_READY_CONFIRM,{
++            "cancel":false,
++            "menu":this,
++            "source":"keyboard"
++         }))
++         {
++            return;
++         }
+## public function initReplay() : void
+## why: replays: queue expansion fighters via queuePlayerCharacterResource, let mods queue match assets, no double load
+@@ 759 0 da39a3ee5e6b4b0d 6
++         var onDone:Function = null;
++         if(this.m_replayLoadArmed)
++         {
++            return;
++         }
++         this.m_replayLoadArmed = true;
+@@ 778 0 da39a3ee5e6b4b0d 1
++         ResourceManager.flushLoadQueue();
+@@ 781 1 7b5fab42f863939d 7
++            ResourceManager.queuePlayerCharacterResource(this.m_game.PlayerSettings[i],i);
++         }
++         ModHost.runHook(ModHooks.QUEUE_MATCH_RESOURCES,{
++            "cancel":false,
++            "game":this.m_game,
++            "stageId":(this.m_game.LevelData ? this.m_game.LevelData.stage : null),
++            "queue":function(param1:String):void
+@@ 783 1 006500c8796a60ad 4
++               if(Boolean(param1))
++               {
++                  ResourceManager.queueResources([param1]);
++               }
+@@ 785 1 b9c24006c3851160 1
++         });
+@@ 787 1 a7207b20af322d64 9
++         onDone = function():void
++         {
++            m_replayLoadArmed = false;
++            startReplay();
++         };
++         ResourceManager.load({
++            "oncomplete":onDone,
++            "flushUnused":true
++         });
+## public function removePic(_:Number) : void
+## why: CSS: also remove palette preview clip (mc_pa) and null-check pic/icon holders when clearing a port
+@@ 802 0 da39a3ee5e6b4b0d 3
++         var _loc0_:MovieClip = null;
++         var _loc2_:MovieClip = null;
++         var _loc1_:DisplayObject = null;
+@@ 808 1 b740aad8d21c63dd 2
++         _loc0_ = MovieClip(charDisplay.getChildByName("pic")) as MovieClip;
++         if(Boolean(_loc0_) && _loc0_.numChildren > 0)
+@@ 810 2 14810ab4f7aaa909 11
++            _loc1_ = _loc0_.getChildByName("mc_pa");
++            if(Boolean(_loc1_) && _loc1_.parent == _loc0_)
++            {
++               _loc0_.removeChild(_loc1_);
++            }
++            _loc1_ = _loc0_.getChildByName("mc");
++            if(Boolean(_loc1_) && _loc1_.parent == _loc0_)
++            {
++               _loc0_.removeChild(_loc1_);
++            }
++            charMC = _loc0_.addChild(ResourceManager.getLibraryMC("blankmc")) as MovieClip;
+@@ 813 1 903028aaf5ef7afd 2
++            _loc2_ = MovieClip(charDisplay.getChildByName("icon")) as MovieClip;
++            if(Boolean(_loc2_) && _loc2_.numChildren > 0)
+@@ 815 2 d7fbb199e15646f2 6
++               _loc1_ = _loc2_.getChildByName("mc");
++               if(Boolean(_loc1_) && _loc1_.parent == _loc2_)
++               {
++                  _loc2_.removeChild(_loc1_);
++               }
++               charMC = _loc2_.addChild(ResourceManager.getLibraryMC("blankmc")) as MovieClip;
+## public function changePic(_:Number, _:String, _:Number = -1) : void
+## why: CSS: portrait, name and series icon for expansion fighters with fallbacks; palette-aware preview paint
+@@ 826 0 da39a3ee5e6b4b0d 8
++         var _loc0_:CharacterData = null;
++         var _loc1_:CharacterData = null;
++         var _loc3_:DisplayObject = null;
++         var _loc4_:CharacterData = null;
++         var _loc5_:CharacterData = null;
++         var _loc6_:String = null;
++         var _loc7_:MovieClip = null;
++         var _loc8_:DisplayObject = null;
+@@ 830 1 dd665d6430923cd0 7
++            _loc0_ = Stats.resolveExpansionCharacterData(expansionNum);
++            if(!_loc0_)
++            {
++               this.removePic(num);
++               return;
++            }
++            character = _loc0_.StatsName;
+@@ 832 1 36cd769b92e9ccd5 1
++            charDisplay.playerTxt.text = _loc0_.DisplayName != null ? _loc0_.DisplayName : "";
+@@ 838 1 29334f108bca6d38 9
++            if(character == "random")
++            {
++               charDisplay.playerTxt.text = "Random";
++            }
++            else
++            {
++               _loc1_ = Stats.getStats(character,-1);
++               charDisplay.playerTxt.text = Boolean(_loc1_) && Boolean(_loc1_.DisplayName) ? _loc1_.DisplayName : "";
++            }
+@@ 841 1 b740aad8d21c63dd 2
++         var _loc2_:MovieClip = MovieClip(charDisplay.getChildByName("pic"));
++         if(Boolean(_loc2_) && _loc2_.numChildren > 0)
+@@ 843 1 da2255be1715bfbc 10
++            _loc3_ = _loc2_.getChildByName("mc_pa");
++            if(Boolean(_loc3_) && _loc3_.parent == _loc2_)
++            {
++               _loc2_.removeChild(_loc3_);
++            }
++            _loc3_ = _loc2_.getChildByName("mc");
++            if(Boolean(_loc3_) && _loc3_.parent == _loc2_ && !_loc3_["__cssSpritePreview"])
++            {
++               _loc2_.removeChild(_loc3_);
++            }
+@@ 851 1 6682cfb0f8369087 2
++            _loc4_ = Stats.getStats(character,-1);
++            if(Boolean(_loc4_) && ResourceManager.getLibraryMC(_loc4_.StatsName + "_charselect") != null)
+@@ 853 1 59b48cb8f3e1ae22 1
++               charMC = ResourceManager.getLibraryMC(_loc4_.StatsName + "_charselect");
+@@ 862 1 ab15c72a4ad90de2 19
++            _loc5_ = Stats.getStats(character,expansionNum);
++            _loc6_ = Boolean(_loc5_) ? _loc5_.StatsName : null;
++            charMC = Boolean(_loc6_) ? ResourceManager.getExpansionCharSelectMC(_loc6_) : null;
++            if(!charMC && Boolean(_loc6_))
++            {
++               charMC = ResourceManager.getLibraryMC(_loc6_ + "_charselect");
++            }
++            if(!charMC)
++            {
++               charMC = ResourceManager.getLibraryMC("mario_charselect");
++            }
++         }
++         if(!charMC)
++         {
++            charMC = ResourceManager.getLibraryMC("rand_mc");
++         }
++         if(!charMC)
++         {
++            return;
+@@ 869 1 2bef75fe4c578ec5 2
++         ModHost.door(ModPatches.PALETTE_APPLY_RESOLVED_COSTUME_TO_SETTING,[this.m_game.PlayerSettings[num - 1],character],undefined);
++         ModHost.applyPatch(ModPatches.CSS_PREVIEW_PAINT,[charMC,this.m_game.PlayerSettings[num - 1].team,character,this.m_game.PlayerSettings[num - 1].costume,true,true],Utils.setColorFilterCharacter);
+@@ 872 1 5039d39e8c389e4f 6
++            _loc7_ = MovieClip(charDisplay.getChildByName("icon"));
++            _loc8_ = _loc7_.getChildByName("mc");
++            if(Boolean(_loc8_) && _loc8_.parent == _loc7_)
++            {
++               _loc7_.removeChild(_loc8_);
++            }
+@@ 874 1 9468aa3e2158b05a 28
++         var _loc9_:CharacterData = expansionNum >= 0 ? Stats.resolveExpansionCharacterData(expansionNum) : Stats.getStats(character,-1);
++         if(character == "xp" || expansionNum >= 0)
++         {
++            if(!_loc9_)
++            {
++               _loc9_ = Stats.resolveExpansionCharacterData(expansionNum);
++            }
++         }
++         charMC = null;
++         if(Boolean(_loc9_) && character != "random")
++         {
++            if(Boolean(_loc9_.StatsName))
++            {
++               charMC = ResourceManager.getRosterSeriesIconMC(_loc9_.StatsName);
++            }
++            if(Boolean(!charMC && _loc9_.SeriesIcon) && Boolean(_loc9_.SeriesIcon != _loc9_.StatsName) && _loc9_.SeriesIcon != _loc9_.LinkageID)
++            {
++               charMC = ResourceManager.getLiveSeriesIconMC(_loc9_.SeriesIcon);
++            }
++            if(Boolean(!charMC && _loc9_.SeriesIcon) && Boolean(_loc9_.SeriesIcon != _loc9_.StatsName) && _loc9_.SeriesIcon != _loc9_.LinkageID)
++            {
++               charMC = ResourceManager.getSafeUiIconMC(_loc9_.SeriesIcon);
++            }
++         }
++         if(!charMC)
++         {
++            charMC = ResourceManager.getSafeUiIconMC("smash_symbol");
++         }
+## public function setLevel(_:Number, _:Number) : void
+## why: CSS: guard setLevel against bad port/missing UI and swallow SaveData write errors
+@@ 922 0 da39a3ee5e6b4b0d 4
++         if(!this.m_game || !this.m_game.PlayerSettings || !this.m_charSelectionBoxes || num < 1 || num > this.m_game.PlayerSettings.length || num > this.m_charSelectionBoxes.length || !this.m_game.PlayerSettings[num - 1])
++         {
++            return;
++         }
+@@ 923 0 da39a3ee5e6b4b0d 4
++         if(!display || !display.levelDisplay || !display.levelDisplay.levelTxt)
++         {
++            return;
++         }
+@@ 935 1 5c031b32a2c450d7 7
++            try
++            {
++               SaveData["VSCPULevel" + num] = level;
++            }
++            catch(saveErr:*)
++            {
++            }
+## private function updateGameMode() : void
+## why: CSS: reset color vault pick on team toggle and fire CSS_TEAM_CHANGED hook
+@@ 979 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.CSS_TEAM_CHANGED,{
++            "menu":this,
++            "port":-1
++         });
+## private function updateSeriesIconColors() : void
+## why: CSS: recolor palette preview clip (mc_pa) and resolve expansion stats name for team colors
+@@ 983 0 da39a3ee5e6b4b0d 2
++         var _loc0_:MovieClip = null;
++         var _loc1_:MovieClip = null;
+@@ 988 1 0447ae0100f8e1af 3
++            _loc0_ = Boolean(charDisplay.getChildByName("pic")) ? MovieClip(charDisplay.getChildByName("pic")) : null;
++            _loc1_ = null;
++            if(Boolean(_loc0_))
+@@ 990 1 fc08d3558e6eb93f 9
++               _loc1_ = _loc0_.getChildByName("mc_pa") as MovieClip;
++               if(!_loc1_)
++               {
++                  _loc1_ = _loc0_.getChildByName("mc") as MovieClip;
++               }
++            }
++            if(Boolean(_loc1_))
++            {
++               Utils.setColorFilterCharacter(_loc1_,this.m_game.PlayerSettings[t - 1].team,this.m_game.PlayerSettings[t - 1].character == "xp" ? Stats.resolveExpansionStatsName(this.m_game.PlayerSettings[t - 1].expansion) : this.m_game.PlayerSettings[t - 1].character,this.m_game.PlayerSettings[t - 1].costume,true,true);
+## public function prevCostume(_:int) : void
+## why: palette: step costumes via palette mod door (merged costume lists) and fire CSS_CHANGE_COSTUME_INDEX
+@@ 1039 1 754b5cbbf94f70e3 2
++         var _loc1_:* = undefined;
++         var _loc0_:String = null;
+@@ 1043 1 40f46e4f39ada8b4 1
++            do
+@@ 1045 2 0e7705efe926080f 3
++               _loc0_ = this.m_game.PlayerSettings[num - 1].character == "xp" ? Stats.resolveExpansionStatsName(this.m_game.PlayerSettings[num - 1].expansion) : this.m_game.PlayerSettings[num - 1].character;
++               _loc1_ = ModHost.door(ModPatches.PALETTE_STEP_COSTUME_CYCLE,[_loc0_,this.m_game.PlayerSettings[num - 1].costume,-1],null);
++               if(_loc1_ == null)
+@@ 1048 1 d8b8e9cbcfd4197c 5
++                  --this.m_game.PlayerSettings[num - 1].costume;
++                  if(this.m_game.PlayerSettings[num - 1].costume < -1)
++                  {
++                     this.m_game.PlayerSettings[num - 1].costume = ResourceManager.getCostumeCount(_loc0_) - 2;
++                  }
+@@ 1050 2 e3a5b5b373af81d9 1
++               else
+@@ 1053 1 d75e603d89db2034 1
++                  this.m_game.PlayerSettings[num - 1].costume = int(_loc1_);
+@@ 1056 0 da39a3ee5e6b4b0d 1
++            while(!(!this.costumeExistsElsewhere(this.m_game.PlayerSettings[num - 1].costume,num) || originalCostume == this.m_game.PlayerSettings[num - 1].costume));
+@@ 1057 0 da39a3ee5e6b4b0d 5
++            ModHost.runHook(ModHooks.CSS_CHANGE_COSTUME_INDEX,{
++               "port":num,
++               "costume":this.m_game.PlayerSettings[num - 1].costume,
++               "menu":this
++            });
+## public function nextCostume(_:int, _:Boolean = false) : void
+## why: palette: step costumes via palette mod door (merged costume lists) and fire CSS_CHANGE_COSTUME_INDEX
+@@ 1062 0 da39a3ee5e6b4b0d 2
++         var _loc1_:* = undefined;
++         var _loc0_:String = null;
+@@ 1063 1 754b5cbbf94f70e3 0
+@@ 1082 1 508eb111c0225f74 1
++               do
+@@ 1084 2 fba0bee244968b6a 3
++                  _loc0_ = this.m_game.PlayerSettings[num - 1].character == "xp" ? Stats.resolveExpansionStatsName(this.m_game.PlayerSettings[num - 1].expansion) : this.m_game.PlayerSettings[num - 1].character;
++                  _loc1_ = ModHost.door(ModPatches.PALETTE_STEP_COSTUME_CYCLE,[_loc0_,this.m_game.PlayerSettings[num - 1].costume,1],null);
++                  if(_loc1_ == null)
+@@ 1087 1 60452ffa3f5d0cdd 5
++                     ++this.m_game.PlayerSettings[num - 1].costume;
++                     if(this.m_game.PlayerSettings[num - 1].costume >= ResourceManager.getCostumeCount(_loc0_) - 1)
++                     {
++                        this.m_game.PlayerSettings[num - 1].costume = -1;
++                     }
+@@ 1089 2 0a8a25def423a97f 1
++                  else
+@@ 1092 5 8f05d5895a18a726 1
++                     this.m_game.PlayerSettings[num - 1].costume = int(_loc1_);
+@@ 1098 0 da39a3ee5e6b4b0d 5
++               }
++               while(!(!this.costumeExistsElsewhere(this.m_game.PlayerSettings[num - 1].costume,num) || originalCostume == this.m_game.PlayerSettings[num - 1].costume));
++               if(sfxIfPossible)
++               {
++                  SoundQueue.instance.playSoundEffect("menu_hover");
+@@ 1102 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.CSS_CHANGE_COSTUME_INDEX,{
++            "port":num,
++            "costume":this.m_game.PlayerSettings[num - 1].costume,
++            "menu":this
++         });
+## public function toggleTeam(_:int) : void
+## why: ModHost: fire CSS_TEAM_CHANGED when a port toggles team
+@@ 1141 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.CSS_TEAM_CHANGED,{
++            "menu":this,
++            "port":num
++         });
+## public function updateLevelDisplay() : void
+## why: CSS: null-guard level display refresh when ports/settings are missing
+@@ 1325 2 08e93758ca0a4366 4
++         var _loc3_:* = null;
++         var _loc1_:MovieClip = null;
++         var _loc2_:int = 0;
++         if(!this.m_game || !this.m_game.PlayerSettings || !this.m_charSelectionBoxes)
+@@ 1328 4 580c8e1436c4bba5 16
++            return;
++         }
++         while(_loc2_ < this.m_charSelectionBoxes.length && _loc2_ < this.m_game.PlayerSettings.length)
++         {
++            _loc1_ = this.m_charSelectionBoxes[_loc2_];
++            _loc3_ = this.m_game.PlayerSettings[_loc2_];
++            if(Boolean(_loc1_) && Boolean(_loc1_.levelDisplay) && Boolean(_loc1_.levelDisplay.levelTxt) && Boolean(_loc3_))
++            {
++               _loc1_.levelDisplay.visible = !_loc3_.human && Boolean(_loc3_.exist) ? true : false;
++               if(_loc1_.levelDisplay.levelHandle)
++               {
++                  _loc1_.levelDisplay.levelHandle.y = -4 - 50 * ((_loc3_.level - 1) / 10);
++               }
++               _loc1_.levelDisplay.levelTxt.text = _loc3_.level;
++            }
++            _loc2_++;
+## public function gameIsReady() : Boolean
+## why: CSS: do not start the match while the costume picker is onscreen (skipped when palette_maker is off)
+@@ 1466 1 73787b10da261109 1
++         if(count >= minimum && Boolean(this.m_readyDelay.IsComplete) && !(this.m_game.GameMode == Mode.TRAINING && this.m_game.PlayerSettings[0].character == null) && !nameEntry && !(Boolean(MenuController.costumeSelectorDisplay) && Boolean(MenuController.costumeSelectorDisplay.isOnscreen())))
+## public function setPlayer(_:int, _:String, _:Number = -1) : void
+## why: CSS: CSS_SLOT_ACTION/SELECT hooks, keep linked-form palette, set active xp expansion, reset vault id
+@@ 1528 0 da39a3ee5e6b4b0d 27
++         var prevChar:String = null;
++         var prevCostumeId:int = 0;
++         var prevCostumeObj:Object = null;
++         var resolved:int = 0;
++         var slotCtx:Object = null;
++         var action:String = null;
++         action = character == null ? "clear" : "commit";
++         slotCtx = {
++            "action":action,
++            "playerIndex":num,
++            "character":character,
++            "costume":(Boolean(this.m_game) && Boolean(this.m_game.PlayerSettings[num - 1]) ? this.m_game.PlayerSettings[num - 1].costume : -1),
++            "cancel":false,
++            "menu":this
++         };
++         if(ModHost.runHook(ModHooks.CSS_SLOT_ACTION,slotCtx))
++         {
++            return;
++         }
++         if(Boolean(MenuController.costumeSelectorDisplay) && Boolean(MenuController.costumeSelectorDisplay.isOnscreen()) && character != null)
++         {
++            return;
++         }
++         if(slotCtx.character !== undefined)
++         {
++            character = slotCtx.character as String;
++         }
+@@ 1538 0 da39a3ee5e6b4b0d 14
++               prevChar = this.m_game.PlayerSettings[num - 1].character;
++               prevCostumeId = int(this.m_game.PlayerSettings[num - 1].costume);
++               prevCostumeObj = null;
++               if(Boolean(prevChar) && Boolean(ModHost.door(ModPatches.PALETTE_IS_LINKED_FORM_PAIR,[prevChar],false)) && Boolean(ModHost.door(ModPatches.PALETTE_IS_LINKED_FORM_PAIR,[character],false)))
++               {
++                  try
++                  {
++                     prevCostumeObj = ResourceManager.getCostume(prevChar,null,prevCostumeId);
++                  }
++                  catch(cErr:Error)
++                  {
++                     prevCostumeObj = null;
++                  }
++               }
+@@ 1541 0 da39a3ee5e6b4b0d 21
++               if(character == "xp")
++               {
++                  if(Boolean(isNaN(expansionNum)) || expansionNum < 0)
++                  {
++                     expansionNum = 0;
++                     this.m_game.PlayerSettings[num - 1].expansion = 0;
++                  }
++                  ResourceManager.setActiveXpExpansion(expansionNum);
++               }
++               if(Boolean(prevCostumeObj))
++               {
++                  resolved = int(ModHost.door(ModPatches.PALETTE_FIND_MERGED_COSTUME_INDEX_BY_IDENTITY,[character,prevCostumeObj],-1));
++                  if(resolved >= 0)
++                  {
++                     this.m_game.PlayerSettings[num - 1].costume = resolved;
++                  }
++                  else
++                  {
++                     this.m_game.PlayerSettings[num - 1].costume = prevCostumeId;
++                  }
++               }
+@@ 1549 0 da39a3ee5e6b4b0d 6
++         ModHost.runHook(ModHooks.CSS_SELECT_CHARACTER,{
++            "port":num,
++            "character":character,
++            "expansion":expansionNum,
++            "menu":this
++         });

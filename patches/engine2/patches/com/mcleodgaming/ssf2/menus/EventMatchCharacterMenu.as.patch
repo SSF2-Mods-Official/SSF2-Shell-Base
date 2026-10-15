@@ -1,0 +1,32 @@
+# com/mcleodgaming/ssf2/menus/EventMatchCharacterMenu.as
+## class header
+## why: ModHost import
+@@ 9 0 da39a3ee5e6b4b0d 5
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modes.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.events.*;
+## override public function initMatch() : void
+## why: ModHost: EVENT_MODE_CLASS door lets mods supply the event mode class; guarded fallback to vanilla
+@@ 53 0 da39a3ee5e6b4b0d 2
++         var _loc2_:* = undefined;
++         var _loc0_:Object = null;
+@@ 65 1 5cac8fee1170e06b 17
++         _loc0_ = MenuController.eventMenu.CurrentEvent;
++         var _loc1_:Class = ModHost.door(ModPatches.EVENT_MODE_CLASS,[_loc0_],null) as Class;
++         if(_loc1_ == null)
++         {
++            try
++            {
++               _loc2_ = ResourceManager.getResourceByID("event_mode").getProp("mode");
++               if(_loc2_ is Class)
++               {
++                  _loc1_ = _loc2_ as Class;
++               }
++            }
++            catch(modeErr:*)
++            {
++            }
++         }
++         m_modeInstance = new EventMode(m_game,{"eventMatchID":_loc0_.id},{"classAPI":_loc1_});

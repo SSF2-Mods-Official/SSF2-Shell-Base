@@ -1,0 +1,118 @@
+# com/mcleodgaming/ssf2/menus/OnlineMenu.as
+## class header
+## why: ModHost import
+@@ 24 1 c7570dde85fbc2c1 8
++   import com.mcleodgaming.mgn.events.*;
++   import com.mcleodgaming.mgn.net.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import fl.controls.*;
++   import flash.events.*;
++   import flash.text.*;
++
+## private function onTCPPortChanged(_:Event) : void
+## why: ModHost: ONLINE_MENU_SHOW hook (adds show() after this method)
+@@ 330 0 da39a3ee5e6b4b0d 6
++      }
++      
++      override public function show() : void
++      {
++         super.show();
++         ModHost.runHook(ModHooks.ONLINE_MENU_SHOW,{"menu":this});
+## private function onLogin(_:MGNEvent) : void
+## why: Discord: process a pending Discord join after login (replaces vanilla tracker event)
+@@ 650 1 e300003c9b5c5c2d 1
++         if(Main.hasPendingDiscordJoin)
+@@ 652 5 9e5e7b8a67ae4efb 1
++            Main.processDiscordJoin();
+## private function onLoginError(_:MGNEvent) : void
+## why: online: show the login error message instead of failing silently
+@@ 663 0 da39a3ee5e6b4b0d 2
++         var _loc0_:String = Boolean(e.data) && Boolean(e.data.message) ? e.data.message : "Login failed. Please try again.";
++         MultiplayerManager.notify(_loc0_);
+## private function onConnect(_:MGNEvent) : void
+## why: palette: preload color vault costumes when online connects so remote palettes resolve
+@@ 667 1 fb02f3ad60ee015b 1
++         ModHost.door(ModPatches.PALETTE_PRELOAD_ALL_COLOR_VAULT_COSTUMES,[],undefined);
+## private function onConnectError(_:MGNEvent) : void
+## why: online: tell the player when the online connection fails
+@@ 672 1 2fb79f8dab0c6fda 0
+@@ 674 0 da39a3ee5e6b4b0d 1
++         MultiplayerManager.notify("Could not connect to online services. Please try again.");
+## private function onDisconnect(_:MGNEvent) : void
+## why: Discord: reset rich presence on disconnect
+@@ 679 0 da39a3ee5e6b4b0d 11
++         if(Boolean(Main.m_sdk))
++         {
++            Main.m_sdk.updateActivity({
++               "details":"On normal menu",
++               "partyMaxSize":0,
++               "partyCurrentSize":0,
++               "partyID":null,
++               "matchSecret":null,
++               "joinSecret":null
++            });
++         }
+## private function onCreateRoom(_:MGNEvent) : void
+## why: Discord: show the room in rich presence after creating it
+@@ 687 0 da39a3ee5e6b4b0d 1
++         this.updateDiscordPresenceForRoom();
+## private function onCreateRoomError(_:MGNEvent) : void
+## why: online: show the create-room error message
+@@ 693 0 da39a3ee5e6b4b0d 2
++         var _loc0_:String = Boolean(e.data) && Boolean(e.data.message) ? e.data.message : "Could not create the room.";
++         MultiplayerManager.notify(_loc0_);
+## private function onJoinRoom(_:MGNEvent) : void
+## why: online: join toast, NET_LOBBY_JOIN hook, Discord room presence
+@@ 705 0 da39a3ee5e6b4b0d 6
++         MultiplayerManager.notify("Join accepted! Entering room...");
++         ModHost.runHook(ModHooks.NET_LOBBY_JOIN,{
++            "event":e,
++            "menu":this
++         });
++         this.updateDiscordPresenceForRoom();
+## private function onRoomJoinRequestError(_:MGNEvent) : void
+## why: online: show the join-request error message
+@@ 712 0 da39a3ee5e6b4b0d 2
++         var _loc0_:String = Boolean(e.data) && Boolean(e.data.message) ? e.data.message : "Could not send join request.";
++         MultiplayerManager.notify(_loc0_);
+## private function onJoinRoomError(_:MGNEvent) : void
+## why: online: show the join-room error message
+@@ 720 0 da39a3ee5e6b4b0d 2
++         var _loc0_:String = Boolean(e.data) && Boolean(e.data.message) ? e.data.message : "Could not join the room.";
++         MultiplayerManager.notify(_loc0_);
+## private function requestToJoinRoom() : void
+## why: online: toast that the join request was sent
+@@ 937 0 da39a3ee5e6b4b0d 3
++         var _loc0_:String = this.m_roomList.selectedItem.room_key;
++         var _loc1_:String = m_subMenu.online_joinroom.roomPass_txt.text;
++         MultiplayerManager.notify("Sending room join request...\nRoom: " + _loc0_ + (Boolean(_loc1_) && _loc1_ != "" ? " (with password)" : ""));
+## private function updateDiscordPresenceForRoom() : void
+## why: Discord: rich presence with party size and join secret while in an online room
+@@ 1027 0 da39a3ee5e6b4b0d 26
++      
++      private function updateDiscordPresenceForRoom() : void
++      {
++         var _loc1_:String = null;
++         var _loc2_:String = null;
++         var _loc3_:String = null;
++         var _loc4_:int = 0;
++         var _loc5_:int = 0;
++         var _loc6_:String = null;
++         var _loc7_:String = null;
++         if(Boolean(Main.m_sdk) && Boolean(Config.rich_presence) && Boolean(MultiplayerManager.Connected))
++         {
++            _loc1_ = MultiplayerManager.RoomKey;
++            _loc2_ = MultiplayerManager.RoomCode;
++            if(_loc1_ == null || _loc1_ == "" || _loc2_ == null || _loc2_ == "")
++            {
++               return;
++            }
++            _loc3_ = MultiplayerManager.RoomPassword;
++            _loc4_ = int(MultiplayerManager.Players.length);
++            _loc5_ = int(MultiplayerManager.ROOM_CAPACITY);
++            _loc6_ = MenuController.buildDiscordJoinSecret(_loc1_,_loc2_,_loc3_,_loc5_);
++            _loc7_ = MultiplayerManager.DiscordPartyID;
++            MenuController.updateDiscordPresence("In Online Lobby","Playing online",MenuController.getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","online",null,_loc7_,_loc4_,_loc5_,_loc1_,_loc6_);
++         }
++      }

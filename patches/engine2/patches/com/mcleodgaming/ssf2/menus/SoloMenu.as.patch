@@ -1,0 +1,50 @@
+# com/mcleodgaming/ssf2/menus/SoloMenu.as
+## class header
+## why: modhost: import ModHost/ModHooks for the hooks below
+@@ 9 0 da39a3ee5e6b4b0d 3
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.events.*;
+## private function classic_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 143 0 da39a3ee5e6b4b0d 4
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++            });
+## private function allstar_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 170 0 da39a3ee5e6b4b0d 4
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++            });
+## private function events_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 197 0 da39a3ee5e6b4b0d 4
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++            });
+## private function training_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 224 0 da39a3ee5e6b4b0d 4
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++            });
+## private function stadium_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 269 0 da39a3ee5e6b4b0d 4
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++            });
+## private function back_CLICK_menu(_:Event) : void
+## why: rumble: stop menu vibration when leaving the menu
+@@ 278 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.RUMBLE,{"kind":"menuStop"});
+## private function home_CLICK(_:MouseEvent) : void
+## why: rumble: stop menu vibration when leaving the menu
+@@ 291 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.RUMBLE,{"kind":"menuStop"});

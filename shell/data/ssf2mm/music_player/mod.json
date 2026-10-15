@@ -1,0 +1,9 @@
+{
+	"id": "music_player",
+	"name": "Music Player",
+	"description": "PS3-style track browser: stage previews, playlists, per-song frequency and visualizers. Stage Select Grab opens it on the hovered stage.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "MusicPlayerMod",
+	"enabledByDefault": true
+}

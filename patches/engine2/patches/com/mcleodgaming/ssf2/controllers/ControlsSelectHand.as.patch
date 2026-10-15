@@ -1,0 +1,48 @@
+# com/mcleodgaming/ssf2/controllers/ControlsSelectHand.as
+## override protected function checkHit(_:Event) : void
+## why: controller: let the gamepad hand click the rumble checkbox on the controls menu
+@@ 49 1 c0a984e8a9c9e542 1
++      override protected function checkHit(param1:Event) : void
+@@ 55 3 06c052dbd52c0a72 3
++         var _loc2_:Boolean = param1 is KeyboardEvent || param1 is GamepadEvent;
++         var _loc3_:int = 0;
++         if(Boolean(MenuController.controlsMenu.TapJumpCheckBox.enabled) && checkBounds(MenuController.controlsMenu.TapJumpCheckBox) && m_hand.visible && _loc2_)
+@@ 59 1 43f5c6dcfb4a63d5 2
++            _loc3_ = 0;
++            while(_loc3_ < m_players.length)
+@@ 61 1 5a95ad024684d11c 1
++               if(m_players[_loc3_].IsDown(m_players[_loc3_]._BUTTON2))
+@@ 65 0 da39a3ee5e6b4b0d 1
++               _loc3_++;
+@@ 67 1 81290d6d2f23f75a 1
++         if(Boolean(MenuController.controlsMenu.RumbleCheckBox) && Boolean(MenuController.controlsMenu.RumbleCheckBox.enabled) && checkBounds(MenuController.controlsMenu.RumbleCheckBox) && m_hand.visible && _loc2_)
+@@ 69 1 43f5c6dcfb4a63d5 2
++            _loc3_ = 0;
++            while(_loc3_ < m_players.length)
+@@ 71 1 5a95ad024684d11c 13
++               if(m_players[_loc3_].IsDown(m_players[_loc3_]._BUTTON2))
++               {
++                  MenuController.controlsMenu.RumbleCheckBox.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
++               }
++               _loc3_++;
++            }
++         }
++         if(Boolean(MenuController.controlsMenu.AutoDashCheckBox.enabled) && checkBounds(MenuController.controlsMenu.AutoDashCheckBox) && m_hand.visible && _loc2_)
++         {
++            _loc3_ = 0;
++            while(_loc3_ < m_players.length)
++            {
++               if(m_players[_loc3_].IsDown(m_players[_loc3_]._BUTTON2))
+@@ 75 0 da39a3ee5e6b4b0d 1
++               _loc3_++;
+@@ 77 1 fdd877b79001677e 1
++         if(Boolean(MenuController.controlsMenu.DTDashCheckBox.enabled) && checkBounds(MenuController.controlsMenu.DTDashCheckBox) && m_hand.visible && _loc2_)
+@@ 79 1 43f5c6dcfb4a63d5 2
++            _loc3_ = 0;
++            while(_loc3_ < m_players.length)
+@@ 81 1 5a95ad024684d11c 1
++               if(m_players[_loc3_].IsDown(m_players[_loc3_]._BUTTON2))
+@@ 85 0 da39a3ee5e6b4b0d 1
++               _loc3_++;
+@@ 87 1 060d6f15d282eb3b 1
++         super.checkHit(param1);

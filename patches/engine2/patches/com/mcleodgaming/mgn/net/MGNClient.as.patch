@@ -1,0 +1,287 @@
+# com/mcleodgaming/mgn/net/MGNClient.as
+## class header
+## why: Discord rich presence: track room password, capacity and party ID
+@@ 8 1 c7570dde85fbc2c1 6
++   import com.mcleodgaming.mgn.events.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.events.*;
++
+@@ 91 0 da39a3ee5e6b4b0d 6
++      
++      protected var m_currentRoomPassword:String;
++      
++      protected var m_currentRoomCapacity:int;
++      
++      protected var m_currentPartyID:String;
+## public function get CurrentPartyID() : String
+## why: Discord rich presence: expose the party ID
+@@ 235 0 da39a3ee5e6b4b0d 5
++      public function get CurrentPartyID() : String
++      {
++         return this.m_currentPartyID;
++      }
++      
+## protected function init(_:Boolean = false) : void
+## why: Discord rich presence: reset room password/capacity/party ID
+@@ 289 0 da39a3ee5e6b4b0d 3
++         this.m_currentRoomPassword = "";
++         this.m_currentRoomCapacity = 0;
++         this.m_currentPartyID = "";
+## private function onLobbySocketMessage(_:MGNEvent) : void
+## why: Discord rich presence: set lobby activity with a join secret on join/create room (other edits are local renames)
+@@ 519 1 a2556ab47f09efa6 2
++         var _loc0_:Object = null;
++         var _loc1_:String = null;
+@@ 559 1 b75f863075200ac6 1
++         else if(data.type != "getRoomUsersSuccess")
+@@ 561 5 9cd0099e222c3e3e 1
++            if(data.type == "roomJoinRequest")
+@@ 567 6 22a02b75b3d95a13 165
++               if(this.m_players.length >= this.m_maxPlayers)
++               {
++                  this.socketHelper(this.m_lobbySocket,{
++                     "type":"directMessage",
++                     "target":data.sid,
++                     "data":{
++                        "type":"requestToJoinRoomError",
++                        "message":"Could not join, room is full."
++                     }
++                  },"object");
++               }
++               else if(this.m_roomLocked)
++               {
++                  this.socketHelper(this.m_lobbySocket,{
++                     "type":"directMessage",
++                     "target":data.sid,
++                     "data":{
++                        "type":"requestToJoinRoomError",
++                        "message":"Could not join, room was locked."
++                     }
++                  },"object");
++               }
++               else
++               {
++                  MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ROOM_JOIN_REQUEST,{"playerConnectionInfo":new PlayerConnectionInfo({
++                     "username":data.username,
++                     "user_key":data.user_key,
++                     "socket_id":data.sid,
++                     "is_dev":data.is_dev
++                  })}));
++               }
++            }
++            else if(data.type == "requestToJoinRoomSuccess")
++            {
++               this.m_players = new Vector.<PlayerConnectionInfo>();
++               this.m_currentHostID = data.sid;
++               this.m_protocol = data.protocol;
++               this.joinRoom(data.room_key,data.room_code);
++            }
++            else if(data.type == "joinRoomSuccess")
++            {
++               this.m_isHost = false;
++               this.handleJoin(data);
++               this.m_currentPartyID = Utils.random().toString();
++               _loc0_ = {
++                  "k":data.room_key.toString(),
++                  "c":data.room_code.toString(),
++                  "p":this.m_currentRoomPassword,
++                  "m":this.m_currentRoomCapacity
++               };
++               Main.m_sdk.updateActivity({
++                  "details":"In Online Lobby",
++                  "partyMaxSize":this.m_currentRoomCapacity,
++                  "partyCurrentSize":this.m_players.length,
++                  "partyID":this.m_currentPartyID,
++                  "matchSecret":data.room_key.toString(),
++                  "joinSecret":JSON.stringify(_loc0_)
++               });
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ROOM_JOINED,{}));
++            }
++            else if(data.type == "createRoomSuccess")
++            {
++               this.m_isHost = true;
++               this.m_currentPartyID = Utils.random().toString();
++               _loc0_ = {
++                  "k":data.room_key.toString(),
++                  "c":data.room_code.toString(),
++                  "p":this.m_currentRoomPassword,
++                  "m":this.m_currentRoomCapacity
++               };
++               _loc1_ = JSON.stringify(_loc0_);
++               Main.m_sdk.updateActivity({
++                  "details":"In Online Lobby",
++                  "partyMaxSize":this.m_currentRoomCapacity,
++                  "partyCurrentSize":this.m_players.length,
++                  "partyID":this.m_currentPartyID,
++                  "matchSecret":data.room_key.toString(),
++                  "joinSecret":_loc1_
++               });
++               this.handleJoin(data);
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ROOM_CREATED,{}));
++            }
++            else if(data.type == "startMatch")
++            {
++               this.m_currentRoomCode = data.room_code;
++               this.m_gameSocketUrl = data.url;
++               this.initMatch(data);
++            }
++            else if(data.type == "setRoomDataSuccess")
++            {
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ROOM_DATA,{}));
++            }
++            else if(data.type == "lockRoomSuccess")
++            {
++               this.m_roomLocked = true;
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.LOCK_ROOM,{}));
++            }
++            else if(data.type == "unlockRoomSuccess")
++            {
++               this.m_roomLocked = false;
++               this.m_matchStarted = false;
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.UNLOCK_ROOM,{}));
++            }
++            else if(data.type == "leaveRoomSuccess")
++            {
++               this.m_roomData = null;
++               this.m_currentRoomCode = null;
++               this.m_currentRoomKey = "";
++               this.m_currentRoomName = "";
++               this.m_players = new Vector.<PlayerConnectionInfo>();
++               if(Boolean(this.m_p2pSocket))
++               {
++                  this.m_p2pSocket.close();
++               }
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.LEAVE_ROOM,{}));
++            }
++            else if(data.type == "neighborLeave")
++            {
++               this.participantDisconnected(data.id);
++            }
++            else if(data.type == "broadcast" || data.type == "directMessage")
++            {
++               this.receiveMessage(data);
++            }
++            else if(data.type == "setReadySuccess")
++            {
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.MATCH_READY_STATUS,{}));
++            }
++            else if(data.type == "finishMatch")
++            {
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.MATCH_FINISHED,{}));
++               this.m_matchStarted = false;
++               this.disconnectGameServer();
++            }
++            else if(data.type == "pingSuccess")
++            {
++               if(!this.m_pingRoundTripTime)
++               {
++                  this.m_pingRoundTripTime = new Date().getTime() - this.m_lastSentPing;
++                  this.ping();
++               }
++               else
++               {
++                  this.m_pingRoundTripTime = new Date().getTime() - this.m_lastSentPing;
++               }
++            }
++            else if(data.type == "connectError")
++            {
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.NOTIFY,{"message":"Could not communicate with server."}));
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_OFFLINE,{}));
++               this.disconnect();
++            }
++            else if(data.type == "loginError")
++            {
++               this.m_timeoutTimer.stop();
++               this.disconnect();
++               MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_LOGIN,{"message":data.message || null}));
++            }
++            else if(data.type != "listRoomsError")
++            {
++               if(data.type != "getRoomUsersError")
++               {
++                  if(data.type == "requestToJoinRoomError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_REQUEST_TO_JOIN_ROOM,{"message":data.message || null}));
+@@ 574 1 ec26153229cdf7ee 39
++                  else if(data.type == "joinRoomError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_CREATE_ROOM,{}));
++                  }
++                  else if(data.type == "createRoomError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_JOIN_ROOM,{}));
++                  }
++                  else if(data.type == "lockRoomError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_LOCK_ROOM,{}));
++                  }
++                  else if(data.type == "unlockRoomError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_UNLOCK_ROOM,{}));
++                  }
++                  else if(data.type == "leaveRoomError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_LEAVE_ROOM,{}));
++                  }
++                  else if(data.type == "setReadyError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_MATCH_READY_STATUS,{}));
++                  }
++                  else if(data.type == "setRoomDataError")
++                  {
++                     MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_ROOM_DATA,{}));
++                  }
++                  else if(data.type != "startMatchError")
++                  {
++                     if(data.type != "finishMatchError")
++                     {
++                        if(data.type == "pingError")
++                        {
++                           MGNEventManager.dispatcher.dispatchEvent(new MGNEvent(MGNEvent.ERROR_PING,{}));
++                        }
++                     }
++                  }
++               }
+@@ 576 179 6bd2513daa9bb778 0
+## public function requestToJoinRoom(_:String, _:String) : void
+## why: Discord rich presence: remember room capacity on join request
+@@ 806 0 da39a3ee5e6b4b0d 1
++            this.m_currentRoomCapacity = MultiplayerManager.ROOM_CAPACITY;
+## public function createJoinRoom(_:String, _:String, _:int, _:Object) : void
+## why: Discord rich presence: remember capacity/password on room create
+@@ 880 0 da39a3ee5e6b4b0d 2
++            this.m_currentRoomCapacity = roomCapacity;
++            this.m_currentRoomPassword = roomPassword;
+## private function participantDisconnected(_:String) : void
+## why: Discord rich presence: refresh party size when a player leaves
+@@ 1277 0 da39a3ee5e6b4b0d 1
++            this.updateDiscordActivity();
+## public function updateDiscordActivity() : void
+## why: Discord rich presence: update lobby activity and join secret
+@@ 1386 0 da39a3ee5e6b4b0d 24
++      
++      public function updateDiscordActivity() : void
++      {
++         var _loc1_:Object = null;
++         var _loc2_:String = null;
++         if(Boolean(Main.m_sdk) && Boolean(this.m_currentRoomKey) && Boolean(this.m_currentRoomCode))
++         {
++            _loc1_ = {
++               "k":this.m_currentRoomKey,
++               "c":this.m_currentRoomCode,
++               "p":this.m_currentRoomPassword,
++               "m":this.m_currentRoomCapacity
++            };
++            _loc2_ = JSON.stringify(_loc1_);
++            Main.m_sdk.updateActivity({
++               "details":"In Online Lobby",
++               "partyMaxSize":this.m_currentRoomCapacity,
++               "partyCurrentSize":this.m_players.length,
++               "partyID":this.m_currentPartyID,
++               "matchSecret":this.m_currentRoomKey,
++               "joinSecret":_loc2_
++            });
++         }
++      }

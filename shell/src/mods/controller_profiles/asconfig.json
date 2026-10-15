@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "source-path": ["src", "../_shared/src"],
+    "output": "../../../data/ssf2mm/controller_profiles/mod.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "warnings": true
+  },
+  "mainClass": "ControllerProfilesMod",
+  "config": "air"
+}

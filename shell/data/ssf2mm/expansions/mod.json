@@ -1,0 +1,9 @@
+{
+	"id": "expansions",
+	"name": "Expansions",
+	"description": "Drop-in characters (expansions/character), real CSS slots from assets.swf, and drop-in events (expansions/events).",
+	"version": "2.0.0",
+	"lifetime": "boot",
+	"entryClass": "ExpansionsMod",
+	"enabledByDefault": true
+}

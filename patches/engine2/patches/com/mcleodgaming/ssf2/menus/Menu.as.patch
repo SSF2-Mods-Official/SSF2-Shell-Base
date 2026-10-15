@@ -1,0 +1,63 @@
+# com/mcleodgaming/ssf2/menus/Menu.as
+## class header
+## why: controller/modhost: imports + m_lastControllerIndex so menus know which pad pressed (rumble target)
+@@ 6 0 da39a3ee5e6b4b0d 4
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
+@@ 55 0 da39a3ee5e6b4b0d 2
++      
++      protected var m_lastControllerIndex:int = -1;
+## public function get SubMenu() : MovieClip
+## why: mods: public BackgroundContainer getter so mods can swap menu backgrounds
+@@ 118 0 da39a3ee5e6b4b0d 5
++      }
++      
++      public function get BackgroundContainer() : MovieClip
++      {
++         return this.m_backgroundContainer;
+## public function manageMenuMappings(_:Event) : void
+## why: controller: record which controller pressed select and pass it to SelectHand
+@@ 199 0 da39a3ee5e6b4b0d 5
++                     this.m_lastControllerIndex = i - 1;
++                     if(this.m_menuMapper is SelectHand)
++                     {
++                        SelectHand(this.m_menuMapper).lastControllerIndex = this.m_lastControllerIndex;
++                     }
+## protected function updateMenuBackground() : void
+## why: mods: APPLY_MENU_BACKGROUND patch point lets mods replace the menu background; null-safe
+@@ 383 0 da39a3ee5e6b4b0d 1
++            var _loc0_:MovieClip = null;
+@@ 403 1 b6b69f5ea218da18 1
++         ModHost.applyPatch(ModPatches.APPLY_MENU_BACKGROUND,[this,this.m_backgroundID,this.m_backgroundContainer],function(param1:*, param2:*, param3:*):void
+@@ 405 3 6680ab677e030cde 11
++            if(!param2 || !param3)
++            {
++               return;
++            }
++            _loc0_ = ResourceManager.getLibraryMC("menu_bg_" + param2) as MovieClip;
++            if(_loc0_)
++            {
++               param3.addChild(_loc0_);
++            }
++         });
++         this.m_backgroundID = null;
+## public function show() : void
+## why: modhost: MENU_SHOW / MENU_NAVIGATE hooks when any menu opens
+@@ 417 0 da39a3ee5e6b4b0d 8
++         ModHost.runHook(ModHooks.MENU_SHOW,{
++            "menu":this,
++            "cancel":false
++         });
++         ModHost.runHook(ModHooks.MENU_NAVIGATE,{
++            "menu":this,
++            "action":"show"
++         });
+## public function removeSelf() : void
+## why: modhost: MENU_HIDE hook when any menu closes
+@@ 428 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.MENU_HIDE,{
++            "menu":this,
++            "cancel":false
++         });

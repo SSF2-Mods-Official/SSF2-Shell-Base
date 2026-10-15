@@ -1,0 +1,44 @@
+# com/mcleodgaming/ssf2/engine/ItemGenerator.as
+## class header
+## why: ModHost import for the hooks below
+@@ 13 0 da39a3ee5e6b4b0d 5
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.geom.*;
+## public function generateItemObj(_:ItemData, _:Number = 1337, _:Number = -1337, _:Boolean = false, _:Boolean = true) : Item
+## why: cancellable BEFORE_ITEM_SPAWN hook so mods can block/replace item spawns
+@@ 308 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 310 1 901aef5dfc2050ea 1
++         if(Boolean(itemObj && this.m_itemIndex < this.m_itemsInUse.length) && Boolean(this.m_itemGens.length > 0 || xloc != 1337 && yloc != -1337) && (Boolean(this.validateItemObj(itemObj)) || isCustom))
+@@ 312 0 da39a3ee5e6b4b0d 11
++            _loc0_ = {
++               "cancel":false,
++               "itemObj":itemObj,
++               "x":xloc,
++               "y":yloc,
++               "isCustom":isCustom
++            };
++            if(ModHost.runHook(ModHooks.BEFORE_ITEM_SPAWN,_loc0_))
++            {
++               return null;
++            }
+## public function generateItemNum(_:Number, _:Number = 1337, _:Number = -1337, _:Boolean = false) : Boolean
+## why: cancellable BEFORE_ITEM_SPAWN hook so mods can block/replace item spawns
+@@ 353 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 362 0 da39a3ee5e6b4b0d 12
++            }
++            _loc0_ = {
++               "cancel":false,
++               "itemObj":tempObj,
++               "itemNum":itemNum,
++               "x":xloc,
++               "y":yloc,
++               "isCustom":isCustom
++            };
++            if(ModHost.runHook(ModHooks.BEFORE_ITEM_SPAWN,_loc0_))
++            {
++               return false;

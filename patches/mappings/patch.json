@@ -1,0 +1,16 @@
+{
+  "character": {
+    "masterhand": null,
+    "obama": null
+  },
+  "character_select_screen": {
+    "chip_bounds": {
+      "height": 330,
+      "y": 0
+    },
+    "position": {
+      "x": -73.0
+    }
+  },
+  "exclude_character_from_random": []
+}

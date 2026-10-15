@@ -1,0 +1,285 @@
+# com/mcleodgaming/ssf2/util/Vcam.as
+## class header
+## why: ModHost import + flag to disable the camera for menu previews
+@@ 10 0 da39a3ee5e6b4b0d 6
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.geom.*;
+@@ 90 0 da39a3ee5e6b4b0d 2
++      private var m_menuPreviewDisabled:Boolean;
++      
+## public function Vcam(_:VcamSettings, _:MovieClip, _:DisplayObjectContainer)
+## why: menu preview: init the disabled flag
+@@ 114 0 da39a3ee5e6b4b0d 1
++         this.m_menuPreviewDisabled = false;
+## public function forceSetMode(_:int) : void
+## why: decompile fix: restore lost forceSetMode body (zoom mode targets)
+@@ 328 0 da39a3ee5e6b4b0d 30
++         var _loc0_:int = 0;
++         var _loc1_:Vector.<MovieClip> = null;
++         var _loc2_:int = 0;
++         _loc0_ = int(this.m_mode);
++         this.m_mode = value;
++         if(_loc0_ === ZOOM_MODE)
++         {
++            _loc1_ = new Vector.<MovieClip>();
++            _loc2_ = 0;
++            while(_loc2_ < GameController.stageData.Players.length)
++            {
++               if(GameController.stageData.Players[_loc2_] != null && !GameController.stageData.Players[_loc2_].StandBy)
++               {
++                  _loc1_.push(GameController.stageData.Players[_loc2_].MC);
++               }
++               _loc2_++;
++            }
++            if(GameController.stageData.ItemsRef.CurrentSmashBall != null)
++            {
++               _loc1_.push(GameController.stageData.ItemsRef.CurrentSmashBall.ItemInstance);
++            }
++            GameController.stageData.CamRef.deleteTargets(_loc1_);
++            _loc1_ = _loc1_.slice(0,1);
++            GameController.stageData.CamRef.addTargets(_loc1_);
++         }
++         if(this.m_mode === ZOOM_MODE)
++         {
++            this.deleteAllTargets();
++            this.addTarget(GameController.stageData.Players[0].MC);
++         }
+## private function makeBG(_:VcamBGSettings) : VcamBG
+## why: mod stages: return null for a background whose linkage is missing instead of crashing
+@@ 349 1 88a56220bf2566b1 1
++      private function makeBG(param1:VcamBGSettings) : VcamBG
+@@ 351 1 669970d6b6303d19 16
++         var _loc2_:MovieClip = null;
++         if(!param1 || !param1.linkage_id)
++         {
++            return null;
++         }
++         _loc2_ = ResourceManager.getLibraryMC(param1.linkage_id);
++         if(!_loc2_)
++         {
++            return null;
++         }
++         return new VcamBG(_loc2_,param1);
++      }
++      
++      public function changeBG(param1:Vector.<VcamBGSettings>) : void
++      {
++         var _loc2_:* = undefined;
+## public function changeBG(_:Vector.<VcamBGSettings>) : void
+## why: mod stages: skip missing BG linkages; starts overlayBG for background-stage overlays
+@@ 356 1 5b2eb499474697e2 1
++         var _loc3_:VcamBG = null;
+@@ 372 1 034065dbb8dc67ec 2
++         _loc2_ = 0;
++         while(_loc2_ < param1.length)
+@@ 374 4 7b885c0653bc69c0 2
++            _loc3_ = this.makeBG(param1[_loc2_]);
++            if(!_loc3_)
+@@ 379 2 b605bea33f1059d4 1
++               _loc2_++;
+@@ 384 19 dd64836d597c3d74 3
++               _loc3_.settings.width_override = param1[_loc2_].width_override || _loc3_.sprite.width;
++               _loc3_.settings.height_override = param1[_loc2_].height_override || _loc3_.sprite.height;
++               if(_loc3_.settings.foreground)
+@@ 404 2 48913674b5508193 2
++                  this.m_fg_holder.addChild(_loc3_.sprite);
++                  this.m_backgrounds.push(_loc3_);
+@@ 409 2 a47f6aa072578525 2
++                  this.m_bg_holder.addChild(_loc3_.sprite);
++                  this.m_backgrounds.push(_loc3_);
+@@ 412 0 da39a3ee5e6b4b0d 44
++               if(_loc3_.settings.autoPanMultiplier)
++               {
++                  _loc3_.settings.xPanMultiplier = (_loc3_.settings.width_override - Main.Width) / 2 / _loc3_.settings.width_override;
++                  _loc3_.settings.yPanMultiplier = (_loc3_.settings.height_override - Main.Height) / 2 / _loc3_.settings.height_override;
++               }
++               _loc3_.sprite.x = Main.Width / 2;
++               _loc3_.sprite.y = Main.Height / 2;
++               _loc3_.centX = _loc3_.sprite.x;
++               _loc3_.centY = _loc3_.sprite.y;
++               if(_loc3_.settings.horizontalScroll && _loc3_.settings.mode !== VcamBGSettings.BOUNDS_MODE)
++               {
++                  _loc3_.horizontalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc3_.horizontalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc3_.horizontalScrollPair[0].x -= _loc3_.sprite.width;
++                  _loc3_.horizontalScrollPair[1].x += _loc3_.sprite.width;
++                  if(_loc3_.settings.foreground)
++                  {
++                     this.m_fg_holder.addChild(_loc3_.horizontalScrollPair[0]);
++                     this.m_fg_holder.addChild(_loc3_.horizontalScrollPair[1]);
++                  }
++                  else
++                  {
++                     this.m_bg_holder.addChild(_loc3_.horizontalScrollPair[0]);
++                     this.m_bg_holder.addChild(_loc3_.horizontalScrollPair[1]);
++                  }
++               }
++               if(_loc3_.settings.verticalScroll && _loc3_.settings.mode !== VcamBGSettings.BOUNDS_MODE)
++               {
++                  _loc3_.verticalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc3_.verticalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc3_.verticalScrollPair[0].y -= _loc3_.sprite.height;
++                  _loc3_.verticalScrollPair[1].y += _loc3_.sprite.height;
++                  if(_loc3_.settings.foreground)
++                  {
++                     this.m_fg_holder.addChild(_loc3_.verticalScrollPair[0]);
++                     this.m_fg_holder.addChild(_loc3_.verticalScrollPair[1]);
++                  }
++                  else
++                  {
++                     this.m_bg_holder.addChild(_loc3_.verticalScrollPair[0]);
++                     this.m_bg_holder.addChild(_loc3_.verticalScrollPair[1]);
++                  }
++               }
++               _loc2_++;
+@@ 413 1 0350ed9058dbd0b2 30
++         }
++         this.fixBG();
++      }
++      
++      public function overlayBG(param1:Vector.<VcamBGSettings>) : void
++      {
++         var _loc2_:int = 0;
++         var _loc3_:int = 0;
++         var _loc4_:int = 0;
++         var _loc5_:VcamBG = null;
++         if(!this.BG_CONTAINER)
++         {
++            return;
++         }
++         if(this.m_bg_holder == null)
++         {
++            this.m_bg_holder = new MovieClip();
++            this.BG_CONTAINER.addChildAt(this.m_bg_holder,0);
++         }
++         if(this.m_fg_holder == null)
++         {
++            this.m_fg_holder = new MovieClip();
++            this.BG_CONTAINER.addChild(this.m_fg_holder);
++         }
++         _loc2_ = 0;
++         while(_loc2_ < this.m_backgrounds.length)
++         {
++            this.m_backgrounds[_loc2_].sprite.visible = false;
++            _loc3_ = 0;
++            while(_loc3_ < this.m_backgrounds[_loc2_].horizontalScrollPair.length)
+## public function overlayBG(_:Vector.<VcamBGSettings>) : void
+## why: background-stage overlay: hide current BGs and layer another stage's backgrounds
+@@ 415 5 1fc40d3c78d53263 24
++               this.m_backgrounds[_loc2_].horizontalScrollPair[_loc3_].visible = false;
++               _loc3_++;
++            }
++            _loc4_ = 0;
++            while(_loc4_ < this.m_backgrounds[_loc2_].verticalScrollPair.length)
++            {
++               this.m_backgrounds[_loc2_].verticalScrollPair[_loc4_].visible = false;
++               _loc4_++;
++            }
++            _loc2_++;
++         }
++         _loc2_ = 0;
++         while(_loc2_ < param1.length)
++         {
++            _loc5_ = this.makeBG(param1[_loc2_]);
++            if(!_loc5_)
++            {
++               _loc2_++;
++            }
++            else
++            {
++               _loc5_.settings.width_override = param1[_loc2_].width_override || _loc5_.sprite.width;
++               _loc5_.settings.height_override = param1[_loc2_].height_override || _loc5_.sprite.height;
++               if(_loc5_.settings.foreground)
+@@ 421 2 879a5e97598e8063 1
++                  this.m_fg_holder.addChild(_loc5_.sprite);
+@@ 426 2 1c0ca8194e94b3d5 1
++                  this.m_bg_holder.addChild(_loc5_.sprite);
+@@ 429 0 da39a3ee5e6b4b0d 45
++               this.m_backgrounds.push(_loc5_);
++               if(_loc5_.settings.autoPanMultiplier)
++               {
++                  _loc5_.settings.xPanMultiplier = (_loc5_.settings.width_override - Main.Width) / 2 / _loc5_.settings.width_override;
++                  _loc5_.settings.yPanMultiplier = (_loc5_.settings.height_override - Main.Height) / 2 / _loc5_.settings.height_override;
++               }
++               _loc5_.sprite.x = Main.Width / 2;
++               _loc5_.sprite.y = Main.Height / 2;
++               _loc5_.centX = _loc5_.sprite.x;
++               _loc5_.centY = _loc5_.sprite.y;
++               if(_loc5_.settings.horizontalScroll && _loc5_.settings.mode !== VcamBGSettings.BOUNDS_MODE)
++               {
++                  _loc5_.horizontalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc5_.horizontalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc5_.horizontalScrollPair[0].x -= _loc5_.sprite.width;
++                  _loc5_.horizontalScrollPair[1].x += _loc5_.sprite.width;
++                  if(_loc5_.settings.foreground)
++                  {
++                     this.m_fg_holder.addChild(_loc5_.horizontalScrollPair[0]);
++                     this.m_fg_holder.addChild(_loc5_.horizontalScrollPair[1]);
++                  }
++                  else
++                  {
++                     this.m_bg_holder.addChild(_loc5_.horizontalScrollPair[0]);
++                     this.m_bg_holder.addChild(_loc5_.horizontalScrollPair[1]);
++                  }
++               }
++               if(_loc5_.settings.verticalScroll && _loc5_.settings.mode !== VcamBGSettings.BOUNDS_MODE)
++               {
++                  _loc5_.verticalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc5_.verticalScrollPair.push(ResourceManager.getLibraryMC(param1[_loc2_].linkage_id));
++                  _loc5_.verticalScrollPair[0].y -= _loc5_.sprite.height;
++                  _loc5_.verticalScrollPair[1].y += _loc5_.sprite.height;
++                  if(_loc5_.settings.foreground)
++                  {
++                     this.m_fg_holder.addChild(_loc5_.verticalScrollPair[0]);
++                     this.m_fg_holder.addChild(_loc5_.verticalScrollPair[1]);
++                  }
++                  else
++                  {
++                     this.m_bg_holder.addChild(_loc5_.verticalScrollPair[0]);
++                     this.m_bg_holder.addChild(_loc5_.verticalScrollPair[1]);
++                  }
++               }
++               _loc2_++;
+## public function PERFORMALL() : void
+## why: menu preview: camera idle when disabled; CAMERA_UPDATE hook; disableMenuPreview
+@@ 1334 0 da39a3ee5e6b4b0d 4
++         if(this.m_menuPreviewDisabled)
++         {
++            return;
++         }
+@@ 1340 0 da39a3ee5e6b4b0d 7
++               if(ModHost.hasHook(ModHooks.CAMERA_UPDATE))
++               {
++                  ModHost.runHook(ModHooks.CAMERA_UPDATE,{
++                     "camera":this,
++                     "mode":this.m_mode
++                  });
++               }
+@@ 1350 0 da39a3ee5e6b4b0d 23
++            if(ModHost.hasHook(ModHooks.CAMERA_UPDATE))
++            {
++               ModHost.runHook(ModHooks.CAMERA_UPDATE,{
++                  "camera":this,
++                  "mode":this.m_mode
++               });
++            }
++         }
++      }
++      
++      public function disableMenuPreview() : void
++      {
++         this.m_menuPreviewDisabled = true;
++         this.m_targets.length = 0;
++         this.m_forcedTargets.length = 0;
++         this.m_focusMCs.length = 0;
++         this.m_focusTimers.length = 0;
++         try
++         {
++            this.resetStage();
++         }
++         catch(rstErr:*)
++         {

@@ -1,0 +1,9 @@
+{
+	"id": "replay_browser",
+	"name": "Vault Replays",
+	"description": "Vault Replays opens a folder browser with previews (PSB-style) instead of a single-file picker.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "ReplayBrowserMod",
+	"enabledByDefault": true
+}

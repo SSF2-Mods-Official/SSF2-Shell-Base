@@ -1,0 +1,13 @@
+# com/mcleodgaming/ssf2/menus/ConstantDebuggerMenu.as
+## public function ConstantDebuggerMenu()
+## why: debug: hide the constant debugger overlay in LAZYDEBUG mode
+@@ 23 1 c6bf86ad97aef9ff 1
++         m_subMenu.visible = Boolean(Main.DEBUG) && !Main.LAZYDEBUG;
+## public function reset() : void
+## why: debug: add updateVisibility so the overlay can follow a runtime debug toggle
+@@ 65 0 da39a3ee5e6b4b0d 5
++      }
++      
++      public function updateVisibility() : void
++      {
++         m_subMenu.visible = Boolean(Main.DEBUG) && !Main.LAZYDEBUG;

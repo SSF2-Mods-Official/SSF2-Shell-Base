@@ -1,0 +1,99 @@
+# com/mcleodgaming/ssf2/items/Item.as
+## class header
+## why: ModHost import for item hooks
+@@ 13 0 da39a3ee5e6b4b0d 5
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.geom.*;
+## override public function reactionHit(_:InteractiveSprite, _:HitBoxCollisionResult) : Boolean
+## why: BEFORE_ITEM_HIT hook so mods can cancel item hits
+@@ 797 0 da39a3ee5e6b4b0d 11
++         var _loc0_:Object = {
++            "cancel":false,
++            "item":this,
++            "other":otherSprite,
++            "hitBoxResult":hBoxResult,
++            "attack":attackDamage
++         };
++         if(ModHost.runHook(ModHooks.BEFORE_ITEM_HIT,_loc0_))
++         {
++            return false;
++         }
+## public function inheritPalette() : void
+## why: unclear - restructures the InheritPalette check into early returns (same behavior)
+@@ 1298 1 21cb25d83042c613 1
++         if(!this.m_currentHolder)
+@@ 1300 2 7ecf188f4feead55 1
++            return;
+@@ 1303 0 da39a3ee5e6b4b0d 6
++         if(!this.m_itemStats.InheritPalette)
++         {
++            return;
++         }
++         this.m_currentHolder.applyPalette(m_sprite);
++         setPaletteSwap(this.m_currentHolder.PaletteSwapData,this.m_currentHolder.PaletteSwapPAData);
+## private function kill() : void
+## why: ITEM_DESTROY hook for mods
+@@ 1632 0 da39a3ee5e6b4b0d 1
++            ModHost.runHook(ModHooks.ITEM_DESTROY,{"item":this});
+## override public function PERFORMALL() : void
+## why: time stop: skip the item tick while frozen
+@@ 2070 4 9c74af0b6b18647d 7
++               if(!this.IsFrozenInTime)
++               {
++                  this.checkTimers();
++                  this.m_itemAttack();
++                  checkReflection();
++                  this.m_checkDead();
++               }
+@@ 2077 10 097928f91864c5ab 13
++               if(!this.IsFrozenInTime)
++               {
++                  this.checkTimers();
++                  this.m_pushAwayItems();
++                  this.m_groundCollisionTest();
++                  this.m_calcFlyingAngle();
++                  this.m_itemAttack();
++                  this.m_checkReverse();
++                  this.m_itemFall();
++                  this.m_itemMove();
++                  m_forces();
++                  this.m_pushAwayOpponents();
++               }
+@@ 2089 5 9891de27bc4a1814 8
++               if(!this.IsFrozenInTime)
++               {
++                  this.checkRichochetTimer();
++                  checkHitStun();
++                  updateCamerBox();
++                  this.m_checkDeathBounds();
++                  this.m_checkDead();
++               }
+## override protected function PREPERFORM() : void
+## why: time stop: don't advance item animation while frozen
+@@ 2107 2 1b4fb04a740fae3d 5
++               if(!this.IsFrozenInTime)
++               {
++                  Utils.advanceFrame(m_sprite.stance);
++                  Utils.recursiveMovieClipPlay(m_sprite.stance,true);
++               }
+## override protected function POSTPERFORM() : void
+## why: time stop: skip post tick while frozen; IsFrozenInTime follows owner or stage time stop
+@@ 2121 2 ac1534c9099c7ee2 5
++            if(!this.IsFrozenInTime)
++            {
++               super.POSTPERFORM();
++               m_apiInstance.update();
++            }
+@@ 2124 0 da39a3ee5e6b4b0d 9
++      }
++      
++      override public function get IsFrozenInTime() : Boolean
++      {
++         if(Boolean(this.m_owner) && this.m_owner != this)
++         {
++            return this.m_owner.IsFrozenInTime;
++         }
++         return Boolean(this.STAGEDATA) ? this.STAGEDATA.InTimeStop : false;

@@ -1,0 +1,95 @@
+# com/mcleodgaming/ssf2/controllers/EventMenuHand.as
+## class header
+## why: events: list-toggle callback, per-controller let-go and input lock for the expansion list toggle
+@@ 14 0 da39a3ee5e6b4b0d 6
++      public var listTogglePush:Function;
++      
++      private var m_toggleLetGo:Object;
++      
++      private var m_inputLocked:Boolean;
++      
+## public function EventMenuHand(_:MovieClip, _:Vector.<EventButton>, _:Function)
+## why: events: init toggle/input-lock state
+@@ 22 0 da39a3ee5e6b4b0d 2
++         this.m_toggleLetGo = {};
++         this.m_inputLocked = false;
+## public function setInputLocked(_:Boolean) : void
+## why: events: lock input while switching lists; syncButtons swaps in the new row buttons
+@@ 31 0 da39a3ee5e6b4b0d 33
++      public function setInputLocked(param1:Boolean) : void
++      {
++         this.m_inputLocked = param1;
++         this.resetLetGo();
++         this.m_toggleLetGo = {};
++         if(param1)
++         {
++            this.m_rollOverID = -1;
++         }
++      }
++      
++      public function syncButtons(param1:Vector.<EventButton>) : void
++      {
++         var _loc2_:Vector.<HandButton> = new Vector.<HandButton>();
++         var _loc3_:int = 0;
++         while(_loc3_ < param1.length)
++         {
++            _loc2_.push(param1[_loc3_]);
++            _loc3_++;
++         }
++         m_buttons = _loc2_;
++         this.m_rollOverID = -1;
++      }
++      
++      override protected function checkHit(param1:Event) : void
++      {
++         if(this.m_inputLocked)
++         {
++            return;
++         }
++         super.checkHit(param1);
++      }
++      
+## override protected function checkControls(_:Event) : void
+## why: events: Grab/Taunt toggles Vanilla/Expansions list from a controller; ignore input while locked
+@@ 33 0 da39a3ee5e6b4b0d 7
++         var _loc0_:Controller = null;
++         var _loc1_:Boolean = false;
++         var _loc2_:Boolean = false;
++         if(this.m_inputLocked)
++         {
++            return;
++         }
+@@ 56 0 da39a3ee5e6b4b0d 26
++         i = 0;
++         while(i < m_players.length)
++         {
++            _loc0_ = m_players[i];
++            _loc1_ = Boolean(_loc0_.IsDown(_loc0_._GRAB));
++            _loc2_ = Boolean(_loc0_.IsDown(_loc0_._TAUNT));
++            if(_loc1_ && _loc2_)
++            {
++               this.m_toggleLetGo[i] = false;
++               i++;
++            }
++            else
++            {
++               if(!_loc1_ && !_loc2_)
++               {
++                  this.m_toggleLetGo[i] = true;
++               }
++               else if(Boolean(this.m_toggleLetGo[i]) && (_loc1_ || _loc2_) && this.listTogglePush !== null)
++               {
++                  this.m_toggleLetGo[i] = false;
++                  this.listTogglePush();
++                  break;
++               }
++               i++;
++            }
++         }
+## override protected function checkBounds(_:DisplayObject, _:DisplayObject = null) : Boolean
+## why: events: null-safe bounds check for rows removed during a list switch
+@@ 61 0 da39a3ee5e6b4b0d 4
++         if(!mc || !mc.parent || !mc.parent.parent)
++         {
++            return false;
++         }

@@ -1,0 +1,64 @@
+# com/mcleodgaming/ssf2/modes/EventMode.as
+## class header
+## why: ModHost import for the door below
+@@ 5 0 da39a3ee5e6b4b0d 1
++   import com.mcleodgaming.ssf2.modhost.*;
+## override public function saveModeData(_:Object) : Boolean
+## why: expansion events: resolve id via EVENT_RESOLVE_ID door; record last win session flag
+@@ 26 1 08b788331b15c576 0
+@@ 76 0 da39a3ee5e6b4b0d 4
++               id = ModHost.door(ModPatches.EVENT_RESOLVE_ID,[data.eventMatchID],null) as String;
++            }
++            if(!id)
++            {
+@@ 77 0 da39a3ee5e6b4b0d 7
++            }
++            try
++            {
++               ModHost.setSessionFlag("event_expansions.lastWinId",id);
++            }
++            catch(flagErr:*)
++            {
+@@ 91 1 78a486233e81ca79 1
++            else if(this.rankings.indexOf(rank) < this.rankings.indexOf(SaveData.Records.events.wins[id].rank) || Boolean(rank === SaveData.Records.events.wins[id].rank) && Boolean(scoreType.match(/points|stamina|kos/) && score > SaveData.Records.events.wins[id].score || scoreType.match(/time|damage/) && score < SaveData.Records.events.wins[id].score))
+## protected function verifyMatchesBefore(_:Boolean, _:int, _:String) : Boolean
+## why: expansion events: skip expansion/seriesStart events when counting vanilla progress
+@@ 157 1 3b5252ebe0d7c775 1
++      protected function verifyMatchesBefore(param1:Boolean, param2:int, param3:String) : Boolean
+@@ 159 5 9d1d43fb7ed7ced7 6
++         var _loc4_:int = 0;
++         var _loc5_:int = 0;
++         var _loc6_:int = 0;
++         param3 = param3.toUpperCase();
++         var _loc7_:Array = ResourceManager.getResourceByID("event_mode").getProp("eventList");
++         while(_loc6_ < _loc7_.length)
+@@ 165 1 6bf44d8b4801989e 1
++            if(Boolean(_loc7_[_loc6_].expansion) || Boolean(_loc7_[_loc6_].seriesStart))
+@@ 167 9 1907699197ccd179 1
++               _loc6_++;
+@@ 179 2 1c70b7b640c2d5d2 1
++               if(Boolean(_loc7_[_loc6_].allStar))
+@@ 182 1 c7cf720d7639a1cc 9
++                  _loc4_++;
++                  if(param1 && param2 === _loc4_)
++                  {
++                     return true;
++                  }
++                  if(!SaveData.Records.events.wins[_loc7_[_loc6_].id] || this.rankings.indexOf(SaveData.Records.events.wins[_loc7_[_loc6_].id].rank) > this.rankings.indexOf(param3))
++                  {
++                     return false;
++                  }
+@@ 184 1 bc96e7f5d6641cbe 1
++               else
+@@ 186 1 81506c8965066cde 9
++                  _loc5_++;
++                  if(!param1 && param2 === _loc5_)
++                  {
++                     return true;
++                  }
++                  if(!SaveData.Records.events.wins[_loc7_[_loc6_].id] || this.rankings.indexOf(SaveData.Records.events.wins[_loc7_[_loc6_].id].rank) > this.rankings.indexOf(param3))
++                  {
++                     return false;
++                  }
+@@ 188 0 da39a3ee5e6b4b0d 1
++               _loc6_++;

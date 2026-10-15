@@ -1,0 +1,448 @@
+# com/mcleodgaming/ssf2/controllers/MenuController.as
+## class header
+## why: ModHost imports and slots for mod-provided menus (hitbox test, palette maker, costume selector)
+@@ 5 0 da39a3ee5e6b4b0d 3
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.util.*;
+@@ 113 0 da39a3ee5e6b4b0d 2
++      private static var m_hitBoxTestMenu:*;
++      
+@@ 114 0 da39a3ee5e6b4b0d 4
++      
++      private static var m_paletteMakerMenu:*;
++      
++      private static var m_costumeSelectorDisplay:*;
+## public static function init() : void
+## why: build menus through ModHost (MENU_CREATE hook), run palette init door, add Discord presence + stage-name helpers
+@@ 126 1 740597c9dae297bd 1
++            m_debugConsole = hostCreateMenu(DebugConsole,"DebugConsole") as DebugConsole;
+@@ 129 1 9f6ebbcec6140e44 195
++         if(ModHost.hasPatch(ModPatches.PALETTE_INIT))
++         {
++            ModHost.door(ModPatches.PALETTE_INIT,[],undefined);
++         }
++      }
++      
++      public static function getCurrentTimestamp() : uint
++      {
++         return uint(new Date().time / 1000);
++      }
++      
++      public static function updateDiscordPresence(param1:String, param2:String, param3:uint, param4:uint, param5:String, param6:String, param7:String, param8:String, param9:String, param10:uint, param11:uint, param12:String, param13:String, param14:Object = null) : void
++      {
++         var largeImageKey:String = null;
++         largeImageKey = null;
++         largeImageKey = param5;
++         var activity:Object = null;
++         var resolvedLarge:String = null;
++         var discordPresence:Class = null;
++         if(Boolean(Main.m_sdk) && Boolean(Config.rich_presence))
++         {
++            activity = {};
++            if(Boolean(param1))
++            {
++               activity["state"] = param1;
++            }
++            if(Boolean(param2))
++            {
++               activity["details"] = param2;
++            }
++            if(param3 > 0)
++            {
++               activity["timestampStart"] = param3.toString();
++            }
++            if(param4 > 0)
++            {
++               activity["timestampEnd"] = param4.toString();
++            }
++            resolvedLarge = largeImageKey;
++            try
++            {
++               if(Boolean(!param14 && GameController.currentGame) && Boolean(GameController.currentGame.PlayerSettings) && GameController.currentGame.PlayerSettings.length > 0)
++               {
++                  param14 = GameController.currentGame.PlayerSettings[0];
++               }
++               resolvedLarge = ModHost.door(ModPatches.PALETTE_DISCORD_RESOLVE_LARGE_IMAGE,[largeImageKey,param6,param14],null);
++               if(resolvedLarge === undefined)
++               {
++                  resolvedLarge = largeImageKey;
++               }
++            }
++            catch(discordCostumeErr:Error)
++            {
++               resolvedLarge = largeImageKey;
++            }
++            if(Boolean(resolvedLarge))
++            {
++               activity["largeImage"] = resolvedLarge;
++            }
++            if(Boolean(param6))
++            {
++               activity["largeText"] = param6;
++            }
++            if(Boolean(param7))
++            {
++               activity["smallImage"] = param7;
++            }
++            if(Boolean(param8))
++            {
++               activity["smallText"] = param8;
++            }
++            if(Boolean(param9))
++            {
++               activity["partyID"] = param9;
++            }
++            if(param10 > 0)
++            {
++               activity["partyCurrentSize"] = param10;
++            }
++            if(param11 > 0)
++            {
++               activity["partyMaxSize"] = param11;
++            }
++            if(Boolean(param12))
++            {
++               activity["matchSecret"] = param12;
++            }
++            if(Boolean(param13))
++            {
++               activity["joinSecret"] = param13;
++            }
++            activity["instance"] = true;
++            discordPresence = ModHost.door(ModPatches.PALETTE_DISCORD_CLASS,[],null) as Class;
++            if(Boolean(discordPresence))
++            {
++               discordPresence.rememberLastActivity(activity);
++            }
++            try
++            {
++               Main.m_sdk.updateActivity(activity);
++            }
++            catch(err:Error)
++            {
++            }
++         }
++      }
++      
++      public static function buildDiscordJoinSecret(param1:String, param2:String, param3:String = "", param4:int = 0) : String
++      {
++         if(!param1 || !param2)
++         {
++            return null;
++         }
++         var _loc5_:Object = {
++            "k":param1,
++            "c":param2,
++            "p":param3 || "",
++            "m":param4
++         };
++         return JSON.stringify(_loc5_);
++      }
++      
++      public static function getStageDisplayName(param1:String) : String
++      {
++         var _loc3_:* = undefined;
++         var _loc4_:Object = null;
++         var _loc5_:Object = null;
++         var _loc6_:String = null;
++         var _loc7_:String = null;
++         if(param1 == null || param1 == "")
++         {
++            return "Unknown Stage";
++         }
++         if(param1 === "random")
++         {
++            return "Random";
++         }
++         try
++         {
++            _loc3_ = ResourceManager.getResourceByID("mappings");
++            if(!_loc3_)
++            {
++               return param1.charAt(0).toUpperCase() + param1.substr(1);
++            }
++            _loc4_ = _loc3_.getProp("metadata");
++            if(!_loc4_)
++            {
++               return param1.charAt(0).toUpperCase() + param1.substr(1);
++            }
++            _loc5_ = _loc4_.stage;
++            if(Boolean(_loc5_) && Boolean(_loc5_[param1]))
++            {
++               _loc7_ = _loc5_[param1].name;
++               if(Boolean(_loc7_) && _loc7_ != "")
++               {
++                  return _loc7_;
++               }
++            }
++         }
++         catch(e:Error)
++         {
++         }
++         return param1.charAt(0).toUpperCase() + param1.substr(1);
++      }
++      
++      public static function getTimerEndTimestamp(param1:*) : uint
++      {
++         var _loc3_:* = undefined;
++         var _loc4_:Number = Number(NaN);
++         try
++         {
++            if(Boolean(param1) && Boolean(param1.TimerRef))
++            {
++               _loc3_ = param1.TimerRef;
++               if(Boolean(_loc3_.CountDown) && _loc3_.CurrentTime > 0)
++               {
++                  _loc4_ = _loc3_.CurrentTime / 30;
++                  return getCurrentTimestamp() + uint(_loc4_);
++               }
++            }
++         }
++         catch(e:Error)
++         {
++         }
++         return 0;
++      }
++      
++      private static function hostCreateMenu(param1:Class, param2:String, param3:Array = null) : *
++      {
++         var _loc4_:* = ModHost.create(param1,param3);
++         ModHost.runHook(ModHooks.MENU_CREATE,{
++            "menu":_loc4_,
++            "className":param2
++         });
++         return _loc4_;
+## public static function disposeAllMenus(_:Boolean = false) : void
+## why: clear the mod-provided hitbox test menu on dispose
+@@ 176 0 da39a3ee5e6b4b0d 1
++         m_hitBoxTestMenu = null;
+## public static function removeAllMenus() : void
+## why: remove mod-provided hitbox/palette maker/costume selector menus with the rest
+@@ 342 0 da39a3ee5e6b4b0d 4
++         if(Boolean(m_hitBoxTestMenu))
++         {
++            m_hitBoxTestMenu.removeSelf();
++         }
+@@ 407 0 da39a3ee5e6b4b0d 8
++         if(Boolean(m_paletteMakerMenu))
++         {
++            m_paletteMakerMenu.removeSelf();
++         }
++         if(Boolean(m_costumeSelectorDisplay))
++         {
++            m_costumeSelectorDisplay.removeSelf();
++         }
+## public static function get titleMenu() : TitleMenu
+## why: mods: create via hostCreateMenu; Discord rich presence: show 'In menus' on title
+@@ 461 1 710b676fabaf63c4 1
++            m_titleMenu = hostCreateMenu(TitleMenu,"TitleMenu") as TitleMenu;
+@@ 463 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence(null,"In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2",null,null,null,0,0,null,null);
+## public static function get mainMenu() : MainMenu
+## why: mods: create via hostCreateMenu; Discord rich presence: Main Menu
+@@ 506 1 ff3f91bd444b2307 1
++            m_mainMenu = hostCreateMenu(MainMenu,"MainMenu") as MainMenu;
+@@ 508 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Main Menu","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2",null,null,null,0,0,null,null);
+## public static function get dataMenu() : DataMenu
+## why: Discord rich presence: Data menu
+@@ 517 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Data","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","data",null,null,0,0,null,null);
+## public static function get groupMenu() : GroupMenu
+## why: mods: create via hostCreateMenu; Discord rich presence: Group menu
+@@ 524 1 9a8cdd9d86695b01 1
++            m_groupMenu = hostCreateMenu(GroupMenu,"GroupMenu") as GroupMenu;
+@@ 526 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Group","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","smash",null,null,0,0,null,null);
+## public static function get arenaMenu() : ArenaModeMenu
+## why: Discord rich presence: Arena menu
+@@ 535 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Data","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","arena",null,null,0,0,null,null);
+## public static function get onlineMenu() : OnlineMenu
+## why: mods: create via hostCreateMenu; Discord rich presence: Online menu
+@@ 542 1 d10a0a2e5f047994 1
++            m_onlineMenu = hostCreateMenu(OnlineMenu,"OnlineMenu") as OnlineMenu;
+@@ 544 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Online","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","online",null,null,0,0,null,null);
+## public static function get onlineGroupMenu() : OnlineGroupMenu
+## why: mods: create Online Group menu via hostCreateMenu (MENU_CREATE hook)
+@@ 551 1 08613a2dec86bed5 1
++            m_onlineGroupMenu = hostCreateMenu(OnlineGroupMenu,"OnlineGroupMenu") as OnlineGroupMenu;
+## public static function get optionsMenu() : OptionsMenu
+## why: Discord rich presence: Options menu
+@@ 571 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Options","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","option",null,null,0,0,null,null);
+## public static function get qualityMenu() : QualityMenu
+## why: Discord rich presence: Quality menu
+@@ 580 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Options","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","option",null,null,0,0,null,null);
+## public static function get soloMenu() : SoloMenu
+## why: Discord rich presence: Solo menu
+@@ 589 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Solo","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","solo",null,null,0,0,null,null);
+## public static function get soundMenu() : SoundMenu
+## why: Discord rich presence: Sound menu
+@@ 598 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Options","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","option",null,null,0,0,null,null);
+## public static function get stadiumMenu() : StadiumMenu
+## why: Discord rich presence: Stadium menu
+@@ 607 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Stadium","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stadium",null,null,0,0,null,null);
+## public static function get stageSelectMenu() : StageSelectMenu
+## why: mods: create Stage Select via hostCreateMenu so mods/live previews can hook it
+@@ 614 1 80b0b567e8a52b54 1
++            m_stageSelectMenu = hostCreateMenu(StageSelectMenu,"StageSelectMenu") as StageSelectMenu;
+## public static function get vaultMenu() : VaultMenu
+## why: mods: create via hostCreateMenu; Discord rich presence: Vault
+@@ 623 1 f09504c5d47c14a0 1
++            m_vaultMenu = hostCreateMenu(VaultMenu,"VaultMenu") as VaultMenu;
+@@ 625 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Vault","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","vault",null,null,0,0,null,null);
+## public static function get newsMenu() : NewsMenu
+## why: Discord rich presence: News menu
+@@ 634 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Reading the news","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","news",null,null,0,0,null,null);
+## public static function get newsArticleMenu() : NewsArticleMenu
+## why: Discord rich presence: News article
+@@ 643 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Reading the news","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","news",null,null,0,0,null,null);
+## public static function get vsMenu() : VSMenu
+## why: mods: create VS CSS via hostCreateMenu (custom CSS/live previews); Discord rich presence: choosing a character
+@@ 650 1 b7b123da13285f1d 1
++            m_vsMenu = hostCreateMenu(VSMenu,"VSMenu",["menu_charselect_vs"]) as VSMenu;
+@@ 653 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Group",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","smash",null,null,0,0,null,null);
+## public static function get classicMenu() : ClassicModeMenu
+## why: mods: create Classic CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 660 1 393b664496c9e438 1
++            m_classicMenu = hostCreateMenu(ClassicModeMenu,"ClassicModeMenu",["menu_charselect_classic"]) as ClassicModeMenu;
+@@ 663 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Classic Mode",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","classic",null,null,0,0,null,null);
+## public static function get allstarMenu() : AllStarModeMenu
+## why: mods: create All-Star CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 670 1 00c54f14b5bafe15 1
++            m_allstarMenu = hostCreateMenu(AllStarModeMenu,"AllStarModeMenu",["menu_charselect_allstar"]) as AllStarModeMenu;
+@@ 673 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","All-Star Mode",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stars",null,null,0,0,null,null);
+## public static function get eventMenu() : EventMenu
+## why: mods: create Event menu via hostCreateMenu; Discord rich presence: Event Mode
+@@ 680 1 dbd3209afc25fd88 1
++            m_eventMenu = hostCreateMenu(EventMenu,"EventMenu") as EventMenu;
+@@ 682 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Event Mode","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","event",null,null,0,0,null,null);
+## public static function get eventMatchCharacterMenu() : EventMatchCharacterMenu
+## why: mods: create Event CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 689 1 332969656c186efd 1
++            m_eventMatchCharacterMenu = hostCreateMenu(EventMatchCharacterMenu,"EventMatchCharacterMenu",["menu_charselect_event"]) as EventMatchCharacterMenu;
+@@ 692 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Event Mode",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","event",null,null,0,0,null,null);
+## public static function get onlineCharacterMenu() : OnlineCharacterMenu
+## why: mods: create Online CSS via hostCreateMenu (MENU_CREATE hook)
+@@ 699 1 2aed232616f61e0f 1
++            m_onlineCharacterMenu = hostCreateMenu(OnlineCharacterMenu,"OnlineCharacterMenu",["menu_charselect_online"]) as OnlineCharacterMenu;
+## public static function get trainingMenu() : TrainingMenu
+## why: mods: create Training CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 709 1 030af346c0e91b63 1
++            m_trainingMenu = hostCreateMenu(TrainingMenu,"TrainingMenu",["menu_charselect_training"]) as TrainingMenu;
+@@ 712 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Training",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","train",null,null,0,0,null,null);
+## public static function get targetTestMenu() : TargetTestMenu
+## why: mods: create Target Test CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 719 1 b462a556b8ac958f 1
++            m_targetTestMenu = hostCreateMenu(TargetTestMenu,"TargetTestMenu",["menu_charselect_targettest"]) as TargetTestMenu;
+@@ 722 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Break the Targets",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stadium",null,null,0,0,null,null);
+## public static function get homeRunContestMenu() : HomeRunContestMenu
+## why: mods: create Home-Run CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 729 1 d6d5de36d28ff82b 1
++            m_homeRunContestMenu = hostCreateMenu(HomeRunContestMenu,"HomeRunContestMenu",["menu_charselect_hrc"]) as HomeRunContestMenu;
+@@ 732 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Home-Run Contest",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stadium",null,null,0,0,null,null);
+## public static function get arenaCharacterSelectMenu() : ArenaCharacterSelectMenu
+## why: mods: create Arena CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 739 1 0d9fd295cca4bd85 1
++            m_arenaCharacterSelectMenu = hostCreateMenu(ArenaCharacterSelectMenu,"ArenaCharacterSelectMenu",["menu_charselect_arena"]) as ArenaCharacterSelectMenu;
+@@ 742 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Arena",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","arena",null,null,0,0,null,null);
+## public static function get multimanCharacterSelectMenu() : MultiManCharacterSelectMenu
+## why: mods: create Multi-Man CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 749 1 66fa2e53e8681ca1 1
++            m_multimanCharacterSelectMenu = hostCreateMenu(MultiManCharacterSelectMenu,"MultiManCharacterSelectMenu",["menu_charselect_multiman"]) as MultiManCharacterSelectMenu;
+@@ 752 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Multi-Man Smash",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stadium",null,null,0,0,null,null);
+## public static function get multimanMenu() : MultiManMenu
+## why: Discord rich presence: Multi-Man menu
+@@ 761 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Multi-Man Smash","In menus",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stadium",null,null,0,0,null,null);
+## public static function get crystalSmashCharacterMenu() : CrystalSmashCharacterMenu
+## why: mods: create Crystal Smash CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 768 1 b3989f3cbf5f68a5 1
++            m_crystalSmashCharacterMenu = hostCreateMenu(CrystalSmashCharacterMenu,"CrystalSmashCharacterMenu",["menu_charselect_crystal"]) as CrystalSmashCharacterMenu;
+@@ 771 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Crystal Smash",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stadium",null,null,0,0,null,null);
+## public static function get raceToTheFinishCharacterMenu() : RaceToTheFinishCharacterMenu
+## why: mods: create Race to the Finish CSS via hostCreateMenu; Discord rich presence: choosing a character
+@@ 778 1 fa3cd8f652244845 1
++            m_raceToTheFinishCharacterMenu = hostCreateMenu(RaceToTheFinishCharacterMenu,"RaceToTheFinishCharacterMenu",["menu_charselect_rttf"]) as RaceToTheFinishCharacterMenu;
+@@ 781 0 da39a3ee5e6b4b0d 1
++         updateDiscordPresence("Choosing a character","Race to the Finish",getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","stadium",null,null,0,0,null,null);
+## public static function get controlsMenu() : ControlsMenu
+## why: mods: create Controls menu via hostCreateMenu (controller UI hooks)
+@@ 806 1 6861a1a6c79ac3a5 1
++            m_controlsMenu = hostCreateMenu(ControlsMenu,"ControlsMenu") as ControlsMenu;
+## public static function showInitialMenu() : void
+## why: mods: BEFORE_INITIAL_MENU hook lets a mod/direct launch skip the title menu
+@@ 901 0 da39a3ee5e6b4b0d 5
++         var _loc0_:Object = {"cancel":false};
++         if(ModHost.runHook(ModHooks.BEFORE_INITIAL_MENU,_loc0_))
++         {
++            return;
++         }
+## public static function get hitBoxTestMenu() : *
+## why: getters for mod-provided hitbox/palette/costume menus via ModHost doors; paletteUiBlocksCss gates CSS input
+@@ 918 0 da39a3ee5e6b4b0d 44
++      
++      public static function get hitBoxTestMenu() : *
++      {
++         if(!m_hitBoxTestMenu)
++         {
++            m_hitBoxTestMenu = ModHost.door(ModPatches.HITBOX_TEST_MENU,[],null);
++         }
++         return m_hitBoxTestMenu;
++      }
++      
++      public static function get paletteMakerMenu() : *
++      {
++         var _loc1_:Class = null;
++         if(!m_paletteMakerMenu)
++         {
++            _loc1_ = ModHost.door(ModPatches.PALETTE_MENU_CLASS,[],null) as Class;
++            if(Boolean(_loc1_))
++            {
++               m_paletteMakerMenu = new _loc1_();
++            }
++         }
++         return m_paletteMakerMenu;
++      }
++      
++      public static function paletteUiBlocksCss() : Boolean
++      {
++         var _loc1_:Boolean = Boolean(m_costumeSelectorDisplay) && Boolean(m_costumeSelectorDisplay.isOnscreen());
++         var _loc2_:Boolean = Boolean(m_paletteMakerMenu) && Boolean(m_paletteMakerMenu.isOnscreen());
++         return _loc1_ || _loc2_;
++      }
++      
++      public static function get costumeSelectorDisplay() : *
++      {
++         var _loc1_:Class = null;
++         if(!m_costumeSelectorDisplay)
++         {
++            _loc1_ = ModHost.door(ModPatches.PALETTE_COSTUME_SELECTOR_CLASS,[],null) as Class;
++            if(Boolean(_loc1_))
++            {
++               m_costumeSelectorDisplay = new _loc1_();
++            }
++         }
++         return m_costumeSelectorDisplay;
++      }

@@ -1,0 +1,232 @@
+# com/mcleodgaming/ssf2/engine/InteractiveSprite.as
+## class header
+## why: unclear - ModHost import; moves cached Point/Rectangle field initializers into the constructor
+@@ 25 0 da39a3ee5e6b4b0d 11
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.enemies.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.events.*;
++   import com.mcleodgaming.ssf2.items.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.geom.*;
++   import flash.text.*;
+@@ 215 1 aeef83e875a36c71 1
++      private var __locationCached:Point;
+@@ 217 1 42cdc626fe9fb5f7 1
++      private var __boundsRectCached:Rectangle;
+@@ 219 1 6aa99578f6b4293a 1
++      private var __currentScaleCached:Point;
+@@ 221 1 24371dcdd9b62bf8 1
++      private var __attemptToMovePointCache:Point;
+## public function InteractiveSprite(_:MovieClip, _:StageData, _:Boolean = true)
+## why: unclear - initializes the cached Point/Rectangle fields here instead of at declaration
+@@ 225 0 da39a3ee5e6b4b0d 4
++         this.__locationCached = new Point();
++         this.__boundsRectCached = new Rectangle();
++         this.__currentScaleCached = new Point();
++         this.__attemptToMovePointCache = new Point();
+## public static function hitTest(_:InteractiveSprite, _:InteractiveSprite, _:uint, _:uint, _:Function = null, _:HitBoxProcessor = null, _:Boolean = false) : Vector.<HitBoxCollisionResult>
+## why: unclear - caches CurrentAnimation in a local before getHitBoxes, no visible behavior change
+@@ 366 1 4219bf2b083153ad 2
++            anim = mySprite.CurrentAnimation;
++            myHitBoxes = anim.getHitBoxes(mySprite.CurrentFrameNum,myType);
+## protected function buildHitBoxData(_:String, _:Boolean = true) : void
+## why: menu preview: reuse cached hitbox data or an empty manager instead of loading hitboxes
+@@ 947 0 da39a3ee5e6b4b0d 12
++         if(Boolean(this.STAGEDATA) && this.STAGEDATA.IsMenuPreview)
++         {
++            if(Boolean(linkage_id) && HitBoxManager.HitBoxManageList[linkage_id] != null)
++            {
++               this.m_hitBoxManager = HitBoxManager.HitBoxManageList[linkage_id];
++            }
++            else
++            {
++               this.m_hitBoxManager = HitBoxManager.createEmpty(linkage_id);
++            }
++            return;
++         }
+## public function updatePaletteSwap() : void
+## why: custom costumes: deeper recursive replacePalette so nested stance clips recolor
+@@ 1013 1 2cda7da6ed3d2315 1
++            Utils.replacePalette(this.m_sprite.stance,this.m_paletteSwapData,16,true,false);
+## public function setPaletteSwap(_:Object, _:Object) : void
+## why: custom costumes: null-guard charHead; paint health box via overridable getHealthBoxPaletteData
+@@ 1021 1 8367ec958c912e18 1
++         if(Boolean(this.m_healthBoxMC) && Boolean(this.m_healthBoxMC.charHead))
+@@ 1023 1 1315b7ca21cf3600 1
++            Utils.replacePalette(this.m_healthBoxMC.charHead,this.getHealthBoxPaletteData(),12,true,true);
+@@ 1026 0 da39a3ee5e6b4b0d 5
++      }
++      
++      protected function getHealthBoxPaletteData() : Object
++      {
++         return this.m_paletteSwapPAData;
+## public function updateColorFilter(_:DisplayObject, _:int, _:String, _:int = -1) : void
+## why: applyCostumeMcName patch so mods can recolor named costume clips
+@@ 1085 0 da39a3ee5e6b4b0d 1
++         ModHost.applyPatch("applyCostumeMcName",[mc,statsName,colorObj],null);
+## public function attachHealthBox(_:String, _:String, _:String, _:int = -1, _:String = null, _:int = -1) : void
+## why: safe UI icon lookup for expansion thumbnails/series icons + BEFORE_HEALTHBOX_PAINT hook
+@@ 1101 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 1112 1 7fe7a1c4c493df83 1
++         mcLoad = ResourceManager.getSafeUiIconMC(thumbnail);
+@@ 1118 1 ff10b3551c23fc0b 1
++         mcLoad = ResourceManager.getSafeUiIconMC(seriesIcon);
+@@ 1124 1 1315b7ca21cf3600 17
++            _loc0_ = {
++               "cancel":false,
++               "sprite":this,
++               "healthBox":this.m_healthBoxMC,
++               "charHead":this.m_healthBoxMC.charHead,
++               "palette":this.getHealthBoxPaletteData(),
++               "name":name,
++               "thumbnail":thumbnail,
++               "seriesIcon":seriesIcon,
++               "teamID":teamID,
++               "costumeName":costumeName,
++               "costumeIndex":costumeIndex
++            };
++            if(!ModHost.runHook(ModHooks.BEFORE_HEALTHBOX_PAINT,_loc0_))
++            {
++               Utils.replacePalette(this.m_healthBoxMC.charHead,_loc0_.palette != null ? _loc0_.palette : this.getHealthBoxPaletteData(),12,true,true);
++            }
+## public function dealDamage(_:Number) : void
+## why: AFTER_APPLY_DAMAGE hook for mods
+@@ 1243 0 da39a3ee5e6b4b0d 6
++         ModHost.runHook(ModHooks.AFTER_APPLY_DAMAGE,{
++            "cancel":false,
++            "sprite":this,
++            "damage":damage,
++            "totalDamage":this.m_damage
++         });
+## public function setDamage(_:Number) : void
+## why: HUD_UPDATE hook for mods when percent changes
+@@ 1288 0 da39a3ee5e6b4b0d 7
++            ModHost.runHook(ModHooks.HUD_UPDATE,{
++               "cancel":false,
++               "sprite":this,
++               "healthBox":this.m_healthBoxMC,
++               "damage":this.m_damage,
++               "difference":difference
++            });
+## public function startActionShot(_:int, _:int = -1) : void
+## why: BEFORE_HITSTUN hook (mods can cancel or alter hitstun/paralysis)
+@@ 2117 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 2120 0 da39a3ee5e6b4b0d 15
++         }
++         if(hitStun > 0)
++         {
++            _loc0_ = {
++               "cancel":false,
++               "sprite":this,
++               "hitStun":hitStun,
++               "paralysis":paralysis
++            };
++            if(ModHost.runHook(ModHooks.BEFORE_HITSTUN,_loc0_))
++            {
++               return;
++            }
++            hitStun = int(_loc0_.hitStun);
++            paralysis = int(_loc0_.paralysis);
+## public function playFrame(_:String) : void
+## why: tryToGotoAndStop so a missing label in a mod SWF doesn't throw
+@@ 3749 1 d7616cbd96657109 1
++            Utils.tryToGotoAndStop(this.m_sprite,n);
+## public function stancePlayFrame(_:*) : void
+## why: tryToGotoAndStop so a missing label in a mod SWF doesn't throw
+@@ 3764 1 bb8c053377546d42 8
++            if(n is String)
++            {
++               Utils.tryToGotoAndStop(this.m_sprite.stance,String(n));
++            }
++            else
++            {
++               Utils.tryToGotoAndStop(this.m_sprite.stance,n);
++            }
+## public function getNearest(_:String, _:Boolean = true, _:Boolean = true) : InteractiveSprite
+## why: unclear - removes a stray `continue;` left by the decompile
+@@ 3935 1 50085f2733e42aa6 1
++               while(true)
+@@ 3937 2 a899777f17de9a63 1
++                  if(x < this.STAGEDATA.Enemies.length)
+@@ 3940 1 b9b699b8aadef465 2
++                     currTarget = this.STAGEDATA.Enemies[x];
++                     if(!(this.m_targetInterrupt != null && Boolean(this.m_targetInterrupt({"target":currTarget.APIInstance.instance}))))
+@@ 3942 1 14640df014c45b15 1
++                        if(Boolean(currTarget) && Boolean(currTarget != this) && !(this.m_player_id > 0 && currTarget.ID == this.m_player_id))
+@@ 3944 2 d1579670bc987e87 1
++                           if(!(skipSameTeam && (this.m_team_id > 0 && currTarget.Team == this.m_team_id || this.m_player_id === currTarget.ID)) && !(skipOwner && Enemy(currTarget).getOwner() === this))
+@@ 3947 2 4a61453e0ba2d697 6
++                              dis = Number(Utils.getDistanceFrom(this,currTarget));
++                              if(dis < closest)
++                              {
++                                 target = currTarget;
++                                 closest = dis;
++                              }
+@@ 3952 0 da39a3ee5e6b4b0d 1
++                     x++;
+@@ 3953 1 1825e2256abfea0a 0
+## private function augmentEffect(_:MovieClip, _:Object) : void
+## why: unclear - inits parentLock/flipOnX/syncHitStun and drops a duplicate loop=0 (decompile fix)
+@@ 4480 1 769c218752461593 1
++      private function augmentEffect(param1:MovieClip, param2:Object) : void
+@@ 4487 0 da39a3ee5e6b4b0d 8
++         var effect:MovieClip = param1;
++         loopHandler = null;
++         parentLockHandler = null;
++         flipXHandler = null;
++         hitStuncheckHandler = null;
++         parentLock = false;
++         flipOnX = false;
++         syncHitStun = false;
+@@ 4491 4 ee10fdc60fc6b8f4 4
++         loop = param2.loop !== undefined ? int(param2.loop) : loop;
++         parentLock = param2.parentLock !== undefined ? Boolean(param2.parentLock) : parentLock;
++         flipOnX = param2.flipOnX !== undefined ? Boolean(param2.flipOnX) : flipOnX;
++         syncHitStun = param2.syncHitStun !== undefined ? Boolean(param2.syncHitStun) : syncHitStun;
+@@ 4497 1 b8001c34d952eb5e 1
++            loopHandler = function(param1:Event):void
+@@ 4513 1 6006c6d838bf390b 1
++            parentLockHandler = function(param1:Event):void
+@@ 4530 1 3ed553e888200dea 1
++            flipXHandler = function(param1:Event):void
+@@ 4550 1 c68649215a383295 1
++            hitStuncheckHandler = function(param1:Event):void
+## public function applyKnockbackSpeed(_:Number, _:Number) : void
+## why: BEFORE/AFTER_APPLY_KNOCKBACK hooks so mods can alter or cancel knockback
+@@ 4749 0 da39a3ee5e6b4b0d 13
++         var _loc0_:Object = null;
++         _loc0_ = {
++            "cancel":false,
++            "sprite":this,
++            "speed":speed,
++            "angle":angle
++         };
++         if(ModHost.runHook(ModHooks.BEFORE_APPLY_KNOCKBACK,_loc0_))
++         {
++            return;
++         }
++         speed = Number(_loc0_.speed);
++         angle = Number(_loc0_.angle);
+@@ 4752 0 da39a3ee5e6b4b0d 8
++         ModHost.runHook(ModHooks.AFTER_APPLY_KNOCKBACK,{
++            "cancel":false,
++            "sprite":this,
++            "speed":speed,
++            "angle":angle,
++            "xKnockback":this.m_xKnockback,
++            "yKnockback":this.m_yKnockback
++         });
+## public function get IsFrozenInTime() : Boolean
+## why: time stop: base getter (never frozen) overridden by Character/Projectile/Item/Enemy
+@@ 4799 0 da39a3ee5e6b4b0d 5
++      
++      public function get IsFrozenInTime() : Boolean
++      {
++         return false;
++      }

@@ -1,0 +1,38 @@
+# com/mcleodgaming/ssf2/menus/ArenaModeMenu.as
+## class header
+## why: modhost: import ModHost/ModHooks for the hooks below
+@@ 9 0 da39a3ee5e6b4b0d 5
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.events.*;
+## public function ArenaModeMenu()
+## why: rumble: add manageMenuMappings override that rumbles the controller that last navigated
+@@ 30 0 da39a3ee5e6b4b0d 12
++      }
++      
++      override public function manageMenuMappings(param1:Event) : void
++      {
++         super.manageMenuMappings(param1);
++         if(m_lastControllerIndex >= 0)
++         {
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":m_lastControllerIndex
++            });
++         }
+## private function soccer_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 100 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":0
++         });
+## private function basketball_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 117 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":0
++         });

@@ -1,0 +1,292 @@
+# com/mcleodgaming/ssf2/controllers/Chip.as
+## class header
+## why: imports + state for palette-UI input block and CSS undo/redo key latches
+@@ 22 0 da39a3ee5e6b4b0d 10
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.engine.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.menus.*;
++   import com.mcleodgaming.ssf2.modapi.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.geom.*;
++   import flash.text.*;
+@@ 42 0 da39a3ee5e6b4b0d 2
++      private var m_paletteWasBlocking:Boolean;
++      
+@@ 51 0 da39a3ee5e6b4b0d 4
++      
++      private var m_undoKeyLetGo:Boolean;
++      
++      private var m_redoKeyLetGo:Boolean;
+## public function Chip(_:CharacterSelectMenu, _:MovieClip, _:int)
+## why: init palette-block flag and undo/redo key latches
+@@ 89 0 da39a3ee5e6b4b0d 1
++         this.m_paletteWasBlocking = false;
+@@ 94 0 da39a3ee5e6b4b0d 2
++         this.m_undoKeyLetGo = true;
++         this.m_redoKeyLetGo = true;
+## public function incrementExpansionNum() : void
+## why: expansion chars: play the expansion's own announcer when cycling
+@@ 139 0 da39a3ee5e6b4b0d 1
++         this.playExpansionAnnouncer(false);
+## public function decrementExpansionNum() : void
+## why: expansion chars: play the expansion's own announcer when cycling
+@@ 145 0 da39a3ee5e6b4b0d 1
++         this.playExpansionAnnouncer(false);
+## private function checkControls() : void
+## why: custom CSS: taunt/jump fire CSS_SLOT_ACTION undo/redo hook
+@@ 226 0 da39a3ee5e6b4b0d 34
++         if(!this.m_keys.IsDown(this.m_keys._TAUNT))
++         {
++            this.m_undoKeyLetGo = true;
++         }
++         if(!this.m_keys.IsDown(this.m_keys._JUMP))
++         {
++            this.m_redoKeyLetGo = true;
++         }
++         if(Boolean(this.m_undoKeyLetGo) && Boolean(this.m_keys.IsDown(this.m_keys._TAUNT)))
++         {
++            this.m_undoKeyLetGo = false;
++            ModHost.runHook(ModHooks.CSS_SLOT_ACTION,{
++               "action":"undo",
++               "playerIndex":this.m_playerID,
++               "character":this.m_lastHit,
++               "costume":(Boolean(this.m_characterSelectMenu.GameObj) ? this.m_characterSelectMenu.GameObj.PlayerSettings[this.m_playerID - 1].costume : -1),
++               "cancel":false,
++               "menu":this.m_characterSelectMenu,
++               "chip":this
++            });
++         }
++         if(Boolean(this.m_redoKeyLetGo) && Boolean(this.m_keys.IsDown(this.m_keys._JUMP)))
++         {
++            this.m_redoKeyLetGo = false;
++            ModHost.runHook(ModHooks.CSS_SLOT_ACTION,{
++               "action":"redo",
++               "playerIndex":this.m_playerID,
++               "character":this.m_lastHit,
++               "costume":(Boolean(this.m_characterSelectMenu.GameObj) ? this.m_characterSelectMenu.GameObj.PlayerSettings[this.m_playerID - 1].costume : -1),
++               "cancel":false,
++               "menu":this.m_characterSelectMenu,
++               "chip":this
++            });
++         }
+## private function chipCssRoot() : DisplayObjectContainer
+## why: custom CSS layout: null-safe lookup of name display/keypad clips
+@@ 255 0 da39a3ee5e6b4b0d 39
++      private function chipCssRoot() : DisplayObjectContainer
++      {
++         if(!this.m_chip || !this.m_chip.parent)
++         {
++            return null;
++         }
++         return this.m_chip.parent.parent as DisplayObjectContainer;
++      }
++      
++      private function chipPlayerDisplay() : DisplayObjectContainer
++      {
++         var _loc1_:DisplayObjectContainer = this.chipCssRoot();
++         if(!_loc1_)
++         {
++            return null;
++         }
++         return _loc1_["display" + this.m_playerID] as DisplayObjectContainer;
++      }
++      
++      private function chipNameDisplay() : DisplayObjectContainer
++      {
++         var _loc1_:DisplayObjectContainer = this.chipPlayerDisplay();
++         if(!_loc1_)
++         {
++            return null;
++         }
++         return _loc1_["nameDisplay"] as DisplayObjectContainer;
++      }
++      
++      private function chipNameKeyPad() : MovieClip
++      {
++         var _loc1_:DisplayObjectContainer = this.chipNameDisplay();
++         if(!_loc1_)
++         {
++            return null;
++         }
++         return _loc1_["nameKeyPad"] as MovieClip;
++      }
++      
+## private function checkGrab(_:Event) : void
+## why: custom CSS: block chip under palette UI/editor/BEFORE_CHIP_UPDATE; null-safe keypad; name pencil hook
+@@ 257 0 da39a3ee5e6b4b0d 3
++         var nameKeyPad:MovieClip = null;
++         var nameDisplay:DisplayObjectContainer = null;
++         var pencilCtx:Object = null;
+@@ 260 1 56b5afe063bc272a 34
++         if(MenuController.paletteUiBlocksCss())
++         {
++            this.m_paletteWasBlocking = true;
++            this.m_keyLetGo = false;
++            this.m_key2LetGo = false;
++            return;
++         }
++         if(this.m_paletteWasBlocking)
++         {
++            this.m_paletteWasBlocking = false;
++            this.m_keyLetGo = false;
++            this.m_key2LetGo = false;
++         }
++         j = 0;
++         nameKeyPad = null;
++         nameDisplay = null;
++         pencilCtx = null;
++         if(ModHost.getSessionFlag("css.blockLevel"))
++         {
++            this.m_keyLetGo = false;
++            return;
++         }
++         if(ModHost.runHook(ModHooks.BEFORE_CHIP_UPDATE,{
++            "cancel":false,
++            "playerId":this.m_playerID,
++            "chip":this,
++            "menu":this.m_characterSelectMenu
++         }))
++         {
++            this.m_hand_xSpeed = 0;
++            this.m_hand_ySpeed = 0;
++            return;
++         }
++         if(!(MenuController.rulesMenu && MenuController.rulesMenu.isOnscreen()) && !(MenuController.controlsMenu && MenuController.controlsMenu.isOnscreen()) && !MenuController.paletteUiBlocksCss())
+@@ 286 1 72e9a35b0ab2e646 3
++            nameKeyPad = this.chipNameKeyPad();
++            nameDisplay = this.chipNameDisplay();
++            if(Boolean(this.m_key2LetGo) && Boolean(this.m_chip.visible) && this.m_grabbedChip == null && !this.m_held && !this.m_pressed && Boolean(this.m_hand.visible) && Boolean(this.m_keys.IsDown(this.m_keys._BUTTON1)) && this.m_hand.y >= this.m_chipBoundary.y && (!nameKeyPad || !nameKeyPad.visible))
+@@ 335 1 fab2ecbeec82d35b 1
++               if(Boolean(nameKeyPad) && nameKeyPad.visible)
+@@ 340 2 8090f00e8de9b90c 2
++                     tmpField = nameDisplay ? nameDisplay["nameTxt"] as TextField : null;
++                     if(Boolean(tmpField) && tmpField.length > 0)
+@@ 345 1 9f87c9070e51db96 1
++                     else if(nameKeyPad["btn_done"])
+@@ 347 1 5fd2ef59be592e00 1
++                        DisplayObject(nameKeyPad["btn_done"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 356 1 a20f5b3fab390b8d 1
++                  if(Boolean(nameKeyPad) && nameKeyPad.visible)
+@@ 358 1 1bbf14c781cd9149 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_abc"])))
+@@ 361 1 06c187401269b084 1
++                        DisplayObject(nameKeyPad["btn_abc"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 363 1 1bbf14c781cd9149 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_abc"])))
+@@ 366 1 06c187401269b084 1
++                        DisplayObject(nameKeyPad["btn_abc"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 368 1 f112eff70fbcecd3 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_def"])))
+@@ 371 1 f328244746f73d1a 1
++                        DisplayObject(nameKeyPad["btn_def"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 373 1 611171125f06953f 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_ghi"])))
+@@ 376 1 ff62cf8041cb869c 1
++                        DisplayObject(nameKeyPad["btn_ghi"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 378 1 3ce4f34a67e8d1db 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_jkl"])))
+@@ 381 1 22513e35a35c20eb 1
++                        DisplayObject(nameKeyPad["btn_jkl"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 383 1 3a506e5bf9a2810d 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_mno"])))
+@@ 386 1 256c02fb9d28d777 1
++                        DisplayObject(nameKeyPad["btn_mno"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 388 1 2ebbc8c474fda3d9 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_pqrs"])))
+@@ 391 1 618b890a82ae7ad2 1
++                        DisplayObject(nameKeyPad["btn_pqrs"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 393 1 d7776cc1b44ceded 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_tuv"])))
+@@ 396 1 3964b8cb647b080a 1
++                        DisplayObject(nameKeyPad["btn_tuv"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 398 1 6f4e6344069d36d2 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_wxyz"])))
+@@ 401 1 dd4e7f2950461d95 1
++                        DisplayObject(nameKeyPad["btn_wxyz"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 403 1 dc77dd92a8dab2bb 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_misc"])))
+@@ 406 1 db9526d8250d4171 1
++                        DisplayObject(nameKeyPad["btn_misc"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 408 1 041798cdd488359b 1
++                     if(Boolean(this.m_keyLetGo) && Boolean(this.checkBoundsKeypad(nameKeyPad["btn_done"])))
+@@ 411 1 5fd2ef59be592e00 1
++                        DisplayObject(nameKeyPad["btn_done"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+@@ 414 1 f68fb024128763ae 1
++                  else if(Boolean(nameDisplay) && Boolean(this.m_keyLetGo) && Boolean(nameDisplay["btn_keypad"]) && Boolean(this.m_hand.hitBox.hitTestObject(nameDisplay["btn_keypad"])))
+@@ 417 1 bda42f281f8fbe57 11
++                     pencilCtx = {
++                        "cancel":false,
++                        "playerId":this.m_playerID,
++                        "chip":this,
++                        "menu":this.m_characterSelectMenu,
++                        "button":nameDisplay["btn_keypad"]
++                     };
++                     if(!ModHost.runHook(ModHooks.CSS_NAME_PENCIL,pencilCtx))
++                     {
++                        DisplayObject(nameDisplay["btn_keypad"]).dispatchEvent(new MouseEvent(MouseEvent.CLICK));
++                     }
+@@ 549 0 da39a3ee5e6b4b0d 4
++               if(ModHost.getSessionFlag("css_editor.editing"))
++               {
++                  j = this.m_characterSelectMenu.GameObj.PlayerSettings.length + 1;
++               }
+@@ 566 1 5a18702fd615a7c2 1
++                  if(Boolean(this.m_keyLetGo) && !ModHost.getSessionFlag("css.blockLevel") && Boolean(this.m_characterSelectMenu) && Boolean(this.m_characterSelectMenu.GameObj) && Boolean(this.m_characterSelectMenu.GameObj.PlayerSettings) && j >= 1 && j <= this.m_characterSelectMenu.GameObj.PlayerSettings.length && Boolean(this.m_characterSelectMenu.GameObj.PlayerSettings[j - 1]) && Boolean(this.m_chip.parent.parent["display" + j]["levelDisplay"]) && Boolean(this.m_chip.parent.parent["display" + j]["levelDisplay"].visible) && Boolean(this.m_hand.hitBox.hitTestObject(this.m_chip.parent.parent["display" + j]["levelDisplay"])))
+@@ 569 1 06d499c29d268049 8
++                     try
++                     {
++                        this.m_characterSelectMenu.incLevel(j);
++                     }
++                     catch(incErr:*)
++                     {
++                        GameLog.write("[css] level-hit swallowed " + incErr);
++                     }
+@@ 579 1 f278edfdc97e995e 1
++                     this.m_chip.parent.parent["display" + j].charPortrait.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+## private function press(_:MouseEvent) : void
+## why: ModHost hook CHIP_SELECT when a chip is picked up
+@@ 596 0 da39a3ee5e6b4b0d 5
++            ModHost.runHook(ModHooks.CHIP_SELECT,{
++               "chip":this,
++               "playerId":this.m_playerID,
++               "menu":this.m_characterSelectMenu
++            });
+## public function checkCollision() : void
+## why: CSS editor: skip hits; expansion chars in roster slots (no cxp box); menu rumble
+@@ 605 0 da39a3ee5e6b4b0d 4
++         if(ModHost.getSessionFlag("css_editor.editing"))
++         {
++            return;
++         }
+@@ 614 1 39a0cfe5c718cb89 1
++            if(i !== "cxp" && i !== "xp" && Boolean(this.checkBounds(this.m_characterSelectMenu.CharMCHash[i])))
+@@ 619 1 1dbfb0a028a5528b 1
++                  this.m_characterSelectMenu.setPlayer(this.m_playerID,this.m_lastHit,-1);
+@@ 624 0 da39a3ee5e6b4b0d 4
++                  ModHost.runHook(ModHooks.RUMBLE,{
++                     "kind":"menu",
++                     "controllerIndex":this.m_playerID - 1
++                  });
+@@ 631 17 cb7f9631b3cfa76e 2
++            this.m_characterSelectMenu.setPlayer(this.m_playerID,null);
++            this.m_lastHit = null;
+## private function sayCharacter(_:String) : void
+## why: expansion chars: announcer helper using the pack's announcer id
+@@ 780 0 da39a3ee5e6b4b0d 14
++         SoundQueue.instance.playVoiceEffect("taunt_" + charName);
++      }
++      
++      private function playExpansionAnnouncer(param1:Boolean) : void
++      {
++         var _loc2_:String = null;
++         var _loc3_:String = null;
++         if(param1)
++         {
++            SoundQueue.instance.playSoundEffect("menu_charselect");
++         }
++         _loc2_ = Stats.resolveExpansionStatsName(this.m_expansionNum);
++         _loc3_ = ResourceManager.getExpansionAnnouncerId(_loc2_);
++         SoundQueue.instance.playVoiceEffect(Boolean(_loc3_) ? _loc3_ : "narrator_expansion");

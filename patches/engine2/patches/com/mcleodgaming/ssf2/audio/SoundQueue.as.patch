@@ -1,0 +1,291 @@
+# com/mcleodgaming/ssf2/audio/SoundQueue.as
+## class header
+## why: ModHost import + fade-out state for music fade
+@@ 7 1 c7570dde85fbc2c1 5
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.events.*;
++   import flash.media.*;
++   import flash.utils.Timer;
++
+@@ 41 0 da39a3ee5e6b4b0d 14
++      private var m_fadeOutEnabled:Boolean;
++      
++      private var m_fadeOutStartTime:Number;
++      
++      private var m_fadeOutDuration:Number;
++      
++      private var m_fadeOutStartVolume:Number;
++      
++      private var m_songEndTime:Number;
++      
++      private var m_fadeTimer:Timer;
++      
++      private var m_fadeSteps:int;
++      
+## public function SoundQueue()
+## why: init music fade-out state
+@@ 58 0 da39a3ee5e6b4b0d 7
++         this.m_fadeOutEnabled = false;
++         this.m_fadeOutStartTime = 0;
++         this.m_fadeOutDuration = 0;
++         this.m_fadeOutStartVolume = 0;
++         this.m_songEndTime = 0;
++         this.m_fadeTimer = null;
++         this.m_fadeSteps = 0;
+## public function playMusic(_:String, _:Number) : void
+## why: PLAY_MUSIC patch point so mods/menu playlist can override music
+@@ 170 3 8000df862b86c9e9 14
++         ModHost.applyPatch(ModPatches.PLAY_MUSIC,[soundName,loopLoc],this.playMusicStock);
++      }
++      
++      public function playMusicStock(param1:String, param2:Number) : void
++      {
++         var _loc3_:Array = null;
++         var _loc4_:* = undefined;
++         var _loc5_:Boolean = false;
++         ModHost.runHook(ModHooks.MUSIC_START,{
++            "soundName":param1,
++            "loopLoc":param2,
++            "cancel":false
++         });
++         if(!param1)
+## public function playMusicStock(_:String, _:Number) : void
+## why: MUSIC_START hook; hoist duplicate _loc5_ decl; cancel pending fade on new song
+@@ 177 1 4007849e65655cb2 1
++         if(param1 === "menumusic")
+@@ 181 1 b2cb991b9e4b24c5 1
++               param1 = this.m_currentSongID;
+@@ 185 2 19c3755b73781108 2
++               _loc3_ = ["menumusic1","menumusic2","meleemenu2"];
++               param1 = "menumusic1";
+@@ 190 2 048beec02bda253d 2
++                  param1 = _loc3_[Utils.safeRandomInteger(0,2)];
++                  if(param1 === "meleemenu2")
+@@ 198 2 2848181cf867640a 1
++         if(param1.indexOf(".ogg|") == 0)
+@@ 201 1 b3911b520bb9a2d9 1
++            _loc5_ = true;
+@@ 203 1 cf1cb472e3345a18 1
++         if(param1 == this.m_currentSongID)
+@@ 207 1 196712b396268608 1
++         this.m_loopLocation = param2;
+@@ 212 1 06c2195e3473b961 2
++         this.m_fadeOutEnabled = false;
++         if(param1 != null)
+@@ 214 2 9309dbf5eab8f0ad 2
++            _loc4_ = null;
++            if(_loc5_)
+@@ 217 1 a1432c4d42c678ba 1
++               _loc4_ = new (ResourceManager.getLibraryClass(param1.substr(5)))();
+@@ 222 1 42b509b9e14f4715 1
++               _loc4_ = ResourceManager.getLibrarySound(param1);
+@@ 225 1 18b26ab39adae2e1 1
++            if(_loc4_ != null)
+@@ 229 1 a8bfae6207efe449 1
++                  this.m_currentSong = _loc4_.play(0,0,new SoundTransform(this.m_musicIsMuted ? 0 : Number(SaveData.BGVolumeLevel)));
+@@ 232 1 7d666ba39f8f467b 1
++                     this.m_currentSongID = param1;
+## public function stopMusic() : void
+## why: MUSIC_STOP hook; adds playMusicWithFadeOut/startImmediateFadeOut music fades
+@@ 285 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.MUSIC_STOP,{
++            "songId":this.m_currentSongID,
++            "cancel":false
++         });
+@@ 299 0 da39a3ee5e6b4b0d 158
++         this.m_fadeOutEnabled = false;
++         this.stopFadeTimer();
++      }
++      
++      public function playMusicWithFadeOut(param1:String, param2:Number, param3:Number = 2000) : void
++      {
++         var _loc4_:* = undefined;
++         var _loc5_:Boolean = false;
++         if(!param1)
++         {
++            this.stopMusic();
++            return;
++         }
++         if(param1.indexOf(".ogg|") == 0)
++         {
++            _loc5_ = true;
++         }
++         if(param1 == this.m_currentSongID)
++         {
++            return;
++         }
++         this.m_loopLocation = -1;
++         if(this.m_musicIsPlaying)
++         {
++            this.stopMusic();
++         }
++         if(param1 != null)
++         {
++            _loc4_ = null;
++            if(_loc5_)
++            {
++               _loc4_ = new (ResourceManager.getLibraryClass(param1.substr(5)))();
++               this.m_musicIsOgg = true;
++            }
++            else
++            {
++               _loc4_ = ResourceManager.getLibrarySound(param1);
++               this.m_musicIsOgg = false;
++            }
++            if(_loc4_ != null)
++            {
++               if(!this.m_musicIsOgg)
++               {
++                  this.m_currentSong = _loc4_.play(0,0,new SoundTransform(this.m_musicIsMuted ? 0 : Number(SaveData.BGVolumeLevel)));
++                  if(this.m_currentSong != null)
++                  {
++                     this.m_currentSongID = param1;
++                     this.m_currentSong.addEventListener(Event.SOUND_COMPLETE,this.stopMusic);
++                     this.m_musicIsPlaying = true;
++                     this.m_songEndTime = param2;
++                     this.m_fadeOutDuration = param3;
++                     this.m_fadeOutStartTime = param2 - param3;
++                     this.m_fadeOutStartVolume = this.m_musicIsMuted ? 0 : Number(SaveData.BGVolumeLevel);
++                     this.m_fadeOutEnabled = true;
++                     this.startFadeOutTimer();
++                  }
++               }
++            }
++         }
++      }
++      
++      public function startImmediateFadeOut(param1:Number = 2000) : void
++      {
++         ModHost.runHook(ModHooks.MUSIC_FADE,{
++            "fadeDurationMs":param1,
++            "cancel":false
++         });
++         if(!this.m_musicIsPlaying || !this.m_currentSong)
++         {
++            return;
++         }
++         this.stopFadeTimer();
++         this.m_fadeOutDuration = param1;
++         this.m_fadeOutStartTime = this.m_currentSong.position;
++         this.m_fadeOutStartVolume = this.m_musicIsMuted ? 0 : Number(SaveData.BGVolumeLevel);
++         this.m_songEndTime = this.m_currentSong.position + param1;
++         this.m_fadeOutEnabled = true;
++         this.m_fadeSteps = 0;
++         var _loc2_:int = 50;
++         this.m_fadeTimer = new Timer(_loc2_,Math.ceil(param1 / _loc2_));
++         this.m_fadeTimer.addEventListener(TimerEvent.TIMER,this.onFadeTimerTick);
++         this.m_fadeTimer.addEventListener(TimerEvent.TIMER_COMPLETE,this.onFadeComplete);
++         this.m_fadeTimer.start();
++      }
++      
++      private function startFadeOutTimer() : void
++      {
++         if(Boolean(this.m_fadeTimer))
++         {
++            this.m_fadeTimer.stop();
++            this.m_fadeTimer.removeEventListener(TimerEvent.TIMER,this.onFadeTimerTick);
++            this.m_fadeTimer = null;
++         }
++         var _loc1_:Number = Number(this.m_fadeOutStartTime);
++         var _loc2_:Timer = new Timer(_loc1_,1);
++         _loc2_.addEventListener(TimerEvent.TIMER_COMPLETE,this.onFadeStart);
++         _loc2_.start();
++      }
++      
++      private function onFadeStart(param1:TimerEvent) : void
++      {
++         param1.target.removeEventListener(TimerEvent.TIMER_COMPLETE,this.onFadeStart);
++         if(!this.m_fadeOutEnabled || !this.m_musicIsPlaying)
++         {
++            return;
++         }
++         this.m_fadeSteps = 0;
++         var _loc2_:int = 50;
++         this.m_fadeTimer = new Timer(_loc2_,Math.ceil(this.m_fadeOutDuration / _loc2_));
++         this.m_fadeTimer.addEventListener(TimerEvent.TIMER,this.onFadeTimerTick);
++         this.m_fadeTimer.addEventListener(TimerEvent.TIMER_COMPLETE,this.onFadeComplete);
++         this.m_fadeTimer.start();
++      }
++      
++      private function onFadeTimerTick(param1:TimerEvent) : void
++      {
++         var _loc2_:Number = Number(NaN);
++         var _loc3_:Number = Number(NaN);
++         var _loc4_:Number = Number(NaN);
++         if(!this.m_fadeOutEnabled || !this.m_musicIsPlaying)
++         {
++            this.stopFadeTimer();
++            return;
++         }
++         if(Boolean(this.m_currentSong))
++         {
++            _loc2_ = Number(this.m_currentSong.position);
++            if(_loc2_ >= this.m_fadeOutStartTime)
++            {
++               _loc3_ = (_loc2_ - this.m_fadeOutStartTime) / this.m_fadeOutDuration;
++               _loc3_ = Math.min(_loc3_,1);
++               _loc4_ = this.m_fadeOutStartVolume * (1 - _loc3_);
++               if(!this.m_musicIsMuted)
++               {
++                  this.setMusicVolume(_loc4_);
++               }
++            }
++         }
++      }
++      
++      private function onFadeComplete(param1:TimerEvent) : void
++      {
++         this.stopFadeTimer();
++         if(this.m_musicIsPlaying)
++         {
++            this.stopMusic();
++         }
++      }
++      
++      private function stopFadeTimer() : void
++      {
++         if(Boolean(this.m_fadeTimer))
++         {
++            this.m_fadeTimer.stop();
++            this.m_fadeTimer.removeEventListener(TimerEvent.TIMER,this.onFadeTimerTick);
++            this.m_fadeTimer.removeEventListener(TimerEvent.TIMER_COMPLETE,this.onFadeComplete);
++            this.m_fadeTimer = null;
++         }
+## public function playSoundEffect(_:String, _:Number = 1) : int
+## why: PLAY_EFFECT patch point so mods can override sound effects
+@@ 302 0 da39a3ee5e6b4b0d 5
++      {
++         return int(ModHost.applyPatch(ModPatches.PLAY_EFFECT,[sound,scaleVolume],this.playSoundEffectStock));
++      }
++      
++      public function playSoundEffectStock(sound:String, scaleVolume:Number = 1) : int
+## public function playPitchShiftedEffect(_:String, _:Number = 1, _:Number = 1) : Boolean
+## why: unclear - no-op pitch-shift stubs + isFadeOutEnabled getter
+@@ 486 0 da39a3ee5e6b4b0d 27
++      
++      public function playPitchShiftedEffect(param1:String, param2:Number = 1, param3:Number = 1) : Boolean
++      {
++         return false;
++      }
++      
++      public function updatePitchShift(param1:Number) : void
++      {
++      }
++      
++      public function updatePitchShiftVolume(param1:Number) : void
++      {
++      }
++      
++      public function stopPitchShiftedEffect() : void
++      {
++      }
++      
++      public function isPitchShiftedEffectPlaying() : Boolean
++      {
++         return false;
++      }
++      
++      public function isFadeOutEnabled() : Boolean
++      {
++         return this.m_fadeOutEnabled;
++      }

@@ -1,0 +1,14 @@
+# com/mcleodgaming/ssf2/platforms/Platform.as
+## class header
+## why: ModHost import for the hook below
+@@ 6 0 da39a3ee5e6b4b0d 3
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.geom.*;
+## override public function PERFORMALL() : void
+## why: ModHost hook so mods can run per-frame platform logic
+@@ 254 0 da39a3ee5e6b4b0d 4
++         if(ModHost.hasHook(ModHooks.PLATFORM_STEP))
++         {
++            ModHost.runHook(ModHooks.PLATFORM_STEP,{"platform":this});
++         }

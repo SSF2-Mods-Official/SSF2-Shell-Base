@@ -1,0 +1,21 @@
+# com/mcleodgaming/ssf2/controllers/Game.as
+## class header
+## why: ModHost import for the hooks below
+@@ 8 0 da39a3ee5e6b4b0d 2
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
+## public function Game(_:int = -1, _:uint = 0)
+## why: ModHost hook GAME_CREATE so mods can see new games
+@@ 51 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.GAME_CREATE,{
++            "game":this,
++            "gameMode":gameMode,
++            "playerLimit":playerLimit
++         });
+## public function get DamageRatio() : Number
+## why: CALC_DAMAGE_RATIO patch point so mods can change damage ratio
+@@ 242 1 a166fa4b5c4fc32a 4
++         return Number(ModHost.applyPatch(ModPatches.CALC_DAMAGE_RATIO,[this.m_levelData.damageRatio],function(param1:Number):Number
++         {
++            return param1 as Number;
++         }));

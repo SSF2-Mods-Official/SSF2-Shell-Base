@@ -1,0 +1,26 @@
+# com/mcleodgaming/ssf2/modes/CustomMode.as
+## class header
+## why: ModHost import for pendingStageOverride
+@@ 14 0 da39a3ee5e6b4b0d 7
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.menus.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import com.mcleodgaming.ssf2.util.*;
+## public function startMatch(_:CustomMatch) : void
+## why: ModHost stage override; queue expansion character resources; flush unused on load
+@@ 87 0 da39a3ee5e6b4b0d 5
++         if(Boolean(ModHost.pendingStageOverride) && ModHost.pendingStageOverride.length > 0)
++         {
++            this.m_currentGame.LevelData.stage = ModHost.pendingStageOverride;
++            ModHost.pendingStageOverride = "";
++         }
+@@ 107 4 9d777677e551f628 1
++            ResourceManager.queuePlayerCharacterResource(this.m_currentGame.PlayerSettings[i],i);
+@@ 113 1 c1f2a3eb3d597a5a 4
++         ResourceManager.load({
++            "oncomplete":this.startCustomMatch,
++            "flushUnused":true
++         });

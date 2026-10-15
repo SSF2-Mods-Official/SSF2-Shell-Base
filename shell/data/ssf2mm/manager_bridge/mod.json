@@ -1,0 +1,9 @@
+{
+	"id": "manager_bridge",
+	"name": "Manager Bridge",
+	"description": "Link to SSF2 Mod Manager and the SSF2 Stream extension: launch.json deep links, instant match, and the game.log bridge.",
+	"version": "2.0.0",
+	"lifetime": "boot",
+	"entryClass": "ManagerBridgeMod",
+	"enabledByDefault": true
+}

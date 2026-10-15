@@ -1,0 +1,520 @@
+# com/mcleodgaming/ssf2/api/SSF2API.as
+## class header
+## why: ModHost import + menu preview state
+@@ 27 0 da39a3ee5e6b4b0d 11
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.audio.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.enemies.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.items.*;
++   import com.mcleodgaming.ssf2.menus.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.display.*;
++   import flash.geom.*;
+@@ 32 0 da39a3ee5e6b4b0d 2
++      
++      private static var _menuPreview:Object;
+## public static function deinit() : void
+## why: menu preview: enable/disable with stub camera and stage for character scripts
+@@ 53 1 cf53903569af5bd7 126
++      }
++      
++      public static function enableMenuPreview(param1:Object = null) : void
++      {
++         _menuPreview = param1 || {};
++         if(_menuPreview.camera == null)
++         {
++            _menuPreview.camera = createMenuPreviewCamera();
++         }
++         if(_menuPreview.stage == null)
++         {
++            _menuPreview.stage = createMenuPreviewStageStub();
++         }
++      }
++      
++      public static function disableMenuPreview() : void
++      {
++         _menuPreview = null;
++      }
++      
++      private static function createMenuPreviewStageStub() : Object
++      {
++         var mid:MovieClip = null;
++         var fg:MovieClip = null;
++         var bg:MovieClip = null;
++         mid = null;
++         fg = null;
++         bg = null;
++         mid = new MovieClip();
++         fg = new MovieClip();
++         bg = new MovieClip();
++         var emptyArr:Function = function(... rest):Array
++         {
++            return [];
++         };
++         var pickMid:Function = function():MovieClip
++         {
++            if(Boolean(_api) && Boolean(_api.IsMenuPreview) && Boolean(_api.StageRef))
++            {
++               return _api.StageRef as MovieClip;
++            }
++            return mid;
++         };
++         var pickFg:Function = function():MovieClip
++         {
++            if(Boolean(_api) && Boolean(_api.IsMenuPreview) && Boolean(_api.StageFG))
++            {
++               return _api.StageFG as MovieClip;
++            }
++            return fg;
++         };
++         var pickBg:Function = function():MovieClip
++         {
++            if(Boolean(_api) && Boolean(_api.IsMenuPreview) && Boolean(_api.StageBG))
++            {
++               return _api.StageBG as MovieClip;
++            }
++            return bg;
++         };
++         return {
++            "getMidground":pickMid,
++            "getForeground":pickFg,
++            "getBackground":pickBg,
++            "getCameraBackgrounds":emptyArr,
++            "getWeatherMC":function():MovieClip
++            {
++               return new MovieClip();
++            }
++         };
++      }
++      
++      private static function createMenuPreviewCamera() : Object
++      {
++         var camMC:MovieClip = null;
++         camMC = null;
++         camMC = new MovieClip();
++         var holder:MovieClip = new MovieClip();
++         var noop:Function = function(... rest):*
++         {
++            return undefined;
++         };
++         var zero:Function = function(... rest):*
++         {
++            return 0;
++         };
++         holder.addChild(camMC);
++         return {
++            "shake":noop,
++            "darken":noop,
++            "killDarkener":noop,
++            "lightFlash":noop,
++            "maxZoomOut":noop,
++            "targetCenterStage":noop,
++            "forceTarget":noop,
++            "forceInBounds":noop,
++            "addTarget":noop,
++            "deleteTarget":noop,
++            "addTimedTarget":noop,
++            "deleteTimedTarget":noop,
++            "addTimedTargetPoint":noop,
++            "deleteTimedTargetPoint":noop,
++            "addForcedTarget":noop,
++            "deleteForcedTarget":noop,
++            "setStageFocus":noop,
++            "removeStageFocus":noop,
++            "updateCameraParameters":noop,
++            "getCameraParameter":zero,
++            "getTopLeftPoint":function():Point
++            {
++               return new Point();
++            },
++            "getMC":function():MovieClip
++            {
++               return camMC;
++            },
++            "getMode":zero,
++            "setMode":noop,
++            "instance":null,
++            "owner":null,
++            "X":0,
++            "Y":0,
++            "Width":Main.Width,
++            "Height":Main.Height,
++            "CornerX":0,
++            "CornerY":0
++         };
+## public static function getCharacter(_:*) : *
+## why: menu preview support; resolve a character from nested clips via parent chain
+@@ 117 0 da39a3ee5e6b4b0d 1
++         var _loc0_:DisplayObject = null;
+@@ 118 1 0612b330549ba675 1
++         if(!isApiLive())
+@@ 128 1 905b491a866fc34c 2
++            _loc0_ = subject_mc;
++            while(Boolean(_loc0_) && id < 0)
+@@ 130 1 583c92c4102d3fa1 9
++               if(_loc0_ is MovieClip)
++               {
++                  if(MovieClip(_loc0_).uid != undefined)
++                  {
++                     id = int(MovieClip(_loc0_).uid);
++                     break;
++                  }
++               }
++               _loc0_ = _loc0_.parent;
+@@ 132 5 69dd740429c009dc 1
++            if(id < 0)
+@@ 139 0 da39a3ee5e6b4b0d 20
++               if(!instance)
++               {
++                  instance = _api.getPlayerByMC(subject_mc);
++               }
++               if(!instance)
++               {
++                  _loc0_ = subject_mc.parent;
++                  while(Boolean(_loc0_) && !instance)
++                  {
++                     if(_loc0_ is MovieClip)
++                     {
++                        instance = _api.getCharacterByMC(MovieClip(_loc0_));
++                        if(!instance)
++                        {
++                           instance = _api.getPlayerByMC(MovieClip(_loc0_));
++                        }
++                     }
++                     _loc0_ = _loc0_.parent;
++                  }
++               }
+@@ 161 1 7123377a51bd9a2e 1
++         return Boolean(gameObject) ? gameObject.instance || gameObject : null;
+## public static function getStage() : *
+## why: menu preview: return stub stage; null-safe outside a match
+@@ 463 1 0612b330549ba675 1
++         try
+@@ 465 0 da39a3ee5e6b4b0d 28
++            if(Boolean(_api) && Boolean(_api.IsMenuPreview))
++            {
++               if(Boolean(_api.APIInstance) && Boolean(_api.APIInstance.instance))
++               {
++                  return _api.APIInstance.instance;
++               }
++               if(!_menuPreview || !_menuPreview.stage)
++               {
++                  enableMenuPreview(null);
++               }
++               return _menuPreview.stage;
++            }
++            if(!isReady())
++            {
++               return null;
++            }
++            if(!_api || !_api.APIInstance)
++            {
++               return null;
++            }
++            return _api.APIInstance.instance;
++         }
++         catch(err:*)
++         {
++            if(Boolean(_menuPreview) && Boolean(_menuPreview.stage))
++            {
++               return _menuPreview.stage;
++            }
+@@ 467 1 cf4246a3cdaddabe 0
+## public static function print(_:String) : void
+## why: mod print also goes to game.log; console errors swallowed
+@@ 657 1 95d916ed85eb6007 14
++            try
++            {
++               MenuController.debugConsole.writeTextData(text);
++            }
++            catch(dbgErr:*)
++            {
++            }
++         }
++         try
++         {
++            ModHost.appendGameLog(text);
++         }
++         catch(logErr:*)
++         {
+## public static function stopSound(_:int) : void
+## why: null-safe SoundQueue (menu preview / teardown)
+@@ 721 1 a66e6e787f431549 10
++         try
++         {
++            if(Boolean(SoundQueue.instance))
++            {
++               SoundQueue.instance.stopSound(id);
++            }
++         }
++         catch(err:*)
++         {
++         }
+## public static function matchGo() : void
+## why: menu preview: no-op so preview scripts can't start a match
+@@ 735 1 0612b330549ba675 1
++         if(!isReady() || Boolean(_api) && Boolean(_api.IsMenuPreview))
+## public static function matchGoComplete() : void
+## why: menu preview: no-op so preview scripts can't start a match
+@@ 751 1 0612b330549ba675 1
++         if(!isReady() || Boolean(_api) && Boolean(_api.IsMenuPreview))
+## public static function attachEffect(_:*, _:Object = null) : MovieClip
+## why: menu preview: effects work without a match and never return null
+@@ 812 1 34d085375dac656b 11
++         var _loc0_:MovieClip = null;
++         if(Boolean(_api) && (Boolean(_api.ActiveScripts) || Boolean(_api.IsMenuPreview)))
++         {
++            _loc0_ = _api.attachEffect(id,options) as MovieClip;
++            return _loc0_ || new MovieClip();
++         }
++         if(Boolean(_menuPreview) && _menuPreview.attachEffect is Function)
++         {
++            return _menuPreview.attachEffect(id,options) as MovieClip || new MovieClip();
++         }
++         return new MovieClip();
+## public static function attachEffectOverlay(_:*, _:Object = null) : MovieClip
+## why: menu preview: overlay effects work without a match and never return null
+@@ 817 1 292f290ae5783e63 15
++         var _loc0_:MovieClip = null;
++         if(Boolean(_api) && (Boolean(_api.ActiveScripts) || Boolean(_api.IsMenuPreview)))
++         {
++            _loc0_ = _api.attachEffectOverlay(id,options) as MovieClip;
++            return _loc0_ || new MovieClip();
++         }
++         if(Boolean(_menuPreview) && _menuPreview.attachEffectOverlay is Function)
++         {
++            return _menuPreview.attachEffectOverlay(id,options) as MovieClip || new MovieClip();
++         }
++         if(Boolean(_menuPreview) && _menuPreview.attachEffect is Function)
++         {
++            return _menuPreview.attachEffect(id,options) as MovieClip || new MovieClip();
++         }
++         return new MovieClip();
+## public static function spawnAssist(_:Class, _:* = null) : *
+## why: API_SPAWN_ASSIST patch point; null-safe owner
+@@ 877 1 e8a1c96bd175a34a 1
++      public static function spawnAssist(param1:Class, param2:* = null) : *
+@@ 879 0 da39a3ee5e6b4b0d 2
++         var cls:Class = param1;
++         var owner:* = param2;
+@@ 887 1 79c67a68aa9e27fc 4
++         return ModHost.applyPatch(ModPatches.API_SPAWN_ASSIST,[cls,owner],function(param1:Class, param2:* = null):*
++         {
++            return _api.spawnAssistAPI(param1,Boolean(param2) ? param2.$ext.getAPI().owner : null).APIInstance.instance;
++         });
+## public static function spawnCharacter(_:Class) : *
+## why: API_SPAWN_CHARACTER patch point for mods
+@@ 909 1 913d7c198162a443 6
++         return ModHost.applyPatch(ModPatches.API_SPAWN_CHARACTER,[character],spawnCharacterStock);
++      }
++      
++      private static function spawnCharacterStock(param1:Class) : *
++      {
++         return _api.spawnCharacterAPI(param1).APIInstance.instance;
+## public static function spawnEnemy(_:*) : *
+## why: API_SPAWN_ENEMY patch point for mods
+@@ 914 2 236e441db8e59bf6 0
+@@ 920 1 8147cb4abfa449ea 8
++         return ModHost.applyPatch(ModPatches.API_SPAWN_ENEMY,[enemy],spawnEnemyStock);
++      }
++      
++      private static function spawnEnemyStock(param1:*) : *
++      {
++         var _loc2_:Array = null;
++         var _loc3_:int = 0;
++         if(param1 is Class)
+## private static function spawnEnemyStock(_:*) : *
+## why: API_SPAWN_ENEMY: vanilla spawnEnemy kept as spawnEnemyStock for mods to fall back to
+@@ 922 1 6d1db3a523f2500e 1
++            return _api.spawnEnemyAPI(param1).APIInstance.instance;
+@@ 924 1 09e8a81c4a069a4f 1
++         if(param1 is String)
+@@ 926 2 72577a6cf10671f1 3
++            _loc2_ = ResourceManager.getResourceByID("enemies").getProp("metadata").enemy_list;
++            _loc3_ = 0;
++            while(_loc3_ < _loc2_.length)
+@@ 929 1 3c1babfb955abac6 1
++               if(_loc2_[_loc3_].name === param1)
+@@ 931 1 81b3aaa49eca1d0a 1
++                  return _api.spawnEnemyAPI(_loc2_[_loc3_].classAPI).APIInstance.instance;
+@@ 933 0 da39a3ee5e6b4b0d 1
++               _loc3_++;
+## public static function isReady() : Boolean
+## why: menu preview API: create/bind stage, spawn/destroy preview characters
+@@ 999 0 da39a3ee5e6b4b0d 51
++      }
++      
++      public static function isApiLive() : Boolean
++      {
++         return _api != null && (Boolean(_api.ActiveScripts) || Boolean(_api.IsMenuPreview));
++      }
++      
++      public static function isMenuPreviewOwner(param1:StageData) : Boolean
++      {
++         return _api != null && _api == param1 && Boolean(_api.IsMenuPreview);
++      }
++      
++      public static function createMenuPreviewStage(param1:Game) : StageData
++      {
++         return StageData.createMenuPreview(param1);
++      }
++      
++      public static function bindMenuPreviewStage(param1:StageData) : Boolean
++      {
++         if(!param1 || !param1.IsMenuPreview)
++         {
++            return false;
++         }
++         _api = param1;
++         enableMenuPreview(null);
++         return true;
++      }
++      
++      public static function spawnMenuPreviewCharacter(param1:String, param2:int = -1, param3:Number = -1, param4:int = 1, param5:String = null) : Character
++      {
++         if(!_api || !_api.IsMenuPreview)
++         {
++            return null;
++         }
++         return _api.spawnMenuPreviewCharacter(param1,param2,param3,param4,param5);
++      }
++      
++      public static function destroyMenuPreviewCharacter(param1:Character) : void
++      {
++         if(Boolean(_api) && Boolean(_api.IsMenuPreview))
++         {
++            _api.destroyMenuPreviewCharacter(param1);
++         }
++      }
++      
++      public static function disposeMenuPreviewStage() : void
++      {
++         if(Boolean(_api) && Boolean(_api.IsMenuPreview))
++         {
++            _api.disposeMenuPreview();
++         }
+## public static function endGame(_:Object = null) : void
+## why: menu preview: no-op so preview scripts can't end a match
+@@ 1217 1 0612b330549ba675 1
++         if(!isReady() || Boolean(_api) && Boolean(_api.IsMenuPreview))
+## public static function getCharacterStats(_:String) : Object
+## why: expansion chars: xp resolves active expansion; default pixelArt/seriesIcon/thumbnail
+@@ 1229 1 2b3455bcb0c85711 1
++      public static function getCharacterStats(param1:String) : Object
+@@ 1231 2 2267e2f87d66393b 3
++         var _loc2_:CharacterData = null;
++         var _loc3_:Object = null;
++         if(param1 == "xp")
+@@ 1234 1 00d4685f262a5130 22
++            _loc2_ = Stats.getStats("xp",ResourceManager.ActiveXpExpansion);
++         }
++         else
++         {
++            _loc2_ = Stats.getStats(param1);
++         }
++         if(Boolean(_loc2_))
++         {
++            _loc3_ = _loc2_.exportData();
++            if(Boolean(_loc3_) && !_loc3_.pixelArt)
++            {
++               _loc3_.pixelArt = Boolean(_loc3_.statsName) ? _loc3_.statsName + "_classic" : param1 + "_classic";
++            }
++            if(Boolean(_loc3_) && (!_loc3_.seriesIcon || _loc3_.seriesIcon == _loc3_.statsName || _loc3_.seriesIcon == _loc3_.linkage_id))
++            {
++               _loc3_.seriesIcon = "smash_symbol";
++            }
++            if(Boolean(_loc3_) && (!_loc3_.thumbnail || _loc3_.thumbnail == _loc3_.statsName || _loc3_.thumbnail == _loc3_.linkage_id))
++            {
++               _loc3_.thumbnail = Boolean(_loc3_.statsName) ? _loc3_.statsName + "_stock" : "smash_symbol";
++            }
++            return _loc3_;
+## public static function getCamera() : *
+## why: menu preview: stub camera; never null outside a match
+@@ 1256 1 80487d470e21a4cb 65
++         var cam:* = undefined;
++         try
++         {
++            if(Boolean(_api) && Boolean(_api.IsMenuPreview))
++            {
++               if(!_menuPreview || !_menuPreview.camera)
++               {
++                  enableMenuPreview(null);
++               }
++               return _menuPreview.camera;
++            }
++            if(Boolean(_menuPreview) && Boolean(_menuPreview.camera) && !isReady())
++            {
++               return _menuPreview.camera;
++            }
++            if(Boolean(_api) && Boolean(_api.CamRef))
++            {
++               cam = _api.CamRef.APIInstance;
++               if(Boolean(cam))
++               {
++                  return cam;
++               }
++            }
++            if(Boolean(_menuPreview) && Boolean(_menuPreview.camera))
++            {
++               return _menuPreview.camera;
++            }
++            return createMenuPreviewCamera();
++         }
++         catch(err:*)
++         {
++            try
++            {
++               return createMenuPreviewCamera();
++            }
++            catch(err2:*)
++            {
++               return {
++                  "shake":function(... rest):*
++                  {
++                  },
++                  "getMC":function():MovieClip
++                  {
++                     return new MovieClip();
++                  },
++                  "getTopLeftPoint":function():Point
++                  {
++                     return new Point();
++                  },
++                  "getMode":function():int
++                  {
++                     return 0;
++                  },
++                  "lightFlash":function(... rest):*
++                  {
++                  },
++                  "darken":function(... rest):*
++                  {
++                  },
++                  "killDarkener":function(... rest):*
++                  {
++                  }
++               };
++            }
++         }
+## public static function getCostumeData(_:String, _:int, _:int = -1) : Object
+## why: never return null for a missing costume (expansion chars)
+@@ 1392 1 2ee00f8d6ca9a77f 2
++         var _loc0_:Object = ResourceManager.getCostume(statsName,Utils.getColorString(team),num);
++         return _loc0_ || Utils.getCostumeObject({});
+## public static function getMetalCostume(_:String) : Object
+## why: adds getTransformCostumePalette patch/door for palette mods on transform forms
+@@ 1398 0 da39a3ee5e6b4b0d 11
++      }
++      
++      public static function getTransformCostumePalette(param1:String, param2:String, param3:int) : Object
++      {
++         var baseStatsName:String = param1;
++         var formStatsName:String = param2;
++         var costumeIndex:int = param3;
++         return ModHost.applyPatch(ModPatches.GET_TRANSFORM_COSTUME_PALETTE,[baseStatsName,formStatsName,costumeIndex],function(param1:String, param2:String, param3:int):Object
++         {
++            return ModHost.door(ModPatches.PALETTE_GET_TRANSFORM_COSTUME_PALETTE,[param1,param2,param3],null);
++         }) as Object;

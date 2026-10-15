@@ -1,0 +1,143 @@
+# com/mcleodgaming/ssf2/controllers/StageButton.as
+## class header
+## why: stage select: move ctor below (now takes a SelectHand); m_selectHand for rumble controller index
+@@ 10 0 da39a3ee5e6b4b0d 6
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.menus.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
+@@ 22 22 60c619f65c366764 3
++      protected var m_selectHand:SelectHand;
++      
++      
+## override protected function button_ROLLOVER(_:MouseEvent) : void
+## why: stage select: big preview for expansion stages; name falls back to StageSelectMenu.displayName
+@@ 57 0 da39a3ee5e6b4b0d 1
++         var _loc0_:MovieClip = null;
+@@ 60 1 e95a2263db13e80a 2
++         _loc0_ = MenuController.stageSelectMenu.SubMenu.stage_sample.previewer as MovieClip;
++         if(Boolean(_loc0_) && _loc0_.getChildByName("mc") != null)
+@@ 62 1 4c06af9dc13c302e 9
++            Utils.tryToGotoAndStop(MovieClip(_loc0_.getChildByName("mc")),this.m_stageID == "random" ? "random" : this.m_stageID);
++            if(this.m_stageID != "random" && Boolean(ModHost.door(ModPatches.EXPANSION_RM,["isExpansionStageId",this.m_stageID],false)))
++            {
++               ModHost.door(ModPatches.EXPANSION_RM,["applyBigStagePreview",_loc0_,this.m_stageID],null);
++            }
++            else
++            {
++               ModHost.door(ModPatches.EXPANSION_RM,["clearBigStagePreview",_loc0_],null);
++            }
+@@ 68 4 07e122f4d9dcb9ab 0
+@@ 75 1 1d7549d89b12ab74 1
++               if(Boolean(stageInfo[this.m_stageID]) && Boolean(stageInfo[this.m_stageID].name))
+@@ 77 1 d3d6bf788db64e54 5
++                  displayName = String(stageInfo[this.m_stageID].name);
++               }
++               else if(Boolean(MenuController.stageSelectMenu) && Boolean(StageSelectMenu.displayName(this.m_stageID)))
++               {
++                  displayName = StageSelectMenu.displayName(this.m_stageID);
+## override protected function button_CLICK(_:MouseEvent) : void
+## why: modhost: STAGE_SELECT hook (cancel, stage editor), rumble, queue expansion chars, QUEUE_MATCH_RESOURCES
+@@ 90 0 da39a3ee5e6b4b0d 3
++         var hookCtx:Object = null;
++         var prevStage:* = undefined;
++         var _loc0_:MouseEvent = e;
+@@ 93 0 da39a3ee5e6b4b0d 11
++            if(Boolean(ModHost.getSessionFlag("stage_editor.editing")))
++            {
++               ModHost.runHook(ModHooks.STAGE_SELECT,{
++                  "stageId":this.m_stageID,
++                  "requestedId":this.m_stageID,
++                  "game":this.m_currentGame,
++                  "cancel":true,
++                  "editing":true
++               });
++               return;
++            }
+@@ 98 0 da39a3ee5e6b4b0d 15
++            prevStage = this.m_currentGame.LevelData.stage;
++            GameController.isStarted = true;
++            this.m_currentGame.LevelData.stage = this.m_stageID === "random" ? StageSetting.getRandomStage(false,false,this.m_currentGame.GameMode !== Mode.TRAINING) : this.m_stageID;
++            hookCtx = {
++               "stageId":this.m_currentGame.LevelData.stage,
++               "requestedId":this.m_stageID,
++               "game":this.m_currentGame,
++               "cancel":false
++            };
++            if(Boolean(ModHost.runHook(ModHooks.STAGE_SELECT,hookCtx)) || Boolean(hookCtx.cancel))
++            {
++               GameController.isStarted = false;
++               this.m_currentGame.LevelData.stage = prevStage;
++               return;
++            }
+@@ 100 2 2e2f9e518548a512 4
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":(Boolean(this.m_selectHand) && this.m_selectHand.lastControllerIndex >= 0 ? this.m_selectHand.lastControllerIndex : 0)
++            });
+@@ 119 1 e4191155359f9392 7
++                  ResourceManager.queuePlayerCharacterResource(this.m_currentGame.PlayerSettings[i - 1],i - 1);
++               }
++               ModHost.runHook(ModHooks.QUEUE_MATCH_RESOURCES,{
++                  "cancel":false,
++                  "game":this.m_currentGame,
++                  "stageId":this.m_stageID,
++                  "queue":function(e:String):void
+@@ 121 1 eddefd0244182b77 4
++                     if(Boolean(e))
++                     {
++                        ResourceManager.queueResources([e]);
++                     }
+@@ 123 2 ddd3440b855579c5 5
++               });
++               ResourceManager.load({
++                  "oncomplete":this.startGame,
++                  "flushUnused":true
++               });
+## override protected function button_ROLLOUT(_:MouseEvent) : void
+## why: stage select: clear the expansion big stage preview on rollout; null-safe previewer
+@@ 131 0 da39a3ee5e6b4b0d 1
++         var _loc0_:MovieClip = null;
+@@ 133 1 49f4cea37a1c3cdf 6
++            _loc0_ = MenuController.stageSelectMenu.SubMenu.stage_sample.previewer as MovieClip;
++            ModHost.door(ModPatches.EXPANSION_RM,["clearBigStagePreview",_loc0_],null);
++            if(Boolean(_loc0_) && _loc0_.getChildByName("mc") != null)
++            {
++               Utils.tryToGotoAndStop(MovieClip(_loc0_.getChildByName("mc")),"paused");
++            }
+## public function StageButton(_:Game, _:MovieClip, _:String, _:SelectHand = null)
+## why: stage select: ctor takes optional SelectHand (moved from header); setSelectHand for paged buttons
+@@ 147 0 da39a3ee5e6b4b0d 31
++
++      public function StageButton(param1:Game, param2:MovieClip, param3:String, param4:SelectHand = null)
++      {
++         var _loc5_:int = 0;
++         super(param2);
++         this.m_currentGame = param1;
++         this.m_stageID = param3;
++         this.m_selectHand = param4;
++         this.m_hiddenStagesList = new Vector.<String>();
++         this.m_hiddenStagesList.push("xpstage");
++         this.m_hiddenStagesList.push("mushroomkingdom3");
++         this.m_hiddenStagesList.push("skyworld");
++         this.m_hiddenStagesList.push("castlesiege");
++         while(_loc5_ < this.m_hiddenStagesList.length)
++         {
++            if(!Main.DEBUG && param3 == this.m_hiddenStagesList[_loc5_])
++            {
++               m_button.visible = false;
++               break;
++            }
++            _loc5_++;
++         }
++         this.m_loadingMask = ResourceManager.getLibraryMC("loadingMask");
++         this.m_loadingMask.x = Main.Width / 2;
++         this.m_loadingMask.y = Main.Height / 2;
++      }
++      
++      public function setSelectHand(param1:SelectHand) : void
++      {
++         this.m_selectHand = param1;
++      }

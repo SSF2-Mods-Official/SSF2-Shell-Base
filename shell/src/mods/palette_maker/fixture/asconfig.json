@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "source-path": [".", "../src", "../../_shared/src"],
+    "output": "PaletteDeepFixture.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "warnings": false,
+    "strict": false
+  },
+  "mainClass": "PaletteDeepFixture",
+  "config": "air"
+}

@@ -1,0 +1,9 @@
+# com/mcleodgaming/ssf2/util/Debug_fps.as
+## public function setVisible(_:Boolean) : void
+## why: lazy debug: let StageData show/hide the FPS counter (F5 toggle)
+@@ 113 0 da39a3ee5e6b4b0d 5
++      
++      public function setVisible(param1:Boolean) : void
++      {
++         this.fpsHolder.visible = param1;
++      }

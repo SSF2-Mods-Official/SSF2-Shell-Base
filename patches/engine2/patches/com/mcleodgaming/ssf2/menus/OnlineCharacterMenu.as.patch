@@ -1,0 +1,40 @@
+# com/mcleodgaming/ssf2/menus/OnlineCharacterMenu.as
+## class header
+## why: Discord: import for Config/Main used by rich presence
+@@ 11 0 da39a3ee5e6b4b0d 6
++   import com.mcleodgaming.mgn.events.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.events.*;
+## override public function show() : void
+## why: Discord: 'Choosing a character' rich presence with join secret on the online CSS
+@@ 50 0 da39a3ee5e6b4b0d 27
++         this.updateDiscordPresenceForCharacterSelect();
++      }
++      
++      private function updateDiscordPresenceForCharacterSelect() : void
++      {
++         var _loc1_:String = null;
++         var _loc2_:String = null;
++         var _loc3_:String = null;
++         var _loc4_:int = 0;
++         var _loc5_:int = 0;
++         var _loc6_:String = null;
++         var _loc7_:String = null;
++         if(Boolean(Main.m_sdk) && Boolean(Config.rich_presence) && Boolean(MultiplayerManager.Connected))
++         {
++            _loc1_ = MultiplayerManager.RoomKey;
++            _loc2_ = MultiplayerManager.RoomCode;
++            if(_loc1_ == null || _loc1_ == "" || _loc2_ == null || _loc2_ == "")
++            {
++               return;
++            }
++            _loc3_ = MultiplayerManager.RoomPassword;
++            _loc4_ = int(MultiplayerManager.Players.length);
++            _loc5_ = int(MultiplayerManager.ROOM_CAPACITY);
++            _loc6_ = MenuController.buildDiscordJoinSecret(_loc1_,_loc2_,_loc3_,_loc5_);
++            _loc7_ = MultiplayerManager.DiscordPartyID;
++            MenuController.updateDiscordPresence("Choosing a character","Playing online",MenuController.getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","online",null,_loc7_,_loc4_,_loc5_,_loc1_,_loc6_);
++         }

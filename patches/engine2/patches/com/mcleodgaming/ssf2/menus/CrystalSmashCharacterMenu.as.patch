@@ -1,0 +1,10 @@
+# com/mcleodgaming/ssf2/menus/CrystalSmashCharacterMenu.as
+## class header
+## why: unclear - makes m_stage_id public (no outside reader found in the Shell source)
+@@ 11 0 da39a3ee5e6b4b0d 4
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modes.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.events.*;
+@@ 15 1 4212976880e47266 1
++      public var m_stage_id:int = 0;

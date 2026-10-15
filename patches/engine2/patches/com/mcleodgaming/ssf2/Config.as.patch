@@ -1,0 +1,8 @@
+# com/mcleodgaming/ssf2/Config.as
+## class header
+## why: load unencrypted data/mod SWFs (encrypt_files=false); rich_presence flag gates Discord presence
+@@ 5 1 a29728558bb24527 1
++      public static const encrypt_files:Boolean = false;
+@@ 43 0 da39a3ee5e6b4b0d 2
++      public static const rich_presence:Boolean = true;
++      

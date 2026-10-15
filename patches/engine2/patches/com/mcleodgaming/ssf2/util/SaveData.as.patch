@@ -1,0 +1,126 @@
+# com/mcleodgaming/ssf2/util/SaveData.as
+## class header
+## why: ModHost import and per-player rumble setting
+@@ 14 1 c7570dde85fbc2c1 7
++   import com.mcleodgaming.mgn.net.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.audio.*;
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.filesystem.*;
++
+@@ 64 0 da39a3ee5e6b4b0d 2
++      public static var rumbleEnabled:Object = null;
++      
+## public static function initializeSaveData(_:Boolean = true) : void
+## why: controller fixes: apply saved rumble setting to Gamepad at startup
+@@ 92 1 285f196ab995c9a4 0
+@@ 94 0 da39a3ee5e6b4b0d 1
++         Gamepad.setGlobalRumbleEnabled(Boolean(SaveData.getRumbleEnabled(1)) || Boolean(SaveData.getRumbleEnabled(2)) || Boolean(SaveData.getRumbleEnabled(3)) || Boolean(SaveData.getRumbleEnabled(4)));
+@@ 221 4 7df840fbb0b72a25 0
+## public static function saveGame() : void
+## why: compile fix for decompiled int cast; mods: SAVE_WRITE hook
+@@ 262 1 27984c49a67bbe83 1
++         var timeDiff:int = int((new Date().getTime() - _lastPowerCheck.getTime()) / 1000 * Main.FRAMERATE);
+@@ 279 1 1afff17ff8ad230c 0
+@@ 281 1 91eb4bd64864f919 1
++         ModHost.runHook(ModHooks.SAVE_WRITE,{"saveFile":m_currentSaveFileName});
+## private static function importSaveFile(_:String) : Boolean
+## why: mods: SAVE_CORRUPT hook when a save file fails to load
+@@ 316 0 da39a3ee5e6b4b0d 1
++               ModHost.runHook(ModHooks.SAVE_CORRUPT,{"saveFile":file});
+## public static function loadGame(_:Boolean = true) : void
+## why: mods: SAVE_LOAD and CONFIG_LOADED hooks after a save loads
+@@ 328 1 2aafd30f3638cb68 1
++            i = int(SaveData.m_previousSaveFileNames.length - 1);
+@@ 333 0 da39a3ee5e6b4b0d 5
++                  ModHost.runHook(ModHooks.SAVE_LOAD,{
++                     "saveFile":SaveData.m_previousSaveFileNames[i],
++                     "upgraded":true
++                  });
++                  ModHost.runHook(ModHooks.CONFIG_LOADED,{"source":"save"});
+@@ 343 0 da39a3ee5e6b4b0d 2
++         ModHost.runHook(ModHooks.SAVE_LOAD,{"saveFile":m_currentSaveFileName});
++         ModHost.runHook(ModHooks.CONFIG_LOADED,{"source":"save"});
+## public static function getRumbleEnabled(_:int = 1) : Boolean
+## why: controller fixes: per-player rumble get/set; mods: ModEnabled map stored in save options
+@@ 1361 0 da39a3ee5e6b4b0d 79
++      
++      public static function getRumbleEnabled(param1:int = 1) : Boolean
++      {
++         var _loc2_:Boolean = false;
++         if(rumbleEnabled == null)
++         {
++            rumbleEnabled = {
++               "player1":true,
++               "player2":true,
++               "player3":true,
++               "player4":true
++            };
++            if(Boolean(m_localObject) && Boolean(m_localObject.game) && Boolean(m_localObject.game.options) && m_localObject.game.options.rumbleEnabled !== undefined)
++            {
++               if(typeof m_localObject.game.options.rumbleEnabled === "boolean")
++               {
++                  _loc2_ = Boolean(m_localObject.game.options.rumbleEnabled);
++                  rumbleEnabled = {
++                     "player1":_loc2_,
++                     "player2":_loc2_,
++                     "player3":_loc2_,
++                     "player4":_loc2_
++                  };
++               }
++               else if(typeof m_localObject.game.options.rumbleEnabled === "object")
++               {
++                  rumbleEnabled = m_localObject.game.options.rumbleEnabled;
++               }
++            }
++         }
++         return rumbleEnabled["player" + param1] !== undefined ? Boolean(rumbleEnabled["player" + param1]) : true;
++      }
++      
++      public static function setRumbleEnabled(param1:Boolean, param2:int = 1) : void
++      {
++         if(rumbleEnabled == null)
++         {
++            getRumbleEnabled(param2);
++         }
++         rumbleEnabled["player" + param2] = param1;
++         if(Boolean(m_localObject) && Boolean(m_localObject.game) && Boolean(m_localObject.game.options))
++         {
++            m_localObject.game.options.rumbleEnabled = rumbleEnabled;
++         }
++         var _loc3_:Boolean = false;
++         var _loc4_:int = 1;
++         while(_loc4_ <= 4)
++         {
++            if(getRumbleEnabled(_loc4_))
++            {
++               _loc3_ = true;
++               break;
++            }
++            _loc4_++;
++         }
++         Gamepad.setGlobalRumbleEnabled(_loc3_);
++      }
++      
++      public static function get ModEnabled() : Object
++      {
++         if(!m_localObject || !m_localObject.game || !m_localObject.game.options)
++         {
++            return {};
++         }
++         if(m_localObject.game.options.modEnabled == null)
++         {
++            m_localObject.game.options.modEnabled = {};
++         }
++         return m_localObject.game.options.modEnabled;
++      }
++      
++      public static function set ModEnabled(param1:Object) : void
++      {
++         if(!m_localObject || !m_localObject.game || !m_localObject.game.options)
++         {
++            return;
++         }
++         m_localObject.game.options.modEnabled = param1 || {};
++      }

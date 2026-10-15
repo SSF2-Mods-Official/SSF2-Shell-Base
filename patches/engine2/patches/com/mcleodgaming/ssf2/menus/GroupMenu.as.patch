@@ -1,0 +1,162 @@
+# com/mcleodgaming/ssf2/menus/GroupMenu.as
+## class header
+## why: modhost: per-controller button let-go state for menu gestures
+@@ 10 0 da39a3ee5e6b4b0d 4
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import flash.events.*;
+@@ 22 0 da39a3ee5e6b4b0d 2
++      private var m_gestureLetGo:Object;
++      
+## public function GroupMenu()
+## why: modhost: init gesture let-go state
+@@ 28 0 da39a3ee5e6b4b0d 1
++         this.m_gestureLetGo = {};
+## override public function manageMenuMappings(_:Event) : void
+## why: modhost: send controller button gestures to mods (emitMenuGesture) before normal Group menu nav
+@@ 45 0 da39a3ee5e6b4b0d 5
++            if(this.pollMenuGestures())
++            {
++               resetControlsLetGo();
++               return;
++            }
+@@ 49 0 da39a3ee5e6b4b0d 78
++      }
++      
++      private function pollMenuGestures() : Boolean
++      {
++         var _loc1_:int = 0;
++         var _loc2_:Controller = null;
++         var _loc3_:Object = null;
++         var _loc4_:Object = null;
++         var _loc5_:Object = null;
++         var _loc6_:Array = null;
++         var _loc7_:Array = null;
++         var _loc8_:int = 0;
++         var _loc9_:String = null;
++         var _loc10_:Boolean = false;
++         _loc7_ = ["GRAB","TAUNT","SHIELD","JUMP","JUMP2","ATTACK","SPECIAL"];
++         _loc1_ = 0;
++         while(_loc1_ < SaveData.Controllers.length)
++         {
++            _loc2_ = SaveData.Controllers[_loc1_];
++            if(Boolean(_loc2_) && m_hasEvents)
++            {
++               _loc3_ = this.m_gestureLetGo[_loc1_] as Object;
++               if(!_loc3_)
++               {
++                  _loc3_ = {
++                     "GRAB":true,
++                     "TAUNT":true,
++                     "SHIELD":true,
++                     "JUMP":true,
++                     "JUMP2":true,
++                     "ATTACK":true,
++                     "SPECIAL":true
++                  };
++                  this.m_gestureLetGo[_loc1_] = _loc3_;
++               }
++               _loc4_ = {
++                  "GRAB":_loc2_.IsDown(_loc2_._GRAB),
++                  "TAUNT":_loc2_.IsDown(_loc2_._TAUNT),
++                  "SHIELD":_loc2_.IsDown(_loc2_._SHIELD),
++                  "JUMP":_loc2_.IsDown(_loc2_._JUMP),
++                  "JUMP2":_loc2_.IsDown(_loc2_._JUMP2),
++                  "ATTACK":_loc2_.IsDown(_loc2_._BUTTON2),
++                  "SPECIAL":_loc2_.IsDown(_loc2_._BUTTON1)
++               };
++               _loc5_ = {};
++               _loc10_ = false;
++               _loc6_ = [];
++               _loc8_ = 0;
++               while(_loc8_ < _loc7_.length)
++               {
++                  _loc9_ = _loc7_[_loc8_];
++                  _loc5_[_loc9_] = _loc4_[_loc9_] && _loc3_[_loc9_];
++                  if(Boolean(_loc5_[_loc9_]))
++                  {
++                     _loc10_ = true;
++                  }
++                  if(Boolean(_loc4_[_loc9_]))
++                  {
++                     _loc6_.push(_loc9_);
++                     _loc3_[_loc9_] = false;
++                  }
++                  else
++                  {
++                     _loc3_[_loc9_] = true;
++                  }
++                  _loc8_++;
++               }
++               if(_loc10_ && _loc6_.length > 0)
++               {
++                  if(ModHost.emitMenuGesture(this,_loc6_,{"controllerIndex":_loc1_}))
++                  {
++                     return true;
++                  }
++               }
++            }
++            _loc1_++;
++         }
++         return false;
+## private function brawl_CLICK(_:MouseEvent) : void
+## why: modhost: rumble + MODE_SELECT hook lets mods intercept Brawl
+@@ 133 0 da39a3ee5e6b4b0d 12
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":0
++         });
++         if(ModHost.runHook(ModHooks.MODE_SELECT,{
++            "mode":"brawl",
++            "menu":this,
++            "cancel":false
++         }))
++         {
++            return;
++         }
+## private function rules_CLICK(_:MouseEvent) : void
+## why: modhost: rumble + MODE_SELECT hook lets mods intercept Rules
+@@ 155 0 da39a3ee5e6b4b0d 12
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":0
++         });
++         if(ModHost.runHook(ModHooks.MODE_SELECT,{
++            "mode":"rules",
++            "menu":this,
++            "cancel":false
++         }))
++         {
++            return;
++         }
+## private function specialbrawl_CLICK(_:MouseEvent) : void
+## why: modhost: rumble + MODE_SELECT hook lets mods intercept Special Brawl
+@@ 178 0 da39a3ee5e6b4b0d 12
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":0
++            });
++            if(ModHost.runHook(ModHooks.MODE_SELECT,{
++               "mode":"special",
++               "menu":this,
++               "cancel":false
++            }))
++            {
++               return;
++            }
+## private function arena_CLICK(_:MouseEvent) : void
+## why: modhost: rumble + MODE_SELECT hook lets mods intercept Arena
+@@ 204 0 da39a3ee5e6b4b0d 12
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":0
++            });
++            if(ModHost.runHook(ModHooks.MODE_SELECT,{
++               "mode":"arena",
++               "menu":this,
++               "cancel":false
++            }))
++            {
++               return;
++            }

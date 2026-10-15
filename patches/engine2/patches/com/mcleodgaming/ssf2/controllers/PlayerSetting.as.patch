@@ -1,0 +1,14 @@
+# com/mcleodgaming/ssf2/controllers/PlayerSetting.as
+## class header
+## why: ModHost import + colorVaultId field for palette vault colors
+@@ 3 0 da39a3ee5e6b4b0d 2
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.util.*;
+## public function importSettings(_:Object) : void
+## why: ModHost hook PLAYER_SETTINGS_UPDATE so mods can react to player settings
+@@ 140 4 918c853fdac8e3ac 0
+@@ 145 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.PLAYER_SETTINGS_UPDATE,{
++            "settings":this,
++            "data":data
++         });
