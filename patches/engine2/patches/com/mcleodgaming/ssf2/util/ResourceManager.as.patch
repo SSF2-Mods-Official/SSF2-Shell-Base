@@ -931,9 +931,14 @@
 +            }
 ## public static function getLibrarySound(_:String) : Sound
 ## why: expansions: play announcer sounds from expansion packs
-@@ 802 0 da39a3ee5e6b4b0d 6
+@@ 802 0 da39a3ee5e6b4b0d 11
 +         var _loc0_:Sound = null;
 +         _loc0_ = tryGetExpansionAnnouncerSound(soundName);
++         if(Boolean(_loc0_))
++         {
++            return _loc0_;
++         }
++         _loc0_ = CharacterAlts.tryGetAltSound(soundName);
 +         if(Boolean(_loc0_))
 +         {
 +            return _loc0_;

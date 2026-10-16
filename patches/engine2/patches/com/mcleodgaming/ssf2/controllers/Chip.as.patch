@@ -15,11 +15,13 @@
 @@ 42 0 da39a3ee5e6b4b0d 2
 +      private var m_paletteWasBlocking:Boolean;
 +      
-@@ 51 0 da39a3ee5e6b4b0d 4
+@@ 51 0 da39a3ee5e6b4b0d 6
 +      
 +      private var m_undoKeyLetGo:Boolean;
 +      
 +      private var m_redoKeyLetGo:Boolean;
++      
++      private var m_altKeyLetGo:Boolean = true;
 ## public function Chip(_:CharacterSelectMenu, _:MovieClip, _:int)
 ## why: init palette-block flag and undo/redo key latches
 @@ 89 0 da39a3ee5e6b4b0d 1
@@ -37,7 +39,7 @@
 +         this.playExpansionAnnouncer(false);
 ## private function checkControls() : void
 ## why: custom CSS: taunt/jump fire CSS_SLOT_ACTION undo/redo hook
-@@ 226 0 da39a3ee5e6b4b0d 34
+@@ 226 0 da39a3ee5e6b4b0d 62
 +         if(!this.m_keys.IsDown(this.m_keys._TAUNT))
 +         {
 +            this.m_undoKeyLetGo = true;
@@ -45,6 +47,34 @@
 +         if(!this.m_keys.IsDown(this.m_keys._JUMP))
 +         {
 +            this.m_redoKeyLetGo = true;
++         }
++         if(!this.m_keys.IsDown(this.m_keys._JUMP) && !this.m_keys.IsDown(this.m_keys._JUMP2))
++         {
++            this.m_altKeyLetGo = true;
++         }
++         if(this.m_altKeyLetGo && (this.m_keys.IsDown(this.m_keys._JUMP) || this.m_keys.IsDown(this.m_keys._JUMP2)))
++         {
++            this.m_altKeyLetGo = false;
++            if(this.m_lastHit && this.m_lastHit != "random" && this.m_lastHit != "xp" && CharacterAlts.count(this.m_lastHit) > 0)
++            {
++               SoundQueue.instance.playSoundEffect("menu_hover");
++               var settings:* = Boolean(this.m_characterSelectMenu.GameObj) ? this.m_characterSelectMenu.GameObj.PlayerSettings[this.m_playerID - 1] : null;
++               var costumeBefore:int = settings ? int(settings.costume) : 0;
++               CharacterAlts.cycle(this.m_playerID,this.m_lastHit,settings);
++               // Costume-tied jump may change PlayerSetting.costume — refresh series icons (public) + palette hook.
++               if(settings && int(settings.costume) != costumeBefore)
++               {
++                  this.m_characterSelectMenu.updateSeriesIconColors();
++                  ModHost.runHook(ModHooks.CSS_CHANGE_COSTUME_INDEX,{
++                     "port":this.m_playerID,
++                     "costume":int(settings.costume),
++                     "menu":this.m_characterSelectMenu
++                  });
++               }
++               this.m_characterSelectMenu.refreshAltName(this.m_playerID,this.m_lastHit);
++               // Jump also drives CSS redo — do not fire redo on the same press as an alt cycle.
++               this.m_redoKeyLetGo = false;
++            }
 +         }
 +         if(Boolean(this.m_undoKeyLetGo) && Boolean(this.m_keys.IsDown(this.m_keys._TAUNT)))
 +         {

@@ -883,6 +883,13 @@
 +            this.scheduleFormCostumeInject(45);
 +            this.updatePaletteSwap();
 +            m_eventManager.dispatchEvent(new SSF2Event(SSF2Event.CHAR_TRANSFORM,{"caller":this.APIInstance.instance}));
+## private function redrawHealthBox() : void
+## why: Match HUD shows CharacterAlts.hudName when the alt has no nametag clip.
+@@ 9560 0 da39a3ee5e6b4b0d 1
++         var hudAlt:String = null;
+@@ 9562 1 59f0569c34c31172 2
++            hudAlt = CharacterAlts.hudName(m_player_id,this.m_playerSettings.character,this.m_characterStats.DisplayName);
++            this.attachHealthBox(Boolean(this.m_playerSettings.name) ? this.m_playerSettings.name.toUpperCase() : (hudAlt != null ? hudAlt : this.m_characterStats.DisplayName).toUpperCase(),this.m_characterStats.Thumbnail,this.m_characterStats.SeriesIcon,m_team_id,this.CostumeName,this.CostumeID);
 ## private function setStats(_:CharacterData) : void
 ## why: null-guard CPU when a non-human has no AI (e.g. menu preview) during a stats swap
 @@ 9692 1 fed213ac6cd8a521 1

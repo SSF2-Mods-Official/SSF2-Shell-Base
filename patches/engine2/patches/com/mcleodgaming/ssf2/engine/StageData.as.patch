@@ -815,7 +815,9 @@
 +         }
 +         var _loc1_:Class = ModHost.resolveClass(Character);
 +         var character:Character = new _loc1_(characterStats,this.GAME.PlayerSettings[num - 1],this);
-@@ 1339 0 da39a3ee5e6b4b0d 6
+@@ 1338 1 8a16da6e91c1c03e 8
++         var hudAlt:String = CharacterAlts.hudName(num,playerSettings.character,characterStats.DisplayName);
++         character.attachHealthBox(Boolean(playerSettings.name) ? playerSettings.name : (hudAlt != null ? hudAlt : characterStats.DisplayName).toUpperCase(),characterStats.Thumbnail,characterStats.SeriesIcon,character.Team,character.CostumeName,character.CostumeID);
 +         ModHost.runHook(ModHooks.AFTER_CHARACTER_SPAWN,{
 +            "character":character,
 +            "playerId":num,
