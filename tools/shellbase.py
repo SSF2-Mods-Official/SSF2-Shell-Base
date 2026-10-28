@@ -1205,6 +1205,15 @@ def prepare_win32(out, vanilla):
             swf.write_bytes(data)
             capped += 1
     log("win32 descriptor extensions=%d swf capped=%d" % (len(kept), capped))
+    launcher = out / "Super Smash Flash 2 Beta.exe"
+    if launcher.is_file():
+        launcher.unlink()
+        log("win32 removed 64-bit launcher")
+    sdk = (SHELL / "META-INF" / "AIR" / "extensions" / "com.jotard.ane.DiscordANE"
+           / "META-INF" / "ANE" / "Windows-x86" / "discord_game_sdk.dll")
+    if sdk.is_file():
+        shutil.copyfile(sdk, out / "discord_game_sdk.dll")
+        log("win32 discord sdk machine=0x%X" % pe_machine(sdk))
 
 
 def copy_overlay(out, src=SHELL, label="shell", skip=("src",)):
