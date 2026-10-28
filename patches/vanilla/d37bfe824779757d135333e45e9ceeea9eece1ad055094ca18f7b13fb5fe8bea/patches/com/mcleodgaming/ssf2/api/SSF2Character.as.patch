@@ -1,0 +1,23 @@
+# com/mcleodgaming/ssf2/api/SSF2Character.as
+## class header
+## why: input + ModHost imports for rumble
+@@ 9 0 da39a3ee5e6b4b0d 6
++   import com.mcleodgaming.ssf2.engine.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.geom.*;
+## public function pickupItem() : Boolean
+## why: controller rumble on item pickup via ModHost RUMBLE hook
+@@ 512 0 da39a3ee5e6b4b0d 10
++         if(this._ownerCasted.IsHuman && this._ownerCasted.ID > 0)
+=81
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"direct",
++               "playerId":this._ownerCasted.ID,
++               "left":0.4,
++               "right":0.3,
++               "ms":120
++            });
+=83

@@ -1,0 +1,210 @@
+# com/mcleodgaming/ssf2/controllers/GameController.as
+## class header
+## why: ModHost import for the hooks below
+@@ 16 0 da39a3ee5e6b4b0d 9
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.items.*;
++   import com.mcleodgaming.ssf2.menus.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.system.*;
+## public static function init() : void
+## why: reset isStarted so a new match can start after teardown
+@@ 76 0 da39a3ee5e6b4b0d 1
++         isStarted = false;
+## public static function startMatch(_:Game = null) : void
+## why: expansion stages via EXPANSION_RM door; music falls back to a loaded track; MODE_START hook
+@@ 158 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Array = null;
+@@ 166 0 da39a3ee5e6b4b0d 5
+=92
++         if(!GameController.currentGame || !GameController.currentGame.LevelData || !Main.Root)
+=83
++            matchStarted = false;
+=225
+@@ 188 1 441343e5761b942e 5
++            stage = ModHost.door(ModPatches.EXPANSION_RM,["ensureStageClip",GameController.currentGame.LevelData.stage],null) as MovieClip;
++            if(!stage)
+=85
++               stage = new MovieClip();
+=91
+@@ 197 2 bbe446b85a34e91d 14
++            _loc0_ = Boolean(currStage) ? currStage.getProp("music") as Array : null;
++            hasMusic = Boolean(GameController.currentGame.LevelData.musicOverride) ? true : Boolean(_loc0_) && _loc0_.length > 0;
++            musicID = null;
++            if(hasMusic)
+=85
++               if(Boolean(GameController.currentGame.LevelData.musicOverride) && Boolean(ResourceManager.getResourceByID(GameController.currentGame.LevelData.musicOverride)))
+=87
++                  musicID = GameController.currentGame.LevelData.musicOverride;
+=90
++               else
+=87
++                  musicID = GameController.pickExistingMusicId(_loc0_,Main.RandMusicIndex);
+=90
+=91
+@@ 215 1 1d4ba47c0a02455b 1
++            cameraParameters = new VcamSettings(Boolean(currStage) ? currStage.getProp("camera") : null);
+@@ 218 0 da39a3ee5e6b4b0d 1
++            ModHost.runHook(ModHooks.MODE_START,{"game":GameController.currentGame});
+@@ 219 0 da39a3ee5e6b4b0d 28
+=61
+=19
++      private static function pickExistingMusicId(param1:Array, param2:int) : String
+=59
++         var _loc3_:int = 0;
++         var _loc4_:String = null;
++         if(!param1 || param1.length <= 0)
+=83
++            return null;
+=92
++         if(param2 >= 0 && param2 < param1.length)
+=83
++            _loc4_ = Boolean(param1[param2]) && Boolean(param1[param2].id) ? String(param1[param2].id) : null;
++            if(Boolean(_loc4_) && Boolean(ResourceManager.getResourceByID(_loc4_)))
+=85
++               return _loc4_;
+=91
+=92
++         while(_loc3_ < param1.length)
+=83
++            _loc4_ = Boolean(param1[_loc3_]) && Boolean(param1[_loc3_].id) ? String(param1[_loc3_].id) : null;
++            if(Boolean(_loc4_) && Boolean(ResourceManager.getResourceByID(_loc4_)))
+=85
++               return _loc4_;
+=91
++            _loc3_++;
+=92
++         return null;
+## public static function endMatch() : void
+## why: idempotent, crash-safe teardown with game.log lines; MODE_END hook
+@@ 289 1 4107fc4fd8007f1a 2
++         var cam:* = undefined;
+=167
+@@ 291 8 3c2d5af5dcad5249 64
+=225
+=92
++         try
+=83
++            GameLog.write("[GameController.endMatch] begin");
+=92
++         catch(log0:*)
+=83
+=92
++         try
+=83
++            ModHost.runHook(ModHooks.MODE_END,{
++               "game":GameController.currentGame,
++               "stageData":GameController.stageData
++            });
+=92
++         catch(e:*)
+=83
++            endMatchLog("MODE_END hook failed: " + e);
+=92
++         try
+=83
++            if(Boolean(GameController.stageData))
+=85
++               cam = GameController.stageData.CamRef;
++               if(Boolean(cam) && cam["die"] is Function)
+=87
++                  cam["die"]();
+=90
+=91
+=92
++         catch(e2:*)
+=83
++            endMatchLog("CamRef.die failed: " + e2);
+=92
++         safeRemoveDisplayObject(weather,"weather");
++         safeRemoveDisplayObject(cutscene,"cutscene");
++         safeRemoveDisplayObject(tags,"tags");
++         safeRemoveDisplayObject(stage,"stage");
++         safeRemoveDisplayObject(background,"background");
++         try
+=83
++            if(Boolean(hud) && hud["removeSelf"] is Function)
+=85
++               hud["removeSelf"]();
+=91
+=92
++         catch(e3:*)
+=83
++            endMatchLog("hud.removeSelf failed: " + e3);
+=92
++         try
+=83
++            if(Boolean(constantDebugger) && constantDebugger["killEvents"] is Function)
+=85
++               constantDebugger["killEvents"]();
+=91
+=92
++         catch(e4:*)
+=83
++            endMatchLog("constantDebugger.killEvents failed: " + e4);
+=92
++         try
+=83
+@@ 300 1 e07bdaf656515267 42
+=92
++         catch(e5:*)
+=83
++            endMatchLog("init failed: " + e5);
++            matchStarted = false;
++            isStarted = false;
+=92
++         endMatchLog("disposed ok");
+=61
+=19
++      private static function endMatchLog(param1:String) : void
+=59
++         try
+=83
++            GameLog.write("[GameController.endMatch] " + param1);
+=92
++         catch(ignore:*)
+=83
+=92
+=61
+=19
++      private static function safeRemoveDisplayObject(param1:*, param2:String) : void
+=59
++         var label:String = null;
++         label = null;
++         label = param2;
++         var parent:* = undefined;
++         try
+=83
++            if(!param1)
+=85
++               return;
+=91
++            parent = param1["parent"];
++            if(Boolean(parent) && parent["removeChild"] is Function)
+=85
++               parent["removeChild"](param1);
+=91
+=92
++         catch(e:*)
+=83
++            endMatchLog("remove " + label + " failed: " + e);
+## public static function destroyStageData() : void
+## why: GAME_DESTROY hook; flush unused resources after a match
+@@ 306 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.GAME_DESTROY,{
++            "stageData":GameController.stageData,
++            "game":GameController.currentGame
++         });
+@@ 316 0 da39a3ee5e6b4b0d 8
++         try
+=83
++            ResourceManager.flushUnusedResources();
+=92
++         catch(flushErr:*)
+=83
++            endMatchLog("flush failed: " + flushErr);
+=92

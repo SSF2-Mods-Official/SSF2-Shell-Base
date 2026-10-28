@@ -1,0 +1,488 @@
+# com/mcleodgaming/ssf2/menus/EventMenu.as
+## class header
+## why: events: imports; private->protected fields plus state for vanilla/expansion/GameBanana event lists and previews
+@@ 13 0 da39a3ee5e6b4b0d 9
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modapi.*;
++   import com.mcleodgaming.ssf2.modes.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.geom.*;
++   import flash.text.*;
+@@ 17 1 99e3c22706854ab1 1
++      protected static const EXP_PREVIEW_X:Number = -24.3;
+@@ 19 1 5e2d5e55f2c2d45b 1
++      protected static const EXP_PREVIEW_Y:Number = -32.5;
+@@ 21 1 2ad56c6a5eab134c 1
++      protected static const EXP_PREVIEW_W:Number = 268;
+@@ 23 1 057a67a2c225a08e 1
++      protected static const EXP_PREVIEW_H:Number = 149;
+@@ 25 1 c0d78101a4fc367e 1
++      protected var m_isDragging:Boolean;
+@@ 27 1 c13d88c8aa912727 1
++      protected var m_currentEvent:Object;
+@@ 29 1 a5ed01706de6ff5e 1
++      protected var m_eventContainer:MovieClip;
+@@ 31 1 a3af0c2edaf31945 1
++      protected var m_eventMask:MovieClip;
+@@ 33 1 bfabdc31d11ba10a 1
++      protected var m_eventButtons:Vector.<EventButton>;
+@@ 35 1 432e4d7b7235b40c 1
++      protected var m_listLocation:Point;
+@@ 37 1 a3074a47fc979a3f 1
++      protected var m_scrollTop:Point;
+@@ 39 1 007298bbb181a6ff 1
++      protected var m_scrollHeight:Number;
+@@ 41 1 69a17768abf5b514 45
++      protected var eventSelectHand:EventMenuHand;
+=16
++      protected var m_events:Array;
+=16
++      protected var m_vanillaEvents:Array;
+=16
++      protected var m_expansionList:Array;
+=16
++      protected var m_downloadList:Array;
+=16
++      protected var m_downloadNotice:String;
+=16
++      protected var m_downloadRequested:Boolean;
+=16
++      protected var m_switchingList:Boolean;
+=16
++      protected var m_lastClickAt:int;
+=16
++      protected var m_pendingListMode:String;
+=16
++      protected var m_blockClicks:Boolean;
+=16
++      protected var m_idleFrames:int;
+=16
++      protected var m_frameArmed:Boolean;
+=16
++      protected var m_listMode:String;
+=16
++      protected var m_chromeAttached:Boolean;
+=16
++      protected var m_toggleBar:MovieClip;
+=16
++      protected var m_vanillaBtn:MovieClip;
+=16
++      protected var m_expansionsBtn:MovieClip;
+=16
++      protected var m_previewBitmap:Bitmap;
+=16
++      protected var m_previewCharMC:MovieClip;
+=16
++      protected var m_game:Game;
+=16
++      protected var m_modeInstance:EventMode;
+=16
++      protected var m_unlockIcon:MovieClip;
+## public function EventMenu()
+## why: events: build vanilla list without expansion entries; init expansion/download list state
+@@ 45 0 da39a3ee5e6b4b0d 2
++         var _loc0_:Array = null;
++         var _loc1_:Object = null;
+@@ 66 1 8dd189b3b86e9e94 28
++         _loc0_ = ResourceManager.getResourceByID("event_mode").getProp("eventList");
++         this.m_vanillaEvents = [];
++         if(Boolean(_loc0_))
+=72
++            i = 0;
++            while(i < _loc0_.length)
+=109
++               _loc1_ = _loc0_[i];
++               if(!(Boolean(_loc1_) && Boolean(_loc1_.expansion)))
+=135
++                  this.m_vanillaEvents.push(_loc1_);
+=137
++               i++;
+=111
+=75
++         this.m_expansionList = [];
++         this.m_downloadList = [];
++         this.m_downloadNotice = "";
++         this.m_downloadRequested = false;
++         this.m_switchingList = false;
++         this.m_lastClickAt = 0;
++         this.m_pendingListMode = null;
++         this.m_blockClicks = false;
++         this.m_idleFrames = 0;
++         this.m_frameArmed = false;
++         this.m_listMode = "vanilla";
++         this.m_events = this.padEventList(this.m_vanillaEvents);
++         this.m_chromeAttached = false;
+@@ 70 0 da39a3ee5e6b4b0d 2
++         this.m_unlockIcon.mouseEnabled = false;
++         this.m_unlockIcon.mouseChildren = false;
+## public function setExpansionList(_:Array) : void
+## why: events: overridable stubs for the Vanilla/Expansions list toggle and download list (Shell subclass fills them)
+@@ 96 0 da39a3ee5e6b4b0d 102
++      public function setExpansionList(param1:Array) : void
+=44
+=89
+=16
++      public function attachExpansionChrome() : void
+=44
+=89
+=16
++      protected function detachExpansionChrome() : void
+=44
+=89
+=16
++      protected function expansionChromeWanted() : Boolean
+=44
++         return false;
+=89
+=16
++      public function setListMode(param1:String) : void
+=44
+=89
+=16
++      protected function requestListMode(param1:String) : void
+=44
+=89
+=16
++      protected function armFramePump() : void
+=44
+=89
+=16
++      protected function disarmFramePump() : void
+=44
+=89
+=16
++      protected function onMenuFrame(param1:Event) : void
+=44
+=89
+=16
++      protected function lockSelectHand(param1:Boolean) : void
+=44
+=89
+=16
++      protected function selectButtonIsUp() : Boolean
+=44
++         return false;
+=89
+=16
++      protected function requestDownloadList() : void
+=44
+=89
+=16
++      public function setDownloadList(param1:Array, param2:String = null) : void
+=44
+=89
+=16
++      public function setDownloadStatus(param1:String, param2:String) : void
+=44
+=89
+=16
++      protected function buildDownloadRows() : Array
+=44
++         return [];
+=89
+=16
++      protected function dbg(param1:String) : void
+=44
+=89
+=16
++      public function getListMode() : String
+=44
++         return "vanilla";
+=89
+=16
++      protected function buildToggleUI() : void
+=44
+=89
+=16
++      protected function makeToggleClip(param1:String, param2:TextFormat) : MovieClip
+=44
++         return null;
+=89
+=16
++      protected function refreshToggleLabels() : void
+=44
+=89
+=16
++      protected function tintToggle(param1:MovieClip, param2:Boolean) : void
+=44
+=89
+=16
++      protected function applyListMode(param1:Boolean) : void
+=44
+=89
+=16
++      protected function padEventList(param1:Array) : Array
+=44
++         return param1;
+=89
+=16
++      protected function listToggleHelper() : void
+=44
+=89
+=16
+## protected function getEventNumString(_:Object) : String
+## why: events: label expansion (XP #), series and GameBanana rows; protected so the subclass can override
+@@ 102 1 e9c71b6660d9c773 1
++      protected function getEventNumString(param1:Object) : String
+@@ 104 3 4b5385dc9279af9f 4
++         var _loc2_:int = 0;
++         var _loc3_:int = 1;
++         var _loc4_:int = 1;
++         while(_loc2_ < this.m_events.length)
+@@ 108 1 334569aec4be87a6 1
++            if(this.m_events[_loc2_] === param1)
+@@ 110 1 de4df74ed43058d9 17
++               if(Boolean(this.m_events[_loc2_].downloadEntry) || Boolean(this.m_events[_loc2_].backEntry) || Boolean(this.m_events[_loc2_].noticeEntry))
+=135
++                  return "";
+=137
++               if(Boolean(this.m_events[_loc2_].downloadItem))
+=135
++                  return "GB";
+=137
++               if(Boolean(this.m_events[_loc2_].seriesStart))
+=135
++                  return "Series";
+=137
++               if(Boolean(this.m_events[_loc2_].expansion))
+=135
++                  return "XP #" + (_loc2_ + 1);
+=137
++               return Boolean(this.m_events[_loc2_].allStar) ? "All-Star # " + _loc4_ : "#" + _loc3_;
+@@ 112 1 05329d35219de43f 1
++            if(Boolean(this.m_events[_loc2_].allStar))
+@@ 114 1 053cd27747c29125 1
++               _loc4_++;
+@@ 116 1 b6c037d7f2deb29f 1
++            else if(!(Boolean(this.m_events[_loc2_].expansion) || Boolean(this.m_events[_loc2_].seriesStart)))
+@@ 118 1 54ef55f8e06a1c85 1
++               _loc3_++;
+@@ 120 0 da39a3ee5e6b4b0d 1
++            _loc2_++;
+## protected function clearPreviewBitmap() : void
+## why: events: overridable stubs for expansion event preview image and live preview character
+@@ 124 0 da39a3ee5e6b4b0d 25
++      protected function clearPreviewBitmap() : void
+=44
+=89
+=16
++      protected function attachExpansionPreview(param1:MovieClip, param2:BitmapData) : void
+=44
+=89
+=16
++      protected function ensureEventUiAbovePreviewer() : void
+=44
+=89
+=16
++      protected function getPreviewCharacterHost() : MovieClip
+=44
++         return null;
+=89
+=16
++      protected function clearPreviewCharacter() : void
+=44
+=89
+=16
++      protected function showPreviewCharacter(param1:String, param2:int) : void
+=44
+=89
+=16
+## public function updateDisplay() : void
+## why: events: blank download/notice rows; show expansion preview bitmap/character instead of a vanilla frame
+@@ 126 1 6cbf05c77a699a8f 4
++         var _loc1_:MovieClip = null;
++         var _loc2_:String = null;
++         var _loc0_:int = -1;
++         if(this.m_eventButtons.length > 0 && Boolean(this.m_currentEvent) && !this.m_currentEvent.placeholder)
+@@ 129 2 063b75286877375a 11
++            m_subMenu.eventName.text = this.m_currentEvent.name != null ? String(this.m_currentEvent.name) : "";
++            m_subMenu.eventDesc.text = this.m_currentEvent.description != null ? String(this.m_currentEvent.description) : "";
++            if(Boolean(this.m_currentEvent.downloadEntry) || Boolean(this.m_currentEvent.downloadItem) || Boolean(this.m_currentEvent.backEntry) || Boolean(this.m_currentEvent.noticeEntry))
+=109
+=161
++               m_subMenu.desc_txt.text = Boolean(this.m_currentEvent.downloadItem) ? "[ GameBanana ]" : "";
++               this.clearPreviewBitmap();
++               this.clearPreviewCharacter();
++               Utils.tryToGotoAndStop(m_subMenu.previewer,1);
++               return;
+=111
+@@ 164 1 0cf0d243bc4b9750 25
++            this.clearPreviewBitmap();
++            this.clearPreviewCharacter();
++            _loc1_ = m_subMenu.previewer as MovieClip;
++            _loc2_ = this.m_currentEvent.previewCharacter != null ? String(this.m_currentEvent.previewCharacter) : "";
++            if(this.m_currentEvent.previewCostume != null && this.m_currentEvent.previewCostume !== "")
+=109
++               _loc0_ = int(this.m_currentEvent.previewCostume);
+=111
++            if(this.m_currentEvent.previewBitmapData is BitmapData && Boolean(_loc1_))
+=109
++               this.attachExpansionPreview(_loc1_,this.m_currentEvent.previewBitmapData as BitmapData);
++               if(_loc2_.length > 0)
+=135
++                  this.showPreviewCharacter(_loc2_,_loc0_);
+=137
+=111
++            else if(_loc2_.length > 0 && Boolean(_loc1_))
+=109
++               Utils.tryToGotoAndStop(_loc1_,1);
++               this.showPreviewCharacter(_loc2_,_loc0_);
+=111
+=116
+=109
++               Utils.tryToGotoAndStop(m_subMenu.previewer,this.m_currentEvent.id);
+=111
+@@ 171 0 da39a3ee5e6b4b0d 2
++            this.clearPreviewBitmap();
++            this.clearPreviewCharacter();
+## override public function makeEvents() : void
+## why: events: wire Vanilla/Expansions toggle buttons; split row drawing into paintEventRows for list switching
+@@ 188 0 da39a3ee5e6b4b0d 12
++         if(Boolean(this.m_vanillaBtn))
+=72
++            this.m_vanillaBtn.addEventListener(MouseEvent.CLICK,this.vanillaToggle_CLICK);
+=75
++         if(Boolean(this.m_expansionsBtn))
+=72
++            this.m_expansionsBtn.addEventListener(MouseEvent.CLICK,this.expansionsToggle_CLICK);
+=75
++         if(!this.eventSelectHand)
+=72
++            return;
+=75
+@@ 189 144 9f57fda933d4a0d2 5
++         this.paintEventRows();
+=89
+=16
++      protected function paintEventRows() : void
+=44
+## override public function killEvents() : void
+## why: events: remove toggle listeners and stop the frame pump unless only switching lists
+@@ 337 0 da39a3ee5e6b4b0d 7
++         if(!this.m_switchingList)
+=72
++            this.disarmFramePump();
++            this.m_pendingListMode = null;
++            this.m_blockClicks = false;
++            this.lockSelectHand(false);
+=75
+@@ 342 1 f07572bfd067e367 2
++         var _loc1_:int = 0;
++         if(Boolean(this.m_vanillaBtn))
+@@ 344 5 df6f245c425dad60 14
++            this.m_vanillaBtn.removeEventListener(MouseEvent.CLICK,this.vanillaToggle_CLICK);
+=75
++         if(Boolean(this.m_expansionsBtn))
+=72
++            this.m_expansionsBtn.removeEventListener(MouseEvent.CLICK,this.expansionsToggle_CLICK);
+=75
++         while(_loc1_ < this.m_eventButtons.length)
+=72
++            this.m_eventButtons[_loc1_].ButtonInstance.visible = true;
++            this.m_eventButtons[_loc1_].killEvents();
++            this.m_eventButtons[_loc1_].ButtonInstance.removeEventListener(MouseEvent.CLICK,this.event_CLICK);
++            this.m_eventButtons[_loc1_].ButtonInstance.removeEventListener(MouseEvent.MOUSE_OVER,this.event_MOUSE_OVER);
++            this.m_eventButtons[_loc1_].ButtonInstance.removeEventListener(MouseEvent.MOUSE_OUT,this.event_MOUSE_OUT);
++            _loc1_++;
+## override public function show() : void
+## why: events: hide the expansion toggle chrome when it is not wanted
+@@ 356 0 da39a3ee5e6b4b0d 4
++         if(!this.expansionChromeWanted())
+=72
++            this.detachExpansionChrome();
+=75
+## protected function repositionList() : void
+## why: events: protected; scroll range from the real list length (expansion lists are longer than vanilla)
+@@ 378 1 e83cb2c5c5286da2 1
++      protected function repositionList() : void
+@@ 380 2 4b7b7572ba9c5822 2
++         var _loc1_:Number = (m_subMenu.scroller.y - this.m_scrollTop.y) / this.m_scrollHeight;
++         if(_loc1_ < 0.01)
+@@ 383 1 9c777c11be38a82d 1
++            _loc1_ = 0;
+@@ 385 1 9d90d6dbb03db29e 1
++         else if(_loc1_ > 0.99)
+@@ 387 1 66c47a2296352a11 1
++            _loc1_ = 1;
+@@ 389 2 34a2553f10eef3b8 2
++         var _loc2_:Number = 23;
++         this.m_eventContainer.y = this.m_listLocation.y - _loc1_ * (_loc2_ * Math.max(0,this.m_events.length - 11));
+## protected function handPushListUpHelper() : void
+## why: events: private->protected so the Shell subclass can override list scrolling
+@@ 393 1 3bd4f74f05ad9fb8 1
++      protected function handPushListUpHelper() : void
+## protected function handPushListDownHelper() : void
+## why: events: private->protected so the Shell subclass can override list scrolling
+@@ 403 1 3fd8eba3bd5487b8 1
++      protected function handPushListDownHelper() : void
+## protected function findEvent(_:MovieClip) : int
+## why: events: private->protected so the Shell subclass can look up rows
+@@ 413 1 6f39d4827efd125f 1
++      protected function findEvent(param1:MovieClip) : int
+@@ 415 1 64ff76603dbf942b 2
++         var _loc2_:int = 0;
++         if(Boolean(param1) && !param1.visible)
+@@ 419 1 56b0d78566b03a8c 1
++         while(_loc2_ < this.m_eventButtons.length)
+@@ 421 1 d549419f49f7644e 1
++            if(this.m_eventButtons[_loc2_].ButtonInstance == param1)
+@@ 423 1 a4ccfa0452449840 1
++               return _loc2_;
+@@ 425 0 da39a3ee5e6b4b0d 1
++            _loc2_++;
+## protected function vanillaToggle_CLICK(_:MouseEvent) : void
+## why: events: stubs for the Vanilla/Expansions toggle clicks and GameBanana event download
+@@ 429 0 da39a3ee5e6b4b0d 12
++      protected function vanillaToggle_CLICK(param1:MouseEvent) : void
+=44
+=89
+=16
++      protected function expansionsToggle_CLICK(param1:MouseEvent) : void
+=44
+=89
+=16
++      protected function startDownload(param1:Object) : void
+=44
+=89
+=16
+## public function event_CLICK(_:MouseEvent) : void
+## why: events: route clicks through overridable handleEventClick, log failures via dbg
+@@ 431 2 8532e63ed7f460b4 1
++         try
+@@ 434 19 356d4a66f2842ee9 1
++            this.handleEventClick(e);
+@@ 454 0 da39a3ee5e6b4b0d 18
++         catch(err:*)
+=72
++            this.dbg("event_CLICK FAIL mode=" + this.m_listMode + " current=" + (this.m_currentEvent ? this.m_currentEvent.id : "none") + " err=" + err);
+=75
+=89
+=16
++      protected function placeDownloadNotice(param1:int) : int
+=44
++         return param1;
+=89
+=16
++      protected function isChromeRow(param1:Object) : Boolean
+=44
++         return false;
+=89
+=16
++      protected function handleEventClick(param1:MouseEvent) : void
+=44
+## public function event_MOUSE_OVER(_:MouseEvent) : void
+## why: events: hovering a placeholder padding row clears the display
+@@ 461 0 da39a3ee5e6b4b0d 6
++            if(Boolean(this.m_events[index].placeholder))
+=109
++               this.m_currentEvent = null;
++               this.updateDisplay();
++               return;
+=111
+## public function backMain_CLICK(_:MouseEvent) : void
+## why: rumble: stop menu vibration when leaving the menu
+@@ 488 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.RUMBLE,{"kind":"menuStop"});

@@ -1,0 +1,13 @@
+# com/mcleodgaming/ssf2/menus/DisclaimerMenu.as
+## class header
+## why: ModHost import
+@@ 14 0 da39a3ee5e6b4b0d 5
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.geom.*;
+## override public function show() : void
+## why: ModHost: TITLE_ENTER hook when the title/disclaimer screen shows
+@@ 130 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.TITLE_ENTER,{"menu":this});

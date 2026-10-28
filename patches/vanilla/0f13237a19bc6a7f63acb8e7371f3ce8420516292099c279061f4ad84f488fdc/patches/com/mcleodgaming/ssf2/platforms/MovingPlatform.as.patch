@@ -1,0 +1,15 @@
+# com/mcleodgaming/ssf2/platforms/MovingPlatform.as
+## class header
+## why: ModHost import for the hook below
+@@ 8 0 da39a3ee5e6b4b0d 3
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.geom.*;
+## protected function move() : void
+## why: ModHost hook so mods can react to moving-platform position updates
+@@ 329 0 da39a3ee5e6b4b0d 5
++               ModHost.runHook(ModHooks.MOVING_PLATFORM_UPDATE,{
++                  "platform":this,
++                  "x":this.m_xLoc,
++                  "y":this.m_yLoc
++               });

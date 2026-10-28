@@ -1,0 +1,1927 @@
+# com/mcleodgaming/ssf2/engine/Character.as
+## class header
+## why: imports + fields for ModHost hooks, form-costume repaint, projectile palette cache and per-character time freeze
+@@ 24 0 da39a3ee5e6b4b0d 7
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.menus.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.geom.*;
+@@ 63 0 da39a3ee5e6b4b0d 10
+=27
++      private var m_formCostumeInjectTicks:int;
+=27
++      private var m_cachedFormInject:Object;
+=27
++      private var m_formPaletteDirty:Boolean;
+=27
++      public var studioDeepPalettePaint:Boolean = false;
+=27
++      private var m_cachedInheritProjectilePaint:Object;
+@@ 606 0 da39a3ee5e6b4b0d 4
++      private var m_frozenInTime:Boolean;
+=27
++      private var m_frozenInTimeTimer:int;
+=27
+## public function Character(_:CharacterData, _:PlayerSetting, _:StageData)
+## why: expansion characters: fall back to LinkageID2/StatsName/empty MC when linkage is missing; name tag for CPUs too
+@@ 609 5 9b91bc10f4872c5e 0
+@@ 634 0 da39a3ee5e6b4b0d 17
++         if(!tmpMC && Boolean(this.m_characterStats.LinkageID2))
+=610
++            tmpMC = ResourceManager.getLibraryMC(this.m_characterStats.LinkageID2);
+=612
++         if(!tmpMC && Boolean(this.m_characterStats.StatsName))
+=610
++            tmpMC = ResourceManager.getLibraryMC(this.m_characterStats.StatsName);
+=612
++         if(!tmpMC)
+=610
++            tmpMC = new MovieClip();
+=612
+=609
+=610
+=611
+=612
+=613
+@@ 732 1 f01abd8d833bc037 1
++         if(Boolean(this.m_playerSettings.name))
+@@ 870 0 da39a3ee5e6b4b0d 4
++         this.m_formCostumeInjectTicks = 0;
++         this.m_cachedFormInject = null;
++         this.m_formPaletteDirty = true;
++         this.m_cachedInheritProjectilePaint = null;
+@@ 1056 0 da39a3ee5e6b4b0d 2
++         this.m_frozenInTime = false;
++         this.m_frozenInTimeTimer = 0;
+## private function reapplyCostume() : void
+## why: custom costumes: clear cached form/projectile paints; add carried-costume reapply for linked-form transforms
+@@ 1663 0 da39a3ee5e6b4b0d 33
++         this.m_cachedInheritProjectilePaint = null;
++         this.m_cachedFormInject = null;
+=1056
+=27
++      private function reapplyCarriedLinkedCostume(param1:Object) : void
+=607
++         var resolved:int = 0;
++         if(!param1)
+=610
++            this.reapplyCostume();
+=2046
+=612
++         if(Boolean(param1.both) || Boolean(ModHost.door(ModPatches.PALETTE_IS_LINKED_FORM_PAIR,[this.m_characterStats.StatsName],false)))
+=610
++            resolved = int(ModHost.door(ModPatches.PALETTE_FIND_MERGED_COSTUME_INDEX_BY_IDENTITY,[this.m_characterStats.StatsName,param1],-1));
++            if(resolved >= 0)
+=987
++               this.m_costume = resolved;
++               if(Boolean(this.m_playerSettings))
+=1112
++                  this.m_playerSettings.costume = resolved;
+=1127
+=989
+=612
++         try
+=610
++            this.setPaletteSwap(param1.paletteSwap,param1.paletteSwapPA);
+=9357
+=612
++         catch(swapErr:Error)
+=610
++            this.reapplyCostume();
+=612
+## public function set CostumeID(_:int) : void
+## why: custom costumes: drop cached paints on costume change; expose projectile paint cache to Projectile
+@@ 1755 0 da39a3ee5e6b4b0d 12
++         this.m_cachedInheritProjectilePaint = null;
++         this.m_cachedFormInject = null;
+=1056
+=27
++      public function get CachedInheritProjectilePaint() : Object
+=607
++         return this.m_cachedInheritProjectilePaint;
+=1056
+=27
++      public function set CachedInheritProjectilePaint(param1:Object) : void
+=607
++         this.m_cachedInheritProjectilePaint = param1;
+## public function jumpIsPressed() : Boolean
+## why: character switch: a ModPatch can reserve JUMP2 for switching so only JUMP/JUMP3 count as jump
+@@ 2663 0 da39a3ee5e6b4b0d 4
++         if(ModHost.hasPatch(ModPatches.RESERVE_JUMP2_AS_SWITCH) && Boolean(ModHost.door(ModPatches.RESERVE_JUMP2_AS_SWITCH,[this,m_player_id],false)))
+=610
++            return Boolean(this.m_pressedControls.JUMP) || Boolean(this.m_pressedControls.JUMP3);
+=612
+## public function jumpIsHeld() : Boolean
+## why: character switch: a ModPatch can reserve JUMP2 for switching so only JUMP/JUMP3 count as jump
+@@ 2668 0 da39a3ee5e6b4b0d 4
++         if(ModHost.hasPatch(ModPatches.RESERVE_JUMP2_AS_SWITCH) && Boolean(ModHost.door(ModPatches.RESERVE_JUMP2_AS_SWITCH,[this,m_player_id],false)))
+=610
++            return Boolean(this.m_heldControls.JUMP) || Boolean(this.m_heldControls.JUMP3);
+=612
+## private function m_pushAwayOpponents() : void
+## why: menu preview: no pushing between preview fighters; null-guard opponent CollisionObj
+@@ 2880 0 da39a3ee5e6b4b0d 4
++         if(Boolean(STAGEDATA) && STAGEDATA.IsMenuPreview)
+=610
+=2046
+=612
+@@ 2886 1 402743eca089d484 1
++            if(!(!opponent || !opponent.CollisionObj || opponent === this || !m_collision.ground || !opponent.CollisionObj.ground || !InteractiveSprite.hitTest(this,opponent,HitBoxSprite.MASTER,HitBoxSprite.MASTER,reactionMaster,null,true).length))
+## private function m_getKey() : void
+## why: menu preview: strip attack/jump/shield/up inputs from preview fighters; BEFORE_INPUT_APPLY hook for mods
+@@ 3966 0 da39a3ee5e6b4b0d 14
++         var _loc0_:Object = null;
++         if(ModHost.hasHook(ModHooks.BEFORE_INPUT_APPLY))
+=610
++            _loc0_ = {
++               "cancel":false,
++               "character":this,
++               "pressed":this.m_pressedControls,
++               "held":this.m_heldControls
++            };
++            if(ModHost.runHook(ModHooks.BEFORE_INPUT_APPLY,_loc0_))
+=987
+=1223
+=989
+=612
+@@ 4075 0 da39a3ee5e6b4b0d 30
+=612
++         if(Boolean(STAGEDATA) && Boolean(STAGEDATA.IsMenuPreview) && !STAGEDATA.FreezeKeys)
+=610
+=4004
+=4005
+=4015
+=4016
+=4007
+=4010
++            this.m_pressedControls.JUMP3 = false;
+=4006
+=4002
+=4011
+=4012
+=4013
+=4014
+=4022
+=4023
+=4033
+=4034
+=4025
+=4028
++            this.m_heldControls.JUMP3 = false;
+=4024
+=4020
+=4029
+=4030
+=4031
+=4032
++            this.m_tap_jump = false;
+## private function initShield() : void
+## why: BEFORE_SHIELD hook so mods can inspect or cancel shielding
+@@ 5451 0 da39a3ee5e6b4b0d 10
++         var _loc0_:Object = null;
++         _loc0_ = {
++            "cancel":false,
++            "character":this,
++            "shieldPower":this.m_shieldPower
+=3032
++         if(ModHost.runHook(ModHooks.BEFORE_SHIELD,_loc0_))
+=610
+=2046
+=612
+## private function initAirDodge() : void
+## why: restores vanilla directional/wavedash air dodge (melee/ultimate modes) lost by the decompiler
+@@ 5518 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Number = NaN;
+@@ 5525 0 da39a3ee5e6b4b0d 42
++         _loc0_ = 1;
++         if(Boolean(STAGEDATA.AirDodge.match(/melee|solo|vsolo|double|vdouble/)))
+=610
++            ++this.m_airDodgeCount;
++            this.m_initialAirDodgeAngle = Utils.getControlsAngle(this.getControls());
++            if(Boolean(STAGEDATA.AirDodge.match(/double|vdouble/)))
+=987
++               if(this.m_initialAirDodgeAngle === 0)
+=1112
++                  this.m_initialAirDodgeAngle = 345;
+=1127
++               else if(this.m_initialAirDodgeAngle === 180)
+=1112
++                  this.m_initialAirDodgeAngle = 195;
+=1127
+=989
+=1301
++            if(this.m_initialAirDodgeAngle >= 0)
+=987
++               stackKnockback(this.m_characterStats.AirDodgeSpeed * _loc0_,this.m_initialAirDodgeAngle,m_xKnockback,m_yKnockback);
+=989
+=612
++         else if(Boolean(STAGEDATA.AirDodge.match(/ultimate/)))
+=610
++            ++this.m_airDodgeCount;
++            this.m_initialAirDodgeAngle = Utils.getControlsAngle(this.getControls());
++            if(this.m_initialAirDodgeAngle >= 0)
+=987
+=12701
++               if(this.m_waveDashPenalty > 0)
+=1112
++                  _loc0_ -= 0.8 * (this.m_waveDashPenalty / 100);
+=1127
++               this.m_waveDashPenalty += 25;
++               if(this.m_waveDashPenalty > 100)
+=1112
++                  this.m_waveDashPenalty = 100;
+=1127
++               stackKnockback(this.m_characterStats.AirDodgeSpeed * _loc0_,this.m_initialAirDodgeAngle,m_xKnockback,m_yKnockback);
++               moveSprite(Utils.calculateXSpeed(10,this.m_initialAirDodgeAngle - 180),-Utils.calculateYSpeed(10,this.m_initialAirDodgeAngle - 180));
+=989
+=612
+## private function m_deactivateShield() : void
+## why: null-guard m_shieldHolderMC before removing it (crash fix)
+@@ 5619 1 b121532a24c41ed2 1
++         if(this.m_shieldHolderMC != null && Boolean(this.m_shieldHolderMC.parent))
+## private function m_breakShield() : void
+## why: controller rumble on shield break + AFTER_SHIELD_BREAK hook for mods
+@@ 5688 0 da39a3ee5e6b4b0d 7
++         if(Boolean(this.m_human) && this.ID > 0)
+=610
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"shieldBreak",
++               "playerId":this.ID
+=631
+=612
+@@ 5692 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.AFTER_SHIELD_BREAK,{
++            "cancel":false,
++            "character":this
+=720
+## private function initLedgeGrab(_:MovieClip) : void
+## why: BEFORE/AFTER_LEDGE_GRAB hooks (mods can cancel or swap the ledge) + controller rumble
+@@ 5922 0 da39a3ee5e6b4b0d 11
++         var _loc0_:Object = null;
++         _loc0_ = {
++            "cancel":false,
++            "character":this,
++            "ledge":ledge
+=3032
++         if(ModHost.runHook(ModHooks.BEFORE_LEDGE_GRAB,_loc0_))
+=610
+=2046
+=612
++         ledge = _loc0_.ledge;
+@@ 5938 0 da39a3ee5e6b4b0d 7
++         if(Boolean(this.m_human) && this.ID > 0)
+=610
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"ledgeGrab",
++               "playerId":this.ID
+=631
+=612
+@@ 5967 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.AFTER_LEDGE_GRAB,{
++            "cancel":false,
++            "character":this,
++            "ledge":ledge
+=720
+## public function fireProjectile(_:*, _:Number = 0, _:Number = 0, _:Boolean = false, _:Object = null) : Projectile
+## why: BEFORE/AFTER_PROJECTILE_SPAWN hooks so mods can cancel or alter projectiles; locals renumbered
+@@ 8601 1 6003018af370cd9f 1
++      public function fireProjectile(param1:*, param2:Number = 0, param3:Number = 0, param4:Boolean = false, param5:Object = null) : Projectile
+@@ 8603 9 328318cff9e3a5ec 26
++         var _loc6_:Projectile = null;
++         var _loc7_:ProjectileAttack = null;
++         var _loc8_:int = 0;
++         var _loc9_:int = 0;
++         var _loc10_:Object = null;
++         _loc9_ = 0;
++         _loc10_ = null;
++         _loc6_ = null;
++         _loc7_ = null;
++         _loc8_ = 0;
++         var _loc11_:int = 0;
++         _loc9_ = 0;
++         _loc10_ = null;
++         _loc6_ = null;
++         _loc7_ = null;
++         _loc8_ = 0;
++         _loc10_ = {
++            "cancel":false,
++            "character":this,
++            "proj":param1,
++            "xOverride":param2,
++            "yOverride":param3,
++            "absolute":param4,
++            "options":param5
+=3032
++         if(ModHost.runHook(ModHooks.BEFORE_PROJECTILE_SPAWN,_loc10_))
+@@ 8613 1 3e4e87b0d37959cd 10
+=1200
+=612
++         param1 = _loc10_.proj;
++         param2 = Number(_loc10_.xOverride);
++         param3 = Number(_loc10_.yOverride);
++         param4 = Boolean(_loc10_.absolute);
++         param5 = _loc10_.options;
++         if(Boolean(param1 as String))
+=610
++            _loc7_ = m_attackData.getProjectile(param1);
+@@ 8617 2 62490795e604f0c0 2
++            _loc7_ = new ProjectileAttack();
++            _loc7_.importData(param1);
+@@ 8620 1 96378bb5b8a91803 1
++         if(!param5)
+@@ 8622 1 2cbfeaf115887edf 1
++            param5 = {};
+@@ 8624 1 fdddfe3ff518802c 1
++         if(_loc7_ != null)
+@@ 8626 2 79f0428585baabe5 2
++            _loc8_ = 0;
++            while(_loc8_ < this.m_characterStats.MaxProjectile && _loc8_ < this.m_projectile.length && !_loc6_)
+@@ 8629 1 4943fb5c696f0de8 1
++               if((this.m_projectile[_loc8_] == null || Boolean(this.m_projectile[_loc8_].inState(PState.DEAD)) || _loc7_.LimitOverwrite) && _loc7_.StatsName != null && (this.getProjectileLimit(_loc7_.StatsName) < _loc7_.Limit || _loc7_.LimitOverwrite))
+@@ 8631 2 e8da289d3f6a7ea6 2
++                  _loc11_ = _loc8_;
++                  if(_loc7_.LimitOverwrite && this.getProjectileLimit(_loc7_.StatsName) >= _loc7_.Limit)
+@@ 8634 2 a70090782924f221 2
++                     _loc8_ = int(this.getIndexOfOldestProjectile(_loc7_.StatsName));
++                     if(_loc8_ < 0)
+@@ 8639 2 9a679a53cce7c847 2
++                     this.m_projectile[_loc8_].destroy();
++                     this.m_projectile[_loc8_] = null;
+@@ 8642 1 09485f65948bb3d1 1
++                  else if(_loc7_.LimitOverwrite)
+@@ 8644 2 aa1a555e746a8097 3
++                     _loc8_ = int(this.getIndexOfOldestProjectile(_loc7_.StatsName));
++                     _loc9_ = 0;
++                     while(_loc9_ < this.m_projectile.length)
+@@ 8647 1 804f961c90f8eb1c 1
++                        if(this.m_projectile[_loc9_] == null)
+@@ 8649 1 12c29a8394ae5244 1
++                           _loc8_ = _loc9_;
+@@ 8652 0 da39a3ee5e6b4b0d 1
++                        _loc9_++;
+@@ 8653 1 dda379b04779fb24 1
++                     if(_loc8_ < 0)
+@@ 8657 1 aab979ee547ed348 1
++                     if(Boolean(this.m_projectile[_loc8_]))
+@@ 8659 1 906c109fe826a54d 1
++                        this.m_projectile[_loc8_].destroy();
+@@ 8662 1 1a530f1f7b45e4ff 1
++                  this.m_projectile[_loc8_] = new Projectile({
+@@ 8669 4 c17bfd2d76919968 4
++                     "chargetime":param5.chargetime || m_attack.ChargeTime,
++                     "chargetime_max":param5.chargetime_max || m_attack.ChargeTimeMax,
++                     "frame":_loc7_.StatsName + "_proj",
++                     "staleMultiplier":this.totalMoveDecay(_loc7_.StatsName + "_proj"),
+@@ 8679 2 515f1938401db6e0 2
++                  },_loc7_,STAGEDATA);
++                  _loc6_ = this.m_projectile[_loc8_];
+@@ 8682 2 af852b8b92744c1b 2
++                  this.m_lastProjectile = _loc8_;
++                  if(param2 != 0 || param3 != 0)
+@@ 8685 1 db61e96afc8378cb 1
++                     if(param4)
+@@ 8687 4 febeda5f69ed7486 4
++                        this.m_projectile[_loc8_].X = param2;
++                        this.m_projectile[_loc8_].Y = param3;
++                        this.m_projectile[_loc8_].safeMove(0,_loc7_.YOffset * m_sizeRatio);
++                        this.m_projectile[_loc8_].safeMove(m_facingForward ? _loc7_.XOffset * m_sizeRatio : -_loc7_.XOffset * m_sizeRatio,0);
+@@ 8694 4 6953ea287c3d281d 4
++                        this.m_projectile[_loc8_].safeMove(0,param3 * m_sizeRatio);
++                        this.m_projectile[_loc8_].safeMove(m_facingForward ? param2 : -param2,0);
++                        this.m_projectile[_loc8_].safeMove(0,_loc7_.YOffset * m_sizeRatio);
++                        this.m_projectile[_loc8_].safeMove(m_facingForward ? _loc7_.XOffset * m_sizeRatio : -_loc7_.XOffset * m_sizeRatio,0);
+@@ 8702 2 e4683e1a390f9ab4 2
++                     this.m_projectile[_loc8_].safeMove(0,_loc7_.YOffset * m_sizeRatio);
++                     this.m_projectile[_loc8_].safeMove(m_facingForward ? _loc7_.XOffset * m_sizeRatio : -_loc7_.XOffset * m_sizeRatio,0);
+@@ 8707 1 f587890028081ea8 1
++               _loc8_++;
+@@ 8710 1 cd51d490afaec918 11
++         if(Boolean(_loc6_))
+=610
++            ModHost.runHook(ModHooks.AFTER_PROJECTILE_SPAWN,{
++               "cancel":false,
++               "character":this,
++               "projectile":_loc6_,
++               "proj":param1,
++               "options":param5
+=631
+=612
++         return _loc6_;
+## private function m_useFinalSmash() : void
+## why: skip Final Smash in studio deep-paint preview; schedule form-costume repaint after a transform FS
+@@ 9058 0 da39a3ee5e6b4b0d 4
++         if(this.studioDeepPalettePaint)
+=610
+=2046
+=612
+@@ 9075 0 da39a3ee5e6b4b0d 1
++            this.scheduleFormCostumeInject(90);
+## override public function updatePaletteSwap() : void
+## why: custom costumes: stance paint hooks, combined form palettes, deeper recursive recolor of stance/KO clips
+@@ 9331 1 6c51f866cf7c9109 31
++         var _loc2_:Object = null;
++         var _loc1_:Boolean = false;
++         var _loc0_:Object = null;
++         if(ModHost.hasHook(ModHooks.BEFORE_STANCE_PAINT))
+=610
++            _loc0_ = {
++               "cancel":false,
++               "character":this,
++               "paletteSwapData":m_paletteSwapData,
++               "paletteSwapPAData":m_paletteSwapPAData,
++               "statsName":(Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null)
++            };
++            if(ModHost.runHook(ModHooks.BEFORE_STANCE_PAINT,_loc0_))
+=987
+=1223
+=989
+=612
++         _loc1_ = Boolean(this.m_characterStats) && ModHost.hasPatch(ModPatches.PALETTE_SHOULD_COMBINE_FORM_PALETTE) && Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_COMBINE_FORM_PALETTE,[this.m_characterStats.StatsName],false));
++         if(HasStance && _loc1_ && (Boolean(m_paletteSwapData) || Boolean(m_paletteSwapPAData)))
+=610
++            _loc2_ = ModHost.applyPatch(ModPatches.COMBINE_PALETTE_BLOCKS,[m_paletteSwapData,m_paletteSwapPAData],null) as Object;
++            Utils.replacePalette(this.m_sprite.stance,_loc2_,16,true,false);
+=612
++         else if(HasStance && Boolean(m_paletteSwapData))
+=610
++            Utils.replacePalette(this.m_sprite.stance,m_paletteSwapData,16,true,false);
+=612
+=741
+=610
++            super.updatePaletteSwap();
+=612
+@@ 9334 3 98c7c51987747b8f 3
++            Utils.replacePalette(this.m_starKOMC,m_paletteSwapData,12,true,false);
++            Utils.replacePalette(this.m_screenKOHolder,m_paletteSwapData,12,true,false);
++            Utils.replacePalette(m_reflectionEffect,m_paletteSwapData,12,true,false);
+@@ 9339 0 da39a3ee5e6b4b0d 10
++         if(ModHost.hasHook(ModHooks.AFTER_STANCE_PAINT))
+=610
++            ModHost.runHook(ModHooks.AFTER_STANCE_PAINT,{
++               "cancel":false,
++               "character":this,
++               "paletteSwapData":m_paletteSwapData,
++               "paletteSwapPAData":m_paletteSwapPAData,
++               "statsName":(Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null)
+=631
+=612
+## override public function setPaletteSwap(_:Object, _:Object) : void
+## why: custom costumes: mark form palette dirty; health-box head paints the combined form palette
+@@ 9344 0 da39a3ee5e6b4b0d 1
++         this.m_formPaletteDirty = true;
+@@ 9345 0 da39a3ee5e6b4b0d 12
+=1056
+=27
++      override protected function getHealthBoxPaletteData() : Object
+=607
++         var _loc1_:String = null;
++         _loc1_ = null;
++         _loc1_ = Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null;
++         if(Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_COMBINE_FORM_PALETTE,[_loc1_],false)))
+=610
++            return ModHost.applyPatch(ModPatches.COMBINE_PALETTE_BLOCKS,[this.m_paletteSwapData,this.m_paletteSwapPAData],null) as Object;
+=612
++         return super.getHealthBoxPaletteData();
+## private function resolveReplaceCharacterAssets(_:String) : Object
+## why: expansion transforms: resolve target stats + MC via expansion id, linkage and NormalStatsID fallbacks
+@@ 9361 1 e02137956ece4859 89
++      private function resolveReplaceCharacterAssets(param1:String) : Object
+=607
++         var _loc2_:CharacterData = null;
++         var _loc3_:CharacterData = null;
++         var _loc4_:MovieClip = null;
++         var _loc5_:String = null;
++         var _loc6_:Array = null;
++         var _loc7_:String = null;
++         var _loc8_:int = 0;
++         _loc2_ = null;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc5_ = null;
++         _loc6_ = null;
++         _loc7_ = null;
++         _loc8_ = 0;
++         if(!param1)
+=610
+=1200
+=612
++         _loc2_ = Stats.getStats(param1,this.m_expansion_id);
++         if(!_loc2_)
+=610
++            _loc2_ = Stats.getStats(param1,-1);
+=612
++         if(Boolean(!_loc2_) && Boolean(this.m_characterStats) && Boolean(this.m_characterStats.NormalStatsID))
+=610
++            _loc2_ = Stats.getStats(this.m_characterStats.NormalStatsID,this.m_expansion_id);
++            if(!_loc2_)
+=987
++               _loc2_ = Stats.getStats(this.m_characterStats.NormalStatsID,-1);
+=989
+=612
++         _loc6_ = [];
++         if(Boolean(_loc2_) && Boolean(_loc2_.LinkageID))
+=610
++            _loc6_.push(_loc2_.LinkageID);
+=612
++         _loc6_.push(param1);
++         if(Boolean(this.m_characterStats) && Boolean(this.m_characterStats.NormalStatsID))
+=610
++            _loc6_.push(this.m_characterStats.NormalStatsID);
+=612
++         _loc8_ = 0;
++         while(_loc8_ < _loc6_.length)
+=610
++            _loc7_ = String(_loc6_[_loc8_]);
++            if(Boolean(_loc7_) && _loc7_.length > 0)
+=987
++               _loc4_ = ResourceManager.getLibraryMC(_loc7_);
++               if(Boolean(_loc4_))
+=1112
++                  _loc5_ = _loc7_;
++                  if(!_loc2_ || Boolean(_loc2_.LinkageID && _loc2_.LinkageID != _loc7_) && Boolean(_loc7_ == param1))
+=1114
++                     _loc3_ = Stats.getStats(_loc7_,this.m_expansion_id);
++                     if(!_loc3_)
+=2157
++                        _loc3_ = Stats.getStats(_loc7_,-1);
+=2162
++                     if(Boolean(_loc3_))
+=2157
++                        _loc2_ = _loc3_;
+=2162
+=1118
++                  if(!_loc2_)
+=1114
++                     _loc2_ = Stats.getStats(_loc7_,this.m_expansion_id);
++                     if(!_loc2_)
+=2157
++                        _loc2_ = Stats.getStats(_loc7_,-1);
+=2162
+=1118
++                  if(Boolean(_loc2_))
+=1114
++                     return {
++                        "stats":_loc2_,
++                        "mc":_loc4_,
++                        "linkage":_loc5_
++                     };
+=1118
+=1127
+=989
++            _loc8_++;
+=612
+=2433
+=1056
+=27
++      public function replaceCharacter(param1:String, param2:String = null, param3:String = null) : void
+## public function replaceCharacter(_:String, _:String = null, _:String = null) : void
+## why: transforms: BEFORE/AFTER_TRANSFORM hooks, expansion asset resolve, carry custom costume across forms
+@@ 9372 0 da39a3ee5e6b4b0d 62
++         var previousStatsName:String = null;
++         var carryCostume:Object = null;
++         var teamColor:String = null;
++         var resolved:Object = null;
++         var liveSwap:Object = null;
++         var liveSwapPA:Object = null;
++         var transformCtx:Object = null;
++         var statData:String = null;
+=10174
++         var jumpFrame:String = null;
++         statData = null;
++         frame = null;
++         jumpFrame = null;
++         stats = null;
++         origFrame = null;
++         tempX = Number(NaN);
++         tempY = Number(NaN);
++         self = null;
++         hasTargets = false;
++         wasVisible = false;
++         oldFilters = null;
++         tmpMC = null;
++         previousStatsName = null;
++         carryCostume = null;
++         teamColor = null;
++         resolved = null;
++         liveSwap = null;
++         liveSwapPA = null;
++         transformCtx = null;
++         statData = param1;
++         frame = param2;
++         jumpFrame = param3;
++         stats = null;
++         origFrame = null;
++         tempX = Number(NaN);
++         tempY = Number(NaN);
++         self = null;
++         hasTargets = false;
++         wasVisible = false;
++         oldFilters = null;
++         tmpMC = null;
++         previousStatsName = null;
++         carryCostume = null;
++         teamColor = null;
++         resolved = null;
++         liveSwap = null;
++         liveSwapPA = null;
++         transformCtx = null;
++         transformCtx = {
++            "cancel":false,
++            "character":this,
++            "statData":statData,
++            "frame":frame,
++            "jumpFrame":jumpFrame
+=3032
++         if(ModHost.runHook(ModHooks.BEFORE_TRANSFORM,transformCtx))
+=610
+=2046
+=612
++         statData = transformCtx.statData;
++         frame = transformCtx.frame;
++         jumpFrame = transformCtx.jumpFrame;
+@@ 9377 1 84504e613e662e5a 62
++         previousStatsName = Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null;
++         carryCostume = null;
++         liveSwap = Boolean(this.m_paletteSwapData) ? Utils.cloneObject(this.m_paletteSwapData) : null;
++         liveSwapPA = Boolean(this.m_paletteSwapPAData) ? Utils.cloneObject(this.m_paletteSwapPAData) : null;
++         try
+=610
++            if(Boolean(previousStatsName) && (Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_CARRY_COSTUME_ON_TRANSFORM,[previousStatsName,statData],false)) || Boolean(ModHost.door(ModPatches.PALETTE_IS_LINKED_FORM_PAIR,[previousStatsName],false))))
+=987
++               teamColor = ModeFeatures.hasFeature(ModeFeatures.IGNORE_TEAM_COSTUME,STAGEDATA.GameRef.GameMode) ? null : Utils.getColorString(m_team_id);
++               carryCostume = ResourceManager.getCostume(previousStatsName,teamColor,this.m_costume);
++               if(!carryCostume)
+=1112
++                  carryCostume = ResourceManager.getCostume(this.CostumeName,teamColor,this.m_costume);
+=1127
+=989
+=612
++         catch(carryErr:Error)
+=610
++            carryCostume = null;
+=612
++         resolved = this.resolveReplaceCharacterAssets(statData);
++         if(!resolved || !resolved.stats || !resolved.mc)
+=610
+=2046
+=612
++         stats = resolved.stats as CharacterData;
++         if(Boolean(!carryCostume && previousStatsName && stats) && Boolean(stats.StatsName) && Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_CARRY_COSTUME_ON_TRANSFORM,[previousStatsName,stats.StatsName],false)))
+=610
++            try
+=987
++               teamColor = ModeFeatures.hasFeature(ModeFeatures.IGNORE_TEAM_COSTUME,STAGEDATA.GameRef.GameMode) ? null : Utils.getColorString(m_team_id);
++               carryCostume = ResourceManager.getCostume(previousStatsName,teamColor,this.m_costume);
++               if(!carryCostume)
+=1112
++                  carryCostume = ResourceManager.getCostume(this.CostumeName,teamColor,this.m_costume);
+=1127
+=989
++            catch(carryErr2:Error)
+=987
++               carryCostume = null;
+=989
+=612
++         if(Boolean(liveSwap || liveSwapPA) && Boolean(stats) && Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_CARRY_COSTUME_ON_TRANSFORM,[previousStatsName,stats.StatsName],false)))
+=610
++            if(Boolean(carryCostume))
+=987
++               carryCostume = Utils.cloneObject(carryCostume);
+=989
+=2826
+=987
++               carryCostume = {};
+=989
++            if(Boolean(liveSwap))
+=987
++               carryCostume.paletteSwap = liveSwap;
+=989
++            if(Boolean(liveSwapPA))
+=987
++               carryCostume.paletteSwapPA = liveSwapPA;
+=989
+=612
++         tmpMC = resolved.mc as MovieClip;
+@@ 9396 2 ec29e7f52b5acf7d 4
++         if(Boolean(m_sprite.parent))
+=610
+=9514
+=612
+@@ 9420 2 3d611b9f7af9fdf1 5
+=16951
+=610
+=5712
+=5713
+=612
+@@ 9459 1 ad730330fd70170c 1
++            this.setState(m_collision.ground ? uint(CState.IDLE) : uint(CState.JUMP_FALLING));
+@@ 9461 1 24e245ec1d91cf84 9
++         if(Boolean(carryCostume) && (Boolean(carryCostume.both) || Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_CARRY_COSTUME_ON_TRANSFORM,[previousStatsName,statData],false)) || Boolean(stats) && Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_CARRY_COSTUME_ON_TRANSFORM,[previousStatsName,stats.StatsName],false))))
+=610
++            this.reapplyCarriedLinkedCostume(carryCostume);
++            this.scheduleFormCostumeInject();
+=612
+=741
+=610
++            this.reapplyCostume();
+=612
+@@ 9469 0 da39a3ee5e6b4b0d 129
++         ModHost.runHook(ModHooks.AFTER_TRANSFORM,{
++            "cancel":false,
++            "character":this,
++            "statData":statData,
++            "previousStatsName":previousStatsName,
++            "statsName":(Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null)
+=720
+=1056
+=27
++      private function scheduleFormCostumeInject(param1:int = 30) : void
+=607
++         if(!this.m_characterStats || !ModHost.door(ModPatches.PALETTE_IS_FORM_LINKED,[this.m_characterStats.StatsName],false))
+=610
+=2046
+=612
++         if(Boolean(ModHost.door(ModPatches.PALETTE_IS_LINKED_FORM_PAIR,[this.m_characterStats.StatsName],false)))
+=610
++            this.m_formCostumeInjectTicks = 0;
++            this.m_formPaletteDirty = true;
+=14719
+=2046
+=612
++         this.m_cachedFormInject = null;
++         this.m_formPaletteDirty = true;
++         this.m_formCostumeInjectTicks = param1;
++         this.injectTransformFormCostume();
+=1056
+=27
++      private function injectTransformFormCostume() : void
+=607
++         var _loc1_:String = null;
++         var _loc2_:Object = null;
++         var _loc3_:Object = null;
++         var _loc4_:Object = null;
++         var _loc5_:Object = null;
++         var _loc6_:Object = null;
++         var _loc7_:MovieClip = null;
++         var _loc8_:Boolean = false;
++         var _loc9_:Boolean = false;
++         _loc1_ = null;
++         _loc2_ = null;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc5_ = null;
++         _loc6_ = null;
++         _loc7_ = null;
++         _loc8_ = false;
++         _loc9_ = false;
+=9463
+=610
+=14719
+=2046
+=612
++         if(!this.m_characterStats || !ModHost.door(ModPatches.PALETTE_IS_FORM_LINKED,[this.m_characterStats.StatsName],false))
+=610
+=14719
+=2046
+=612
++         _loc1_ = ModeFeatures.hasFeature(ModeFeatures.IGNORE_TEAM_COSTUME,STAGEDATA.GameRef.GameMode) ? null : Utils.getColorString(m_team_id);
++         _loc2_ = ResourceManager.getCostume(this.CostumeName,_loc1_,this.m_costume);
++         if(!_loc2_ || !ModHost.door(ModPatches.PALETTE_IS_CUSTOM_COSTUME,[_loc2_],false))
+=610
+=14719
+=2046
+=612
++         if(Boolean(this.m_cachedFormInject) && Boolean(this.m_cachedFormInject.remapped))
+=610
++            _loc3_ = this.m_cachedFormInject.remapped;
+=612
+=741
+=610
++            _loc4_ = ModHost.door(ModPatches.PALETTE_GET_FORM_PALETTE_TEMPLATE,[this.m_characterStats.StatsName],null);
++            if(!_loc4_)
+=987
++               _loc4_ = {
++                  "paletteSwap":this.m_paletteSwapData,
++                  "paletteSwapPA":this.m_paletteSwapPAData || this.m_paletteSwapData
++               };
+=989
++            _loc3_ = ModHost.door(ModPatches.PALETTE_REMAP_COSTUME_ONTO_FORM_TEMPLATE,[_loc2_,_loc4_],null);
++            this.m_cachedFormInject = {
++               "remapped":_loc3_,
++               "costumePA":_loc2_.paletteSwapPA || _loc2_.paletteSwap,
++               "appliedPhase":null
++            };
+=612
++         if(!_loc3_)
+=610
+=14719
+=2046
+=612
++         _loc5_ = _loc3_.paletteSwap;
+=9480
+=610
++            _loc6_ = this.m_cachedFormInject.costumePA || _loc3_.paletteSwapPA;
+=612
+=741
+=610
++            _loc6_ = _loc3_.paletteSwapPA;
+=612
++         _loc8_ = this.m_paletteSwapData !== _loc5_ || this.m_paletteSwapPAData !== _loc6_;
++         _loc9_ = this.m_paletteSwapPAData !== _loc6_;
++         if(_loc8_)
+=610
++            this.m_paletteSwapData = _loc5_;
++            this.m_paletteSwapPAData = _loc6_;
+=11001
++            if(Boolean(_loc9_ || !this.m_cachedFormInject.appliedPhase) && Boolean(this.m_healthBoxMC) && Boolean(this.m_healthBoxMC.charHead))
+=987
++               Utils.replacePalette(this.m_healthBoxMC.charHead,this.getHealthBoxPaletteData(),12,true,true);
+=989
++            if(Boolean(this.m_finalSmashCutinMC) && Boolean(this.m_finalSmashCutinMC.cutinbox) && Boolean(this.m_finalSmashCutinMC.cutinbox.pa) && Boolean(this.m_finalSmashCutinMC.cutinbox.pa.placeholder))
+=987
++               if(this.m_finalSmashCutinMC.cutinbox.pa.placeholder.numChildren > 0)
+=1112
++                  _loc7_ = this.m_finalSmashCutinMC.cutinbox.pa.placeholder.getChildAt(0) as MovieClip;
++                  if(Boolean(_loc7_))
+=1114
++                     Utils.replacePalette(_loc7_,_loc6_ || _loc5_,2);
+=1118
+=1127
+=989
++            this.m_cachedFormInject.appliedPhase = this.m_transformingSpecial ? "transform" : "form";
+=612
++         if(_loc8_)
+=610
++            this.m_formPaletteDirty = true;
+=612
++         this.updatePaletteSwap();
+## public function activateFinalForm() : void
+## why: expansion final forms: resolve SpecialStatsID assets safely (abort if missing) and repaint costume
+@@ 9473 0 da39a3ee5e6b4b0d 2
++         var _loc1_:Object = null;
++         var _loc0_:String = null;
+@@ 9487 1 cfab9b312344485d 9
++            _loc0_ = this.m_characterStats.SpecialStatsID;
++            _loc1_ = this.resolveReplaceCharacterAssets(_loc0_);
++            if(!_loc1_ || !_loc1_.stats || !_loc1_.mc)
+=987
++               this.m_transformingSpecial = false;
+=1223
+=989
++            stats = _loc1_.stats as CharacterData;
++            tmpMC = _loc1_.mc as MovieClip;
+@@ 9514 2 db42cb1dc77898a3 4
+=1419
+=987
+=1421
+=989
+@@ 9555 0 da39a3ee5e6b4b0d 4
++            this.reapplyCostume();
++            this.scheduleFormCostumeInject(45);
+=14719
++            m_eventManager.dispatchEvent(new SSF2Event(SSF2Event.CHAR_TRANSFORM,{"caller":this.APIInstance.instance}));
+## private function redrawHealthBox() : void
+## why: Match HUD shows CharacterAlts.hudName when the alt has no nametag clip.
+@@ 9560 0 da39a3ee5e6b4b0d 1
++         var hudAlt:String = null;
+@@ 9562 1 59f0569c34c31172 2
++            hudAlt = CharacterAlts.hudName(m_player_id,this.m_playerSettings.character,this.m_characterStats.DisplayName);
++            this.attachHealthBox(Boolean(this.m_playerSettings.name) ? this.m_playerSettings.name.toUpperCase() : (hudAlt != null ? hudAlt : this.m_characterStats.DisplayName).toUpperCase(),this.m_characterStats.Thumbnail,this.m_characterStats.SeriesIcon,m_team_id,this.CostumeName,this.CostumeID);
+## private function setStats(_:CharacterData) : void
+## why: null-guard CPU when a non-human has no AI (e.g. menu preview) during a stats swap
+@@ 9692 1 fed213ac6cd8a521 1
++         if(!this.m_human && this.CPU != null)
+## private function checkItemInterrupt(_:String, _:Number, _:Boolean = false) : Boolean
+## why: BEFORE_ITEM_USE hook so mods can cancel item attacks
+@@ 9702 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 9715 0 da39a3ee5e6b4b0d 12
++               _loc0_ = {
++                  "cancel":false,
++                  "character":this,
++                  "item":this.m_item,
++                  "frame":frame,
++                  "Atktype":Atktype,
++                  "cStick":cStick
++               };
++               if(ModHost.runHook(ModHooks.BEFORE_ITEM_USE,_loc0_))
+=1112
+=4086
+=1127
+## public function Attack(_:String, _:Number, _:Boolean = false) : void
+## why: BEFORE_THROW hook (mods can cancel/alter throws) + attack rumble
+@@ 9726 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 9745 0 da39a3ee5e6b4b0d 17
+=612
++         if(Boolean(frame) && frame.substring(0,6) == "throw_")
+=610
++            _loc0_ = {
++               "cancel":false,
++               "character":this,
++               "frame":frame,
++               "Atktype":Atktype,
++               "cStick":cStick
++            };
++            if(ModHost.runHook(ModHooks.BEFORE_THROW,_loc0_))
+=987
+=1223
+=989
++            frame = _loc0_.frame;
++            Atktype = Number(_loc0_.Atktype);
++            cStick = Boolean(_loc0_.cStick);
+@@ 9957 0 da39a3ee5e6b4b0d 7
++            if(Boolean(this.m_human) && this.ID > 0)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"attack",
++                  "playerId":this.ID
+=10241
+=989
+## private function SpecialAttack() : void
+## why: controller rumble on specials/Final Smash; re-enables default FS cutin fallback (vanilla had `if(false && ...)`)
+@@ 10103 0 da39a3ee5e6b4b0d 7
++         if(Boolean(this.m_human) && this.ID > 0 && this.HasFinalSmash)
+=610
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"finalSmash",
++               "playerId":this.ID
+=631
+=612
+@@ 10131 1 06200a5e212e2845 1
++               if(!cutin)
+@@ 10162 0 da39a3ee5e6b4b0d 7
++         if(Boolean(this.m_human) && this.ID > 0)
+=610
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"attack",
++               "playerId":this.ID
+=631
+=612
+## override public function reactionGrab(_:InteractiveSprite, _:HitBoxCollisionResult) : Boolean
+## why: BEFORE_GRAB hook so mods can cancel grabs + grab/grabbed rumble
+@@ 10324 0 da39a3ee5e6b4b0d 2
++         var _loc0_:Object = null;
++         var _loc1_:Object = null;
+@@ 10339 0 da39a3ee5e6b4b0d 10
++               _loc0_ = {
++                  "cancel":false,
++                  "character":this,
++                  "opponent":opponent,
++                  "hitBoxResult":hBoxResult
++               };
++               if(ModHost.runHook(ModHooks.BEFORE_GRAB,_loc0_))
+=1112
+=4086
+=1127
+@@ 10350 0 da39a3ee5e6b4b0d 14
++               if(Boolean(this.m_human) && this.ID > 0)
+=1112
++                  ModHost.runHook(ModHooks.RUMBLE,{
++                     "kind":"grab",
++                     "playerId":this.ID
++                  });
+=1127
++               if(Boolean(opponent.m_human) && opponent.ID > 0)
+=1112
++                  ModHost.runHook(ModHooks.RUMBLE,{
++                     "kind":"grabbed",
++                     "playerId":opponent.ID
++                  });
+=1127
+@@ 10372 2 23e95aad1462c9cf 1
++            if((this.m_grabbed.length == 0 || Boolean(this.m_usingSpecialAttack) && (this.m_characterStats.SpecialType == 6 || this.m_characterStats.SpecialType === 1)) && !(!this.m_usingSpecialAttack && !checkLinearPathBetweenPoints(new Point(m_sprite.x,m_sprite.y - m_height / 2),new Point(otherSprite.X,otherSprite.Y - otherSprite.Height / 2))) && !(Boolean(this.m_usingSpecialAttack) && (this.m_characterStats.SpecialType == 2 || this.m_characterStats.SpecialType == 3) && !checkLinearPathBetweenPoints(new Point(m_sprite.x,m_sprite.y - m_height / 2),new Point(otherSprite.X,otherSprite.Y - otherSprite.Height / 2))) && (!opponent.Invincible || opponent.inState(CState.ATTACKING) && opponent.AttackStateData.ForceGrabbable) && !opponent.Dead && !opponent.Revival && !opponent.Caught() && !opponent.Frozen && !(opponent.Team == m_team_id && m_team_id > 0 && !STAGEDATA.TeamDamage) && !opponent.UsingFinalSmash && !opponent.StandBy && !opponent.inState(CState.CRASH_LAND) && !opponent.inState(CState.KIRBY_STAR) && !opponent.Egg && !opponent.Pitfall)
+@@ 10375 0 da39a3ee5e6b4b0d 10
++               _loc1_ = {
++                  "cancel":false,
++                  "character":this,
++                  "opponent":opponent,
++                  "hitBoxResult":hBoxResult
++               };
++               if(ModHost.runHook(ModHooks.BEFORE_GRAB,_loc1_))
+=1112
+=4086
+=1127
+## override public function reactionHit(_:InteractiveSprite, _:HitBoxCollisionResult) : Boolean
+## why: controller rumble when landing a hit
+@@ 10742 0 da39a3ee5e6b4b0d 9
++            if(Boolean(this.m_human) && this.ID > 0)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"hit",
++                  "playerId":this.ID,
++                  "damage":attackDamage.Damage,
++                  "power":attackDamage.Power
+=10241
+=989
+## public function pickupItem() : Boolean
+## why: BEFORE/AFTER_ITEM_PICKUP hooks + item pickup rumble
+@@ 10821 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 10823 0 da39a3ee5e6b4b0d 9
+=610
+=1276
+=612
++         _loc0_ = {
++            "cancel":false,
++            "character":this,
++            "item":this.m_itemPrePickup
+=3032
++         if(ModHost.runHook(ModHooks.BEFORE_ITEM_PICKUP,_loc0_))
+@@ 10837 0 da39a3ee5e6b4b0d 7
++            if(Boolean(this.m_human) && this.ID > 0)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"itemPickup",
++                  "playerId":this.ID
+=10241
+=989
+@@ 10850 0 da39a3ee5e6b4b0d 5
++            ModHost.runHook(ModHooks.AFTER_ITEM_PICKUP,{
++               "cancel":false,
++               "character":this,
++               "item":this.m_item
+=631
+@@ 10866 0 da39a3ee5e6b4b0d 5
++            ModHost.runHook(ModHooks.AFTER_ITEM_PICKUP,{
++               "cancel":false,
++               "character":this,
++               "item":this.m_itemPrePickup
+=631
+## public function stealStock() : void
+## why: route stock gain through STOCK_CHANGE hook so mods/modes can override stock counts
+@@ 11221 0 da39a3ee5e6b4b0d 1
++         this.m_lives = this.fireStockChange(this.m_lives,this.m_lives + 1);
+## public function setLives(_:int) : void
+## why: adds fireStockChange: STOCK_CHANGE hook lets mods/modes override stock counts
+@@ 11231 1 a5f81ca4308c09d6 3
++         var _loc0_:int = 0;
++         _loc0_ = int(this.m_lives);
++         this.m_lives = this.fireStockChange(lives,_loc0_);
+@@ 11233 0 da39a3ee5e6b4b0d 19
+=1056
+=27
++      private function fireStockChange(param1:int, param2:int) : int
+=607
++         var _loc3_:Object = null;
++         _loc3_ = null;
++         _loc3_ = {
++            "cancel":false,
++            "character":this,
++            "playerId":m_player_id,
++            "stocks":param1,
++            "previous":param2
+=3032
++         ModHost.runHook(ModHooks.STOCK_CHANGE,_loc3_);
++         if(_loc3_.stocks != null)
+=610
++            return int(_loc3_.stocks);
+=612
++         return param1;
+## override public function takeDamage(_:AttackDamage, _:HitBoxSprite = null) : Boolean
+## why: BEFORE_APPLY_DAMAGE hook (mods can cancel hits) + damage/meteor rumble; rest is local renumbering
+@@ 12187 0 da39a3ee5e6b4b0d 11
++         var _loc0_:Object = null;
++         _loc0_ = {
++            "cancel":false,
++            "character":this,
++            "attack":attackObj,
++            "hitBox":collisionHitBox
+=3032
++         if(ModHost.runHook(ModHooks.BEFORE_APPLY_DAMAGE,_loc0_))
+=610
+=1276
+=612
+@@ 12235 1 a2556ab47f09efa6 0
+@@ 12434 0 da39a3ee5e6b4b0d 9
+=989
++            if(Boolean(this.m_human) && this.ID > 0)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"damage",
++                  "playerId":this.ID,
++                  "damage":tempDamage,
++                  "power":tempVelocity
+=10241
+@@ 12653 0 da39a3ee5e6b4b0d 7
++               if(Boolean(this.m_human) && this.ID > 0)
+=1112
++                  ModHost.runHook(ModHooks.RUMBLE,{
++                     "kind":"meteor",
++                     "playerId":this.ID
++                  });
+=1127
+## public function takeShieldDamage(_:AttackDamage, _:HitBoxSprite = null) : Boolean
+## why: shield-hit rumble + BEFORE_POWER_SHIELD hook for mods
+@@ 13241 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Object = null;
+@@ 13293 0 da39a3ee5e6b4b0d 20
+=1127
++               if(Boolean(this.m_human) && this.ID > 0)
+=1112
++                  ModHost.runHook(ModHooks.RUMBLE,{
++                     "kind":"shieldHit",
++                     "playerId":this.ID
++                  });
+=1127
+=989
++            if(this.PerfectShield)
+=987
++               _loc0_ = {
++                  "cancel":false,
++                  "character":this,
++                  "attack":attackObj,
++                  "hitBox":collisionHitBox
++               };
++               if(ModHost.runHook(ModHooks.BEFORE_POWER_SHIELD,_loc0_))
+=1112
+=4086
+## private function performGroundTech() : void
+## why: controller rumble on tech
+@@ 13397 0 da39a3ee5e6b4b0d 7
++            if(Boolean(this.m_human) && this.ID > 0)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"tech",
++                  "playerId":this.ID
+=10241
+=989
+## private function m_checkDeath() : void
+## why: menu preview: never KO preview fighters; replaces duplicated decompile resets
+@@ 13971 5 55e8997395c5ba7c 5
++         var _loc1_:int = 0;
++         var _loc2_:Vector.<Character> = null;
++         _loc1_ = 0;
++         _loc2_ = null;
++         if(Boolean(STAGEDATA) && STAGEDATA.IsMenuPreview)
+@@ 13977 1 19e1e5de9b90bd59 5
+=2046
+=612
++         if(Boolean(!inState(CState.DEAD) && !inState(CState.CAUGHT) && !inState(CState.BARREL) && !inState(CState.STAR_KO) && !inState(CState.SCREEN_KO) && !inState(CState.BARREL) && this.m_starKOTimer.IsComplete && !inState(CState.REVIVAL)) && Boolean(STAGEDATA.DeathBounds) && (m_sprite.x < STAGEDATA.DeathBounds.x || m_sprite.x > STAGEDATA.DeathBounds.x + STAGEDATA.DeathBounds.width || m_sprite.y < STAGEDATA.DeathBounds.y && !STAGEDATA.DisableCeilingDeath && !inState(CState.GRABBING) && (inState(CState.FLYING) || inState(CState.INJURED) || m_collision.ground || Boolean(this.m_windBoxHit) || inState(CState.TUMBLE_FALL) || inState(CState.DIZZY) || inState(CState.STUNNED) || inState(CState.EGG) || inState(CState.FROZEN)) || m_sprite.y > STAGEDATA.DeathBounds.y + STAGEDATA.DeathBounds.height && !STAGEDATA.DisableFallDeath))
+=610
++            if(m_sprite.y < STAGEDATA.DeathBounds.y && !this.m_usingSpecialAttack && !SpecialMode.modeEnabled(STAGEDATA.GameRef.LevelData.specialModes,SpecialMode.SSF1) && Boolean(this.m_characterStats.CanStarKO) && (STAGEDATA.StarKOEnabled || STAGEDATA.ScreenKOEnabled))
+@@ 13979 2 3cf1c7980acd707b 3
++               _loc2_ = new Vector.<Character>();
++               _loc1_ = 0;
++               while(_loc1_ < this.m_grabbed.length)
+@@ 13982 1 868058ba7814f186 2
++                  _loc2_.push(this.m_grabbed[_loc1_]);
++                  _loc1_++;
+@@ 13985 1 c07cfae307c0b241 2
++               _loc1_ = 0;
++               while(_loc1_ < _loc2_.length)
+@@ 13987 1 97052d67c614cef9 1
++                  if(!_loc2_[0].inState(CState.STAR_KO) && !_loc2_[0].inState(CState.SCREEN_KO) && !_loc2_[0].inState(CState.DEAD))
+@@ 13989 1 569d6c795306f09c 1
++                     _loc2_[_loc1_].killCharacterStarKO();
+@@ 13991 0 da39a3ee5e6b4b0d 1
++                  _loc1_++;
+@@ 14013 1 968e586b30302eb9 1
++               this.attachEffect("stamina_ko_explosion",{"y":-this.m_characterStats.Height / 2});
+## private function updateMatchStatistics() : void
+## why: MODE_SCORE hook so custom game modes can score KOs
+@@ 14075 1 318f10efa3656c02 1
++                  if(Boolean(this.m_characterStats.StatsName === "ness") && Boolean(currentCostumeObj && currentCostumeObj.metadata && currentCostumeObj.metadata.ghost) && Boolean(this.m_human))
+@@ 14111 0 da39a3ee5e6b4b0d 7
++                  ModHost.runHook(ModHooks.MODE_SCORE,{
++                     "cancel":false,
++                     "character":killerPlayer,
++                     "victim":this,
++                     "score":killerPlayer.getMatchResults().Score,
++                     "delta":1
++                  });
+## private function loseLife(_:Boolean = false) : void
+## why: STOCK_CHANGE/STOCK_LOST hooks so mods and custom modes see and override stock loss
+@@ 14150 0 da39a3ee5e6b4b0d 1
++            this.m_lives = this.fireStockChange(this.m_lives,this.m_lives + 1);
+@@ 14154 0 da39a3ee5e6b4b0d 12
++            ModHost.runHook(ModHooks.STOCK_LOST,{
++               "cancel":false,
++               "character":this,
++               "victim":this,
++               "lives":this.m_lives,
++               "team":m_team_id,
++               "attacker":(m_lastHitID > 0 ? STAGEDATA.getPlayerByID(m_lastHitID) : null),
++               "killer":(m_lastHitID > 0 ? STAGEDATA.getPlayerByID(m_lastHitID) : null),
++               "killerId":m_lastHitID,
++               "players":STAGEDATA.Players,
++               "stageData":STAGEDATA
+=631
+## public function killCharacterDeathBounds() : void
+## why: STAGE_BOUNDARY_HIT hook for mods
+@@ 14258 7 1f68fadb082f7c94 18
++         var _loc1_:int = 0;
++         var _loc2_:String = null;
++         var _loc3_:Vector.<Character> = null;
++         var _loc4_:MovieClip = null;
++         var _loc5_:Number = NaN;
++         _loc1_ = 0;
++         _loc2_ = null;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc5_ = Number(NaN);
++         ModHost.runHook(ModHooks.STAGE_BOUNDARY_HIT,{
++            "cancel":false,
++            "character":this,
++            "x":m_sprite.x,
++            "y":m_sprite.y
+=720
++         _loc1_ = 0;
++         _loc2_ = "";
+@@ 14269 1 a1db4fa11cbfe85a 1
++               _loc2_ += "_p1";
+@@ 14273 1 e375250fdb3f910e 1
++               _loc2_ += "_p4";
+@@ 14277 1 522667475848a574 1
++               _loc2_ += "_p2";
+@@ 14282 1 b640cbdb21179e86 1
++            _loc2_ += "_p" + m_player_id;
+@@ 14286 2 34a6455822855af1 2
++            _loc4_ = STAGEDATA.attachEffectOverlay("deathMC" + _loc2_);
++            _loc5_ = 80;
+@@ 14290 3 a1564b9700755206 3
++               _loc4_.rotation = 90;
++               _loc4_.x = STAGEDATA.CamBounds.x + STAGE.x - _loc5_;
++               _loc4_.y = m_sprite.y + STAGE.y;
+@@ 14296 3 cc9286bdfebc6c04 3
++               _loc4_.rotation = 270;
++               _loc4_.x = STAGEDATA.CamBounds.x + STAGEDATA.CamBounds.width + STAGE.x + _loc5_;
++               _loc4_.y = m_sprite.y + STAGE.y;
+@@ 14302 3 fc41a1ce92612093 3
++               _loc4_.rotation = 180;
++               _loc4_.x = m_sprite.x + STAGE.x;
++               _loc4_.y = STAGEDATA.CamBounds.y + STAGE.y;
+@@ 14308 2 52df54cb9d0bcb45 2
++               _loc4_.x = m_sprite.x + STAGE.x;
++               _loc4_.y = STAGEDATA.CamBounds.y + STAGEDATA.CamBounds.height + STAGE.y;
+@@ 14318 2 80347b92725de5ad 2
++            _loc4_.scaleX = 1.2;
++            _loc4_.scaleY = 1.2;
+@@ 14322 1 b929f1a7b721d4a4 1
++         if(Boolean(STAGEDATA.CamBounds) && Boolean(m_sprite.y < STAGEDATA.CamBounds.y + 100 || m_sprite.y > STAGEDATA.CamBounds.y + STAGEDATA.CamBounds.height - 160) && (m_sprite.x < STAGEDATA.CamBounds.x + 100 || m_sprite.x > STAGEDATA.CamBounds.x + STAGEDATA.CamBounds.width - 100))
+@@ 14324 1 e27957973f71cb12 1
++            _loc4_.rotation = Utils.forceBase360(90 - Utils.getAngleBetween(new Point(m_sprite.x,m_sprite.y),new Point(STAGEDATA.CamBounds.x + STAGEDATA.CamBounds.width / 2,STAGEDATA.CamBounds.y + STAGEDATA.CamBounds.height / 2)));
+@@ 14328 2 e401e6c450a1faba 3
++         _loc3_ = new Vector.<Character>();
++         _loc1_ = 0;
++         while(_loc1_ < this.m_grabbed.length)
+@@ 14331 1 ab5779e58841c03c 2
++            _loc3_.push(this.m_grabbed[_loc1_]);
++            _loc1_++;
+@@ 14334 1 1a03a21cbe602a62 2
++         _loc1_ = 0;
++         while(_loc1_ < _loc3_.length)
+@@ 14336 1 3f71fb34502e15d8 2
++            _loc3_[_loc1_].killCharacter(true,true);
++            _loc1_++;
+## public function killCharacter(_:Boolean = true, _:Boolean = false) : void
+## why: BEFORE_KO/BEFORE_RESPAWN/AFTER_KO hooks (mods can cancel KO or respawn) + KO rumble
+@@ 14343 0 da39a3ee5e6b4b0d 2
++         var _loc0_:Object = null;
++         var _loc1_:Object = null;
+@@ 14346 0 da39a3ee5e6b4b0d 12
++            _loc0_ = {
++               "cancel":false,
++               "character":this,
++               "effects":effects,
++               "deathBounds":deathBounds
++            };
++            if(ModHost.runHook(ModHooks.BEFORE_KO,_loc0_))
+=987
+=1223
+=989
++            effects = Boolean(_loc0_.effects);
++            deathBounds = Boolean(_loc0_.deathBounds);
+@@ 14379 0 da39a3ee5e6b4b0d 7
++            if(Boolean(this.m_human) && this.ID > 0)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"ko",
++                  "playerId":this.ID
+=10241
+=989
+@@ 14390 1 87f2ae6c9c7a1aac 10
++               _loc1_ = {
++                  "cancel":false,
++                  "character":this,
++                  "effects":effects,
++                  "deathBounds":deathBounds
++               };
++               if(!ModHost.runHook(ModHooks.BEFORE_RESPAWN,_loc1_))
+=1112
++                  this.setState(CState.REVIVAL);
+=1127
+@@ 14398 0 da39a3ee5e6b4b0d 10
++            ModHost.runHook(ModHooks.AFTER_KO,{
++               "cancel":false,
++               "character":this,
++               "victim":this,
++               "attacker":(m_lastHitID > 0 ? STAGEDATA.getPlayerByID(m_lastHitID) : null),
++               "killer":(m_lastHitID > 0 ? STAGEDATA.getPlayerByID(m_lastHitID) : null),
++               "killerId":m_lastHitID,
++               "effects":effects,
++               "deathBounds":deathBounds
+=631
+## public function killCharacterStarKO() : void
+## why: controller rumble on star KO
+@@ 14467 0 da39a3ee5e6b4b0d 7
++                  if(Boolean(this.m_human) && this.ID > 0)
+=1114
++                     ModHost.runHook(ModHooks.RUMBLE,{
++                        "kind":"starKO",
++                        "playerId":this.ID
++                     });
+=1118
+## override public function playFrame(_:String) : void
+## why: tryToGotoAndStop so a missing label in a mod character SWF doesn't throw
+@@ 14711 1 39f8deb8402e0273 1
++            Utils.tryToGotoAndStop(m_sprite,n);
+## override public function stancePlayFrame(_:*) : void
+## why: tryToGotoAndStop so a missing label in a mod character SWF doesn't throw
+@@ 14734 1 d098542e102e3dd2 1
++            Utils.tryToGotoAndStop(m_sprite.stance,n);
+## private function restartStance() : void
+## why: tryToGotoAndStop so a mod stance without frame 1 content doesn't throw
+@@ 14744 1 81d38e9e2b0e9001 1
++            Utils.tryToGotoAndStop(m_sprite.stance,1);
+## private function incrementCharge(_:String, _:String = null) : void
+## why: controller rumble that ramps with smash charge level
+@@ 14810 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Number = NaN;
+@@ 14811 0 da39a3ee5e6b4b0d 44
++         if(Boolean(this.m_human) && this.ID > 0)
+=610
++            _loc0_ = m_attackData.getAttack(attackName).ChargeTime / m_attackData.getAttack(attackName).ChargeTimeMax * 100;
++            if(_loc0_ >= 25 && _loc0_ < 50)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"direct",
++                  "playerId":this.ID,
++                  "left":0.3,
++                  "right":0.4,
++                  "ms":150
+=10241
+=989
++            else if(_loc0_ >= 50 && _loc0_ < 75)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"direct",
++                  "playerId":this.ID,
++                  "left":0.4,
++                  "right":0.4,
++                  "ms":130
+=10241
+=989
++            else if(_loc0_ >= 75 && _loc0_ < 100)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"direct",
++                  "playerId":this.ID,
++                  "left":0.5,
++                  "right":0.4,
++                  "ms":110
+=10241
+=989
++            else if(_loc0_ >= 100)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"direct",
++                  "playerId":this.ID,
++                  "left":0.7,
++                  "right":0.5,
++                  "ms":90
+=10241
+=989
+=612
+## public function armMenuPreviewIdle() : void
+## why: menu preview: put the CSS preview fighter grounded in idle stand with no camera target
+@@ 14900 0 da39a3ee5e6b4b0d 63
++      public function armMenuPreviewIdle() : void
+=607
++         if(!STAGEDATA || !STAGEDATA.IsMenuPreview)
+=610
+=2046
+=612
+=1032
+=920
+=973
++         m_started = true;
++         this.m_xSpeed = 0;
++         this.m_ySpeed = 0;
++         this.m_xKnockback = 0;
++         this.m_yKnockback = 0;
+=909
+=948
++         try
+=610
+=1324
+=612
++         catch(atkErr:*)
+=610
+=612
++         try
+=610
+=1325
+=612
++         catch(stateErr:*)
+=610
+=612
++         try
+=610
++            if(Boolean(CAM))
+=987
++               CAM.deleteTargets(new <MovieClip>[m_sprite]);
+=989
+=612
++         catch(camClr:*)
+=610
+=612
++         try
+=610
++            this.toIdle();
+=612
++         catch(idleErr:*)
+=610
+=612
++         try
+=610
+=15983
+=612
++         catch(standErr:*)
+=610
+=612
++         try
+=610
+=14719
+=612
++         catch(palErr:*)
+=610
+=612
+=1056
+=27
+## public function forceTaunt() : void
+## why: menu preview: taunt on demand in the CSS preview; BEFORE_TAUNT hook can cancel taunts
+@@ 14902 0 da39a3ee5e6b4b0d 35
++         var _loc0_:Number = NaN;
++         if(Boolean(STAGEDATA) && STAGEDATA.IsMenuPreview)
+=610
+=3240
++            this.m_standby = false;
+=17492
++            if(!ModHost.runHook(ModHooks.BEFORE_TAUNT,{
++               "cancel":false,
++               "character":this,
++               "playerId":m_player_id
++            }))
+=987
++               this.playFrame("taunt");
+=13493
+=1112
+=8006
+=1127
++               this.setState(CState.TAUNT);
++               _loc0_ = Math.random();
++               if(_loc0_ < 0.34 && Boolean(Utils.hasLabel(Stance,"taunt_side")))
+=1112
++                  this.stancePlayFrame("taunt_side");
+=1127
++               else if(_loc0_ < 0.67 && Boolean(Utils.hasLabel(Stance,"taunt_updown")))
+=1112
++                  this.stancePlayFrame("taunt_updown");
+=1127
++               else if(Utils.hasLabel(Stance,"taunt_neutral"))
+=1112
++                  this.stancePlayFrame("taunt_neutral");
+=1127
+=6536
+=989
+=2046
+=612
+@@ 14906 1 a9345671b734f769 8
++               if(!ModHost.runHook(ModHooks.BEFORE_TAUNT,{
++                  "cancel":false,
++                  "character":this,
++                  "playerId":m_player_id
++               }))
+=1112
++                  this.initTaunt();
+=1127
+## private function m_checkTaunt() : void
+## why: BEFORE_TAUNT hook; adds m_checkCharacterSwitch (JUMP2 swaps character via ModHost)
+@@ 14923 0 da39a3ee5e6b4b0d 8
++            if(ModHost.runHook(ModHooks.BEFORE_TAUNT,{
++               "cancel":false,
++               "character":this,
++               "playerId":m_player_id
++            }))
+=987
+=1223
+=989
+@@ 14925 0 da39a3ee5e6b4b0d 64
+=1056
+=27
++      private function m_checkCharacterSwitch() : void
+=607
++         var switchCtx:Object = null;
++         var nextId:String = null;
++         var nextCostume:* = undefined;
++         switchCtx = null;
++         nextId = null;
++         nextCostume = undefined;
++         if(!this.m_pressedControls.JUMP2)
+=610
+=2046
+=612
++         switchCtx = {
++            "cancel":false,
++            "character":this,
++            "playerId":m_player_id,
++            "from":(Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null),
++            "to":null,
++            "nextCharacter":null,
++            "nextCostume":null,
++            "consumeJump2":false
+=3032
++         if(ModHost.runHook(ModHooks.BEFORE_CHARACTER_SWITCH,switchCtx))
+=610
+=4010
+=2046
+=612
++         nextId = switchCtx.to != null ? String(switchCtx.to) : (switchCtx.nextCharacter != null ? String(switchCtx.nextCharacter) : null);
++         nextCostume = switchCtx.nextCostume;
++         if(Boolean(nextId) || Boolean(switchCtx.consumeJump2))
+=610
+=4010
+=612
++         if(Boolean(nextId))
+=610
++            ModHost.applyPatch(ModPatches.PERFORM_CHARACTER_SWAP,[this,nextId,nextCostume,switchCtx],function(param1:Character, param2:String, param3:*, param4:Object):void
+=987
++               var _loc5_:Character = null;
++               var _loc6_:String = null;
++               var _loc7_:* = undefined;
++               _loc5_ = null;
++               _loc6_ = null;
++               _loc7_ = undefined;
++               _loc5_ = param1;
++               _loc6_ = param2;
++               _loc7_ = param3;
++               var _loc8_:Object = param4;
++               try
+=1112
++                  if(_loc7_ != null && Boolean(_loc5_.m_playerSettings))
+=1114
++                     _loc5_.m_playerSettings.costume = int(_loc7_);
++                     _loc5_.m_costume = int(_loc7_);
+=1118
++                  _loc5_.replaceCharacter(_loc6_);
+=1127
++               catch(swapErr:*)
+=1112
+=1127
+=631
+=612
++         ModHost.runHook(ModHooks.AFTER_CHARACTER_SWITCH,switchCtx);
+## private function checkFrameControl() : void
+## why: controller rumble on landing, scaled by fall speed
+@@ 15128 0 da39a3ee5e6b4b0d 8
++               if(Boolean(this.m_human) && this.ID > 0)
+=1112
++                  ModHost.runHook(ModHooks.RUMBLE,{
++                     "kind":"land",
++                     "playerId":this.ID,
++                     "fallSpeed":Math.abs(m_ySpeed + m_yKnockback)
++                  });
+=1127
+## private function checkGroundStateChange() : void
+## why: controller rumble on landing, scaled by fall speed
+@@ 15933 0 da39a3ee5e6b4b0d 8
++            if(Boolean(this.m_human) && this.ID > 0)
+=987
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"land",
++                  "playerId":this.ID,
++                  "fallSpeed":Math.abs(m_ySpeed + m_yKnockback)
+=10241
+=989
+## override protected function m_controlFrames() : void
+## why: expansion characters: fall back to stand/fall when the SWF has no entrance label
+@@ 15948 1 fa8f37f57fabf7ae 12
++            if(Utils.hasLabel(m_sprite,"entrance"))
+=987
++               this.playFrame("entrance");
+=989
++            else if(Utils.hasLabel(m_sprite,"stand"))
+=987
+=15831
+=989
+=2826
+=987
+=14370
+=989
+## private function m_checkRevival() : void
+## why: AFTER_RESPAWN hook for mods
+@@ 16614 0 da39a3ee5e6b4b0d 4
++                  ModHost.runHook(ModHooks.AFTER_RESPAWN,{
++                     "cancel":false,
++                     "character":this
++                  });
+@@ 16621 0 da39a3ee5e6b4b0d 4
++                     ModHost.runHook(ModHooks.AFTER_RESPAWN,{
++                        "cancel":false,
++                        "character":this
++                     });
+@@ 16647 0 da39a3ee5e6b4b0d 4
++                     ModHost.runHook(ModHooks.AFTER_RESPAWN,{
++                        "cancel":false,
++                        "character":this
++                     });
+## public function advanceAllEffects() : void
+## why: null-guard yoshi egg stance and poison effect (crash fix)
+@@ 16936 2 003563815a6af81b 5
++         if(Boolean(this.m_yoshiEggMC) && Boolean(this.m_yoshiEggMC.stance))
+=610
++            this.m_yoshiEggMC.stance.nextFrame();
+=612
++         if(Boolean(this.m_poisonEffect) && Boolean(this.m_poisonEffect.parent))
+## private function checkPause() : void
+## why: route pause-menu stock change through the STOCK_CHANGE hook
+@@ 17053 0 da39a3ee5e6b4b0d 1
++               this.m_lives = this.fireStockChange(this.m_lives,this.m_lives - 1);
+## override public function PERFORMALL() : void
+## why: time stop: skip the character tick while frozen; runs the character-switch check each frame
+@@ 17381 7 66642d8079aab618 11
++            this.tickTime();
++            if(!this.IsFrozenInTime)
+=987
+=17440
++               this.checkRecovery();
++               this.checkFrameControl();
++               this.advanceAllEffects();
++               this.checkTimers();
++               this.checkHitLag();
++               this.m_checkRevival();
+=989
+@@ 17389 36 0566dee8665869f1 40
++            if(!this.IsFrozenInTime)
+=987
++               this.m_checkDeath();
++               this.m_checkInvincible();
++               this.m_checkStun();
++               this.m_checkDizzy();
++               this.m_checkPitfall();
++               this.m_checkFrozen();
++               this.m_checkSleeping();
++               this.m_checkEgg();
++               this.m_checkTeching();
++               this.m_forces();
+=15580
++               this.m_checkItem();
++               this.m_charShield();
++               this.m_charGrab();
++               this.m_checkCharacterSwitch();
++               this.m_charJump();
++               this.m_charAttack();
++               this.m_charRoll();
++               this.m_charHang();
++               this.m_charCrouch();
++               this.m_charRun();
++               this.m_charWallCling();
++               this.m_charFall();
++               this.m_charGlide();
++               this.m_checkTaunt();
++               this.m_pushAwayItems();
++               this.m_pushAwayOpponents();
++               this.pushAwayFromWalls();
++               this.m_checkFinalForm();
++               this.m_flipDirection();
++               this.checkRocket();
++               this.checkDI();
++               updateSelfPlatform();
++               this.getLastYPosition();
++               this.checkFrameControl();
++               this.updateTint();
++               this.checkHitStun();
+=989
+@@ 17430 5 942caeea5d979e57 8
++            if(!this.IsFrozenInTime)
+=987
++               this.checkStarKOClips();
++               this.checkSyncedProjectiles();
++               this.checkDeadProjectiles();
+=8230
++               updateCamerBox();
+=989
+@@ 17438 0 da39a3ee5e6b4b0d 1
++            this.tickTime();
+## override protected function PREPERFORM() : void
+## why: time stop freeze; studio deep-paint holds fragile clips; null-guard debugConsole
+@@ 17451 0 da39a3ee5e6b4b0d 1
++         var fragileClip:Boolean = false;
+@@ 17452 1 841cceefcf8577dd 1
++         if(Boolean(Main.DEBUG) && Boolean(MenuController.debugConsole) && Boolean(MenuController.debugConsole.OnlineCapture))
+@@ 17458 2 371e50b4d689434f 33
++            if(!this.IsFrozenInTime)
+=987
++               fragileClip = false;
++               try
+=1112
++                  fragileClip = this.studioDeepPalettePaint && Boolean(ModHost.door("isFragileTimelineClip",[m_sprite.stance],false));
+=1127
++               catch(fragDoorErr:Error)
+=1112
++                  fragileClip = false;
+=1127
++               if(fragileClip)
+=1112
++                  try
+=1114
++                     m_sprite.stance.stop();
++                     m_sprite.stance.bypassTicker = true;
+=1118
++                  catch(fragStanceErr:*)
+=1114
+=1118
+=10397
+=1114
+=5284
++                     this.playFrame("stand");
+=1118
+=1127
++               else if(m_sprite.stance is MovieClip)
+=1112
++                  Utils.advanceFrame(m_sprite.stance as MovieClip);
++                  Utils.recursiveMovieClipPlay(m_sprite.stance as MovieClip,true);
+=1127
+=989
+@@ 17467 3 831c648104e46702 12
++            if(!this.IsFrozenInTime)
+=987
++               if(this.m_starKOMC.parent.parent is MovieClip)
+=1112
++                  MovieClip(this.m_starKOMC.parent.parent).nextFrame();
+=1127
++               if(this.m_starKOMC.stance is MovieClip)
+=1112
++                  Utils.recursiveMovieClipPlay(this.m_starKOMC.stance as MovieClip,true);
++                  Utils.advanceFrame(this.m_starKOMC.stance as MovieClip);
+=1127
+=989
+## override protected function POSTPERFORM() : void
+## why: time stop freeze + form-costume inject ticks; no replay recording in menu preview/without replay data
+@@ 17479 3 8eeaaaa9407f8368 9
++               if(!this.IsFrozenInTime)
+=1112
++                  m_sprite.stance.stop();
++                  Utils.recursiveMovieClipPlay(m_sprite.stance,false);
+=1127
++               if(this.m_formCostumeInjectTicks <= 0)
+=1112
++                  this.updatePaletteSwap();
+=1127
+@@ 17488 3 8458604c2d3c84dd 6
++               if(!this.IsFrozenInTime)
+=1112
++                  MovieClip(this.m_starKOMC.parent.parent).stop();
++                  Utils.recursiveMovieClipPlay(this.m_starKOMC.stance,false);
++                  this.m_starKOMC.stance.stop();
+=1127
+@@ 17493 1 e95faf115e42aafd 9
++            if(!this.IsFrozenInTime)
+=987
++               m_apiInstance.update();
++               if(this.m_formCostumeInjectTicks > 0)
+=1112
++                  --this.m_formCostumeInjectTicks;
++                  this.injectTransformFormCostume();
+=1127
+=989
+@@ 17495 1 96f5e1cc7458eae0 1
++         if(Boolean(!STAGEDATA.IsMenuPreview && !STAGEDATA.Paused && m_player_id > 0 && !STAGEDATA.ReplayMode && STAGEDATA.ReplayDataObj && this.m_key) && Boolean(ModeFeatures.hasFeature(ModeFeatures.ALLOW_REPLAY_RECORD,STAGEDATA.GameRef.GameMode)) && Boolean(this.m_human))
+## override public function get IsFrozenInTime() : Boolean
+## why: time stop API for mods (stopTime/resumeTime/applyTimeFreeze); attachEffect hooks + form palette on effects
+@@ 17500 0 da39a3ee5e6b4b0d 121
+=27
++      override public function get IsFrozenInTime() : Boolean
+=607
++         return this.m_frozenInTime;
+=1056
+=27
++      public function applyTimeFreeze(param1:int = -1) : void
+=607
++         this.m_frozenInTime = param1 != 0;
++         this.m_frozenInTimeTimer = param1;
+=1056
+=27
++      public function removeTimeFreeze() : void
+=607
++         this.m_frozenInTime = false;
++         this.m_frozenInTimeTimer = 0;
+=1056
+=27
++      public function tickTime() : void
+=607
++         if(this.m_frozenInTime)
+=610
++            if(this.m_frozenInTimeTimer > 0)
+=987
++               --this.m_frozenInTimeTimer;
++               if(this.m_frozenInTimeTimer == 0)
+=1112
++                  this.removeTimeFreeze();
+=1127
+=989
+=612
+=1056
+=27
++      public function stopTime(param1:int = -1, param2:int = 0, param3:int = 2147483646, param4:Object = null) : void
+=607
++         var _loc5_:Object = null;
++         var _loc6_:* = undefined;
++         _loc5_ = null;
++         _loc6_ = undefined;
++         if(param3 <= 0)
+=610
+=2046
+=612
++         _loc5_ = {
++            "bypassProjectile":false,
++            "bypassEnemy":false
+=3032
++         param4 = param4 == null ? _loc5_ : param4;
++         for(_loc6_ in _loc5_)
+=610
++            if(param4[_loc6_] === undefined)
+=987
++               param4[_loc6_] = _loc5_[_loc6_];
+=989
+=612
++         this.STAGEDATA.addCharacterTimeStopper(m_uid,param1,param2,param3,param4);
+=1056
+=27
++      public function resumeTime() : void
+=607
++         this.STAGEDATA.removeCharacterTimeStopper(m_uid);
+=1056
+=27
++      override public function attachEffect(param1:*, param2:Object = null) : MovieClip
+=607
++         var _loc3_:MovieClip = null;
++         var _loc4_:Object = null;
++         var _loc5_:Object = null;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc5_ = null;
++         _loc3_ = super.attachEffect(param1,param2);
++         if(Boolean(_loc3_))
+=610
++            _loc3_.uid = m_uid;
++            if(Boolean(this.m_transformingSpecial || this.m_transformedSpecial) && Boolean(this.m_characterStats) && Boolean(ModHost.door(ModPatches.PALETTE_IS_FORM_LINKED,[this.m_characterStats.StatsName],false)) && (Boolean(m_paletteSwapData) || Boolean(m_paletteSwapPAData)))
+=987
++               _loc4_ = ModHost.hasPatch(ModPatches.PALETTE_SHOULD_COMBINE_FORM_PALETTE) && Boolean(ModHost.door(ModPatches.PALETTE_SHOULD_COMBINE_FORM_PALETTE,[this.m_characterStats.StatsName],false)) ? ModHost.applyPatch(ModPatches.COMBINE_PALETTE_BLOCKS,[m_paletteSwapData,m_paletteSwapPAData],null) as Object : m_paletteSwapData || m_paletteSwapPAData;
++               if(Boolean(_loc4_))
+=1112
++                  Utils.replacePalette(_loc3_,_loc4_,8,true,false);
+=1127
+=989
++            _loc5_ = {
++               "character":this,
++               "effect":_loc3_,
++               "id":param1,
++               "options":param2,
++               "statsName":(Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null),
++               "transforming":this.m_transformingSpecial,
++               "transformed":this.m_transformedSpecial
++            };
++            ModHost.runHook(ModHooks.AFTER_ATTACH_EFFECT,_loc5_);
+=612
++         return _loc3_;
+=1056
+=27
++      override public function attachEffectOverlay(param1:*, param2:Object = null) : MovieClip
+=607
++         var _loc3_:MovieClip = null;
++         var _loc4_:Object = null;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc3_ = super.attachEffectOverlay(param1,param2);
++         if(Boolean(_loc3_))
+=610
++            _loc3_.uid = m_uid;
++            _loc4_ = {
++               "cancel":false,
++               "character":this,
++               "effect":_loc3_,
++               "id":param1,
++               "options":param2,
++               "statsName":(Boolean(this.m_characterStats) ? this.m_characterStats.StatsName : null),
++               "transforming":this.m_transformingSpecial,
++               "transformed":this.m_transformedSpecial
++            };
++            ModHost.runHook(ModHooks.AFTER_ATTACH_EFFECT_OVERLAY,_loc4_);
+=612
++         return _loc3_;
+=1056

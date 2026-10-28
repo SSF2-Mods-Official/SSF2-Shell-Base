@@ -1,0 +1,47 @@
+# com/mcleodgaming/ssf2/menus/MultiManMenu.as
+## class header
+## why: modhost: import ModHost/ModHooks for the hooks below
+@@ 8 0 da39a3ee5e6b4b0d 4
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.events.*;
+## private function man10_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 121 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++         });
+## private function man100_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 137 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++         });
+## private function min3_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 153 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++         });
+## private function endless_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 169 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++         });
+## private function cruel_CLICK(_:MouseEvent) : void
+## why: rumble: menu-select vibration for the controller that pressed it (ModHooks.RUMBLE)
+@@ 185 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.RUMBLE,{
++            "kind":"menu",
++            "controllerIndex":(m_lastControllerIndex >= 0 ? m_lastControllerIndex : 0)
++         });
+## private function back_CLICK_multiman(_:MouseEvent) : void
+## why: rumble: stop menu vibration when leaving the menu
+@@ 201 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.RUMBLE,{"kind":"menuStop"});

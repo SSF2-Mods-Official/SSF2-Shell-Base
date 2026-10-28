@@ -26,6 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 ENGINE2 = ROOT / "patches" / "engine2"
+VANILLA = ROOT / "patches" / "vanilla"
 MAPPINGS = ROOT / "patches" / "mappings"
 SHELL = ROOT / "shell"
 # Large shell files shipped in their own release zip (shell-assets-<id>), so a new release does not resend them.
@@ -1077,19 +1078,30 @@ def copy_data(vanilla, out, layout):
     return copied
 
 
+def pe_machine(path):
+    data = path.read_bytes()
+    pe = int.from_bytes(data[0x3C:0x40], "little")
+    return int.from_bytes(data[pe + 4:pe + 6], "little")
+
+
 def copy_air(vanilla_root, out):
     """The captive runtime from the vanilla install; SSF2.exe and its ANEs are built against it."""
     src = vanilla_root / "Adobe AIR"
     if not src.is_dir():
         raise SystemExit("vanilla install has no Adobe AIR folder: %s" % src)
     n = 0
+    dll = None
     for f in sorted(src.rglob("*")):
         if f.is_file() and f.name not in AIR_SKIP:
             dest = out / "Adobe AIR" / f.relative_to(src)
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(f, dest)
             n += 1
+            if f.name == "Adobe AIR.dll":
+                dll = f
     log("AIR runtime files=%d" % n)
+    if dll is not None:
+        log("AIR machine=0x%X" % pe_machine(dll))
 
 
 def copy_overlay(out, src=SHELL, label="shell", skip=("src",)):
@@ -1295,17 +1307,70 @@ def cmd_rebaseline(a):
         log("manifest embed replaced with vanilla bytes=%d" % len(data))
 
 
+def engine_for(sha):
+    """Patch set for this SSF2.swf. The captured installer stays in patches/engine2."""
+    variant = VANILLA / sha
+    if (variant / "base.json").is_file():
+        return variant
+    meta = json.loads((ENGINE2 / "base.json").read_text(encoding="utf-8"))
+    if sha == meta["vanilla_ssf2_sha256"]:
+        return ENGINE2
+    raise SystemExit("SSF2.swf sha256 %s is not a known 1.4.0.1 build" % sha)
+
+
+def save_variant(dest, base, tree, notes, sha, n2f_commit, crlf):
+    """Write a patch set for one SSF2.swf hash. Does not touch patches/engine2."""
+    if dest.exists():
+        shutil.rmtree(dest)
+    tree = {rel: norm_text(text) for rel, text in tree.items()}
+    patches = dest / "patches"
+    added = dest / "added"
+    patches.mkdir(parents=True)
+    added.mkdir()
+    removed = sorted(r for r in base if r not in tree)
+    n_patch = n_added = 0
+    for rel, text in tree.items():
+        if rel in base:
+            if base[rel] != text:
+                write_text(patches / (rel + ".patch"), make_patch(base[rel], text, rel, notes.get(rel)))
+                n_patch += 1
+        else:
+            write_text(added / rel, text)
+            n_added += 1
+    for rel, text in tree.items():
+        pp = patches / (rel + ".patch")
+        if rel not in base:
+            got = read_utf8(added / rel)
+        elif pp.exists():
+            got = apply_patch(base[rel], read_utf8(pp), rel)
+        else:
+            got = base[rel]
+        if got != text:
+            raise SystemExit("variant self-check failed: %s" % rel)
+    meta = {
+        "vanilla_ssf2_sha256": sha,
+        "next2flash_commit": n2f_commit,
+        "removed": removed,
+        "includes": include_order(class_name(r) for r in tree),
+        "crlf": sorted(rel for rel in tree if rel in crlf),
+        "target": {r: sha256_text(t) for r, t in tree.items()},
+    }
+    (dest / "base.json").write_text(json.dumps(meta, indent=1, sort_keys=True) + "\n")
+    log("variant sha=%s patches=%d added=%d -> %s" % (sha[:12], n_patch, n_added, dest))
+
+
 def cmd_build(a):
     vanilla = Path(a.vanilla).resolve()
     out = Path(a.out).resolve() if a.out else ROOT / "Build"
     work = reset_dir(ROOT / "work" / "build")
     n2f = N2f(a.n2f, work)
-    meta = json.loads((ENGINE2 / "base.json").read_text(encoding="utf-8"))
 
     if not (vanilla / "SSF2.swf").is_file():
         raise SystemExit("vanilla folder has no SSF2.swf")
-    log("vanilla hash check skipped")
     vsha = sha256_bytes((vanilla / "SSF2.swf").read_bytes())
+    eng_root = engine_for(vsha)
+    meta = json.loads((eng_root / "base.json").read_text(encoding="utf-8"))
+    log("vanilla sha=%s engine=%s" % (vsha[:12], eng_root.relative_to(ROOT).as_posix()))
 
     base, vbins = vanilla_base(n2f, vanilla, work)
     hint = "Next2Flash %s decompiles differently from %s, the one the patches were captured with" % (
@@ -1318,13 +1383,15 @@ def cmd_build(a):
     for rel, text in base.items():
         if rel in meta["removed"]:
             continue
-        p = ENGINE2 / "patches" / (rel + ".patch")
+        p = eng_root / "patches" / (rel + ".patch")
         try:
             tree[rel] = apply_patch(text, read_utf8(p), rel) if p.exists() else text
         except SystemExit as e:
             raise SystemExit("%s; %s" % (e, hint))
-    for f in sorted((ENGINE2 / "added").rglob("*.as")):
-        tree[f.relative_to(ENGINE2 / "added").as_posix()] = read_utf8(f)
+    added_dir = eng_root / "added"
+    if added_dir.is_dir():
+        for f in sorted(added_dir.rglob("*.as")):
+            tree[f.relative_to(added_dir).as_posix()] = read_utf8(f)
     bad = sorted(r for r, h in meta["target"].items() if sha256_text(tree.get(r, "")) != h)
     extra = sorted(r for r in tree if r not in meta["target"])
     log("engine2 source classes=%d mismatched=%d extra=%d" % (len(tree), len(bad), len(extra)))
@@ -1355,6 +1422,10 @@ def cmd_build(a):
     reset_out(out)
     copy_air(vanilla, out)
     copy_overlay(out)
+    exe = vanilla / "SSF2.exe"
+    if exe.is_file() and not (out / "SSF2.exe").is_file():
+        shutil.copyfile(exe, out / "SSF2.exe")
+        log("copied SSF2.exe from the vanilla folder")
     for rel in ASSET_PATHS:
         if not (SHELL / rel).is_file():
             log("asset missing shell/%s (not copied)" % rel)
@@ -1480,6 +1551,9 @@ def cmd_port(a):
     log("port classes=%d clean=%d upstream=%d merged=%d conflicts=%d missing=%d" % tuple(
         stats[k] for k in ("classes", "clean", "upstream", "merged", "conflicts", "missing")))
     log("port tree classes=%d -> %s (report %s)" % (len(tree), changed, out / "report.md"))
+    if a.variant:
+        sha = sha256_bytes((new / "SSF2.swf").read_bytes())
+        save_variant(VANILLA / sha, new_base, tree, notes, sha, n2f.commit() or "release", set(meta["crlf"]))
 
 
 def cmd_verify(a):
@@ -1567,6 +1641,8 @@ def main(argv=None):
     t.add_argument("--new-vanilla", required=True, help="the new SSF2 install to port the shell to")
     t.add_argument("--n2f", required=True)
     t.add_argument("--out", help="output folder for changed/ and report.md (default work/port)")
+    t.add_argument("--variant", action="store_true",
+                   help="write patches/vanilla/<sha> for this SSF2.swf without touching patches/engine2")
     a = p.parse_args(argv)
     {"build": cmd_build, "capture": cmd_capture, "rebaseline": cmd_rebaseline, "verify": cmd_verify,
      "pack": cmd_pack, "port": cmd_port}[a.cmd](a)

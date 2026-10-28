@@ -1,0 +1,16 @@
+# com/mcleodgaming/ssf2/assists/AssistTrophy.as
+## class header
+## why: ModHost import for assist hooks
+@@ 5 0 da39a3ee5e6b4b0d 1
++   import com.mcleodgaming.ssf2.modhost.*;
+## override public function fadeOut() : void
+## why: ASSIST_FADE hook, fired once when the fade starts
+@@ 42 0 da39a3ee5e6b4b0d 4
++            if(m_fadeTimer.CurrentTime == 0)
+=26
++               ModHost.runHook(ModHooks.ASSIST_FADE,{"assist":this});
+=29
+## override public function destroy() : void
+## why: ASSIST_DESTROY hook for mods
+@@ 53 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.ASSIST_DESTROY,{"assist":this});

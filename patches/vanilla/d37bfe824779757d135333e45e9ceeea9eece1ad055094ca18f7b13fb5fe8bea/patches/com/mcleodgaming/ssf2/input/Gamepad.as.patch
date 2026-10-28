@@ -1,0 +1,290 @@
+# com/mcleodgaming/ssf2/input/Gamepad.as
+## class header
+## why: controller: rumble ANE imports and state; constructor takes an XInput index
+@@ 5 1 c7570dde85fbc2c1 8
++   import com.masterwex.ane.rumble.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.events.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.utils.getTimer;
++
+@@ 12 0 da39a3ee5e6b4b0d 11
+=8
++      private static var m_aneReady:Boolean = false;
+=8
++      private static var m_aneInitLogged:Boolean = false;
+=8
+=8
++      private static var m_lastRumbleTime:Object = {};
+=8
++      private static const RUMBLE_MIN_INTERVAL:int = 16;
+=8
++      private static var m_globalRumbleEnabled:Boolean = true;
+@@ 23 10 9e0e99f5524ca85c 11
++      protected var m_xinputIndex:int = -1;
+=8
++      protected var m_xinputDetected:Boolean = false;
+=8
++      protected var m_rumbleEnabled:Boolean = true;
+=8
+=8
+=8
+=8
+=8
+=8
+## public function set Port(_:int) : void
+## why: controller: XInputIndex accessor so rumble targets the right physical pad
+@@ 47 0 da39a3ee5e6b4b0d 10
+=32
+=8
++      public function get XInputIndex() : int
+=24
++         return this.m_xinputIndex;
+=32
+=8
++      public function set XInputIndex(param1:int) : void
+=24
++         this.m_xinputIndex = param1;
+## public function onDeviceInput(_:String, _:Number) : void
+## why: controller: auto-detect the XInput index from the first button press
+@@ 200 1 a2556ab47f09efa6 0
+@@ 215 0 da39a3ee5e6b4b0d 4
++            if(!this.m_xinputDetected)
+=126
++               this.detectXInputIndex(id);
+=132
+## public function setControl(_:String, _:String, _:Boolean = false) : void
+## why: ModHost: INPUT_REMAP hook when a control is rebound
+@@ 267 0 da39a3ee5e6b4b0d 7
++         ModHost.runHook(ModHooks.INPUT_REMAP,{
++            "gamepad":this,
++            "id":id,
++            "input":input,
++            "inverse":inverse,
++            "control":control
++         });
+## public function setRumble(_:Number = 0, _:Number = 0, _:int = 0) : void
+## why: controller: gamepad rumble via the XInput ANE (per-player, online local-only, rate limited)
+@@ 346 0 da39a3ee5e6b4b0d 220
+=8
++      public function setRumble(param1:Number = 0, param2:Number = 0, param3:int = 0) : void
+=24
++         if(!m_globalRumbleEnabled || !this.m_rumbleEnabled)
+=68
+=178
+=71
++         if(this.m_name.toLowerCase().indexOf("playstation") >= 0 || this.m_name.toLowerCase().indexOf("dualshock") >= 0 || this.m_name.toLowerCase().indexOf("dualsense") >= 0)
+=68
++            param1 *= 0.01;
++            param2 *= 0.01;
+=71
++         param1 = Math.max(0,Math.min(1,param1));
++         param2 = Math.max(0,Math.min(1,param2));
++         if(param1 <= 0 && param2 <= 0)
+=68
+=178
+=71
++         var _loc4_:int = this.m_xinputIndex >= 0 ? this.m_xinputIndex : this.m_port;
++         sendRumbleCommand(_loc4_,param1,param2,param3);
+=32
+=8
++      public function stopRumble() : void
+=24
++         this.setRumble(0,0,0);
+=32
+=8
++      public function supportsRumble() : Boolean
+=24
++         return m_aneReady;
+=32
+=8
++      public function getRumbleEnabled() : Boolean
+=24
++         return this.m_rumbleEnabled;
+=32
+=8
++      public function setRumbleEnabled(param1:Boolean) : void
+=24
++         this.m_rumbleEnabled = param1;
+=32
+=8
++      private function getXInputButtonBit(param1:String) : uint
+=24
++         switch(param1)
+=68
++            case "BUTTON_0":
++               return 4096;
++            case "BUTTON_1":
++               return 8192;
++            case "BUTTON_2":
++               return 16384;
++            case "BUTTON_3":
++               return 32768;
++            case "BUTTON_4":
++               return 256;
++            case "BUTTON_5":
++               return 512;
++            case "BUTTON_6":
++               return 32;
++            case "BUTTON_7":
++               return 16;
++            case "BUTTON_8":
++               return 64;
++            case "BUTTON_9":
++               return 128;
++            default:
++               return 0;
+=71
+=32
++
++      public function Gamepad(param1:String, param2:int, param3:int = -1)
+=24
+=25
+=26
+=27
+=28
++         this.m_name = param1;
++         this.m_port = param2;
++         this.m_xinputIndex = param3;
++         this.m_xinputDetected = false;
+=31
+=32
+=8
++      public static function setGlobalRumbleEnabled(param1:Boolean) : void
+=24
++         m_globalRumbleEnabled = param1;
+=32
+=8
++      public static function getGlobalRumbleEnabled() : Boolean
+=24
++         return m_globalRumbleEnabled;
+=32
+=8
++      public static function rumbleForPlayer(param1:int, param2:Number, param3:Number, param4:int) : void
+=24
+=271
++         var isOnline:Boolean = false;
++         var localPlayerID:int = 0;
++         var gamepad:Gamepad = null;
++         if(!SaveData.getRumbleEnabled(param1))
+=68
+=178
+=71
++         try
+=68
++            isOnline = Boolean(MultiplayerManager.Active);
++            localPlayerID = int(MultiplayerManager.PlayerID);
++            if(isOnline)
+=126
++               if(param1 != localPlayerID)
+=254
++                  return;
+=256
++               index = 0;
+=132
+=285
+=126
++               index = param1 - 1;
+=132
++            if(Boolean(SaveData.Controllers && index >= 0) && Boolean(index < SaveData.Controllers.length) && Boolean(SaveData.Controllers[index]))
+=126
++               gamepad = SaveData.Controllers[index].GamepadInstance;
++               if(gamepad != null)
+=254
++                  gamepad.setRumble(param2,param3,param4);
+=256
+=132
+=71
++         catch(e:Error)
+=68
+=71
+=32
+=8
++      private static function sendRumbleCommand(param1:int, param2:Number, param3:Number, param4:int) : void
+=24
++         var result:Boolean = false;
++         var now:int = int(getTimer());
++         var lastTime:int = int(int(m_lastRumbleTime[param1]) || 0);
++         if(now - lastTime < RUMBLE_MIN_INTERVAL && param2 > 0)
+=68
+=178
+=71
++         m_lastRumbleTime[param1] = now;
++         if(!ensureAneInitialized())
+=68
+=178
+=71
++         try
+=68
++            result = Boolean(Rumble.setRumble(param1,param2,param3,param4));
+=71
++         catch(e:Error)
+=68
+=71
+=32
+=8
++      private static function ensureAneInitialized() : Boolean
+=24
++         var info:Object = null;
++         if(!m_aneReady)
+=68
++            try
+=126
++               m_aneReady = Rumble.initialize();
++               if(m_aneReady)
+=254
++                  info = Rumble.identifyActiveControllers();
++                  m_aneInitLogged = false;
+=256
+=132
++            catch(e:Error)
+=126
++               m_aneReady = false;
++               if(!m_aneInitLogged)
+=254
++                  m_aneInitLogged = true;
+=256
+=132
++            if(!m_aneReady && !m_aneInitLogged)
+=126
++               m_aneInitLogged = true;
+=132
+=71
++         return m_aneReady;
+=32
+=8
++      private function detectXInputIndex(param1:String) : void
+=24
++         var _loc2_:int = 0;
++         var _loc3_:Object = null;
++         var _loc4_:uint = 0;
++         var _loc5_:uint = uint(this.getXInputButtonBit(param1));
++         if(_loc5_ == 0)
+=68
+=178
+=71
++         var _loc6_:* = Rumble.identifyActiveControllers();
++         if(!_loc6_)
+=68
+=178
+=71
++         for each(_loc2_ in _loc6_)
+=68
++            _loc3_ = Rumble.getControllerState(_loc2_);
++            if(Boolean(_loc3_) && Boolean(_loc3_.buttons))
+=126
++               _loc4_ = uint(_loc3_.buttons);
++               if((_loc4_ & _loc5_) != 0)
+=254
++                  this.m_xinputIndex = _loc2_;
++                  this.m_xinputDetected = true;
++                  break;
+=256
+=132
+=71
++         if(this.m_xinputIndex == -1)
+=68
+=71
+=32

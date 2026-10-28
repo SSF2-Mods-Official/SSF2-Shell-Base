@@ -1,0 +1,82 @@
+# com/mcleodgaming/ssf2/enemies/Enemy.as
+## class header
+## why: ModHost import for enemy hooks
+@@ 14 0 da39a3ee5e6b4b0d 6
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.items.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.geom.*;
+## public function destroy() : void
+## why: ENEMY_DESTROY hook for mods
+@@ 238 0 da39a3ee5e6b4b0d 1
++            ModHost.runHook(ModHooks.ENEMY_DESTROY,{"enemy":this});
+## override public function takeDamage(_:AttackDamage, _:HitBoxSprite = null) : Boolean
+## why: ENEMY_HIT hook for mods
+@@ 867 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.ENEMY_HIT,{
++            "enemy":this,
++            "attack":attackObj,
++            "hitBox":collisionHitBox
++         });
+## override public function get IsFrozenInTime() : Boolean
+## why: time stop: freeze enemies unless the owner's time stopper bypasses enemies
+@@ 1053 0 da39a3ee5e6b4b0d 13
++      override public function get IsFrozenInTime() : Boolean
+=43
++         if(Boolean(this.m_owner) && this.m_owner != this)
+=46
++            if(this.STAGEDATA.InTimeStop && this.m_owner is Character)
+=243
++               return this.m_owner.IsFrozenInTime || Boolean(STAGEDATA.getCharacterTimeStopperBypassOptions(this.m_owner.UID)) && !STAGEDATA.getCharacterTimeStopperBypassOptions(this.m_owner.UID).bypassEnemy;
+=245
++            return this.m_owner.IsFrozenInTime;
+=48
++         return this.STAGEDATA.InTimeStop;
+=107
+=17
+## override protected function PREPERFORM() : void
+## why: time stop: don't advance enemy animation while frozen
+@@ 1060 2 1b4fb04a740fae3d 5
++               if(!this.IsFrozenInTime)
+=361
++                  Utils.advanceFrame(m_sprite.stance);
++                  Utils.recursiveMovieClipPlay(m_sprite.stance,true);
+=434
+## override public function PERFORMALL() : void
+## why: ENEMY_AI_STEP hook + time stop: skip the enemy tick while frozen
+@@ 1072 0 da39a3ee5e6b4b0d 4
++         if(ModHost.hasHook(ModHooks.ENEMY_AI_STEP))
+=46
++            ModHost.runHook(ModHooks.ENEMY_AI_STEP,{"enemy":this});
+=48
+@@ 1075 6 0606bf4ed632b2c4 1
++            if(!this.IsFrozenInTime)
+@@ 1082 1 4893b0b6b95765e5 10
++               checkTimers();
++               this.performAttackChecks();
++               this.move();
++               m_forces();
++               gravity();
++               if(!this.m_enemyStats.Ghost)
+=361
++                  m_groundCollisionTest();
+=434
++               updateSelfPlatform();
+@@ 1084 1 fc587e5d62250155 0
+@@ 1087 3 6e16eb2708845f7b 6
++            if(!this.IsFrozenInTime)
+=243
++               checkHitStun();
++               updateCamerBox();
++               this.checkDeath();
+=245
+## override protected function POSTPERFORM() : void
+## why: time stop: skip post tick while frozen
+@@ 1098 2 ac1534c9099c7ee2 5
++            if(!this.IsFrozenInTime)
+=243
++               super.POSTPERFORM();
++               m_apiInstance.update();
+=245

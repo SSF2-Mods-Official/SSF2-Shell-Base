@@ -1,0 +1,45 @@
+# com/mcleodgaming/ssf2/menus/MenuMapper.as
+## class header
+## why: modhost: import ModHost/ModHooks for the hooks below
+@@ 2 0 da39a3ee5e6b4b0d 2
++   import com.mcleodgaming.ssf2.modhost.*;
++   
+## public function up() : void
+## why: modhost: GROUP_MENU_NAV hook on controller up so mods can react to menu navigation
+@@ 55 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.GROUP_MENU_NAV,{
++            "mapper":this,
++            "direction":"up",
++            "node":this.currentNode
++         });
+## public function down() : void
+## why: modhost: GROUP_MENU_NAV hook on controller down
+@@ 82 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.GROUP_MENU_NAV,{
++            "mapper":this,
++            "direction":"down",
++            "node":this.currentNode
++         });
+## public function left() : void
+## why: modhost: GROUP_MENU_NAV hook on controller left
+@@ 109 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.GROUP_MENU_NAV,{
++            "mapper":this,
++            "direction":"left",
++            "node":this.currentNode
++         });
+## public function right() : void
+## why: modhost: GROUP_MENU_NAV hook on controller right
+@@ 136 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.GROUP_MENU_NAV,{
++            "mapper":this,
++            "direction":"right",
++            "node":this.currentNode
++         });
+## public function back() : void
+## why: modhost: MENU_BACK hook on controller back
+@@ 176 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.MENU_BACK,{
++            "mapper":this,
++            "node":this.currentNode
++         });

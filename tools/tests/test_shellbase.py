@@ -472,6 +472,29 @@ class SwfTests(unittest.TestCase):
 
 
 class VanillaHashTests(unittest.TestCase):
+    def test_engine_for_picks_the_patch_set(self):
+        captured = "9afefb865f540eba5c26549f47c6892cdfbb1802ac93aa55723462c469eaacf4"
+        self.assertEqual(sb.engine_for(captured), sb.ENGINE2)
+        for sha in (
+            "d37bfe824779757d135333e45e9ceeea9eece1ad055094ca18f7b13fb5fe8bea",
+            "ebf175c88bc37b46b0c1a34c368eae6d529d0a50f7e8ada85fdefd874f5b17c5",
+            "0f13237a19bc6a7f63acb8e7371f3ce8420516292099c279061f4ad84f488fdc",
+        ):
+            self.assertEqual(sb.engine_for(sha), sb.VANILLA / sha)
+        with self.assertRaises(SystemExit):
+            sb.engine_for("0" * 64)
+
+    def test_pe_machine_reads_the_coff_machine(self):
+        import tempfile
+        data = bytearray(0x80)
+        data[0x3C:0x40] = (0x40).to_bytes(4, "little")
+        data[0x40:0x44] = b"PE\0\0"
+        data[0x44:0x46] = (0x8664).to_bytes(2, "little")
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "Adobe AIR.dll"
+            path.write_bytes(data)
+            self.assertEqual(sb.pe_machine(path), 0x8664)
+
     def test_names_swf_and_mappings_dat(self):
         import tempfile
         with tempfile.TemporaryDirectory() as folder:

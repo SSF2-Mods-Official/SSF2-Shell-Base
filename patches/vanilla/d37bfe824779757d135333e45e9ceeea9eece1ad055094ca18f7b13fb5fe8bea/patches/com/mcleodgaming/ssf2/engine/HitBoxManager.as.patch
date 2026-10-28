@@ -1,0 +1,36 @@
+# com/mcleodgaming/ssf2/engine/HitBoxManager.as
+## class header
+## why: controllers import for the debugConsole warning
+@@ 7 0 da39a3ee5e6b4b0d 3
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.desktop.*;
+## public static function getOrCreate(_:String) : HitBoxManager
+## why: warn on missing hitbox linkage, strip MC scripts, guard gotoAndStop; createEmpty for menu preview
+@@ 45 0 da39a3ee5e6b4b0d 11
++         if(!tmpMC)
+=38
++            if(Boolean(MenuController.debugConsole))
+=50
++               MenuController.debugConsole.alert("Warning, cannot find MovieClip with linkage id \'" + linkageID + "\' so hitbox data could not be loaded!");
+=56
+=40
++         else
+=38
++            Utils.removeActionScript(tmpMC);
+=40
+@@ 48 1 2e259928b4e18d3e 8
++            Utils.removeActionScript(tmpMC);
++            try
+=50
++               tmpMC.gotoAndStop(i + 1);
+=56
++            catch(seekErr:Error)
+=50
+=56
+@@ 60 0 da39a3ee5e6b4b0d 5
+=29
+=10
++      public static function createEmpty(param1:String) : HitBoxManager
+=22
++         return new HitBoxManager((param1 || "unknown") + ".__menu_preview_empty");

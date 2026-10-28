@@ -1,0 +1,409 @@
+# com/mcleodgaming/ssf2/Main.as
+## class header
+## why: Discord SDK ANE, ModHost import, debug off until F5 lazy debug, drop Google Analytics tracker/GAID
+@@ 39 0 da39a3ee5e6b4b0d 14
++   import com.jotard.ane.*;
++   import com.mcleodgaming.mgn.net.*;
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.external.*;
++   import flash.geom.*;
++   import flash.system.*;
++   import flash.text.*;
++   import flash.ui.*;
++   import flash.utils.Timer;
++   import mx.utils.*;
++
+@@ 53 1 ad52c7c889b6ddde 7
++      public static var m_sdk:DiscordGameSDK;
+=42
++      public static var m_sdkTimer:Timer;
+=42
++      public static var m_onlineChar:String;
+=42
++      public static var m_onlineName:String;
+@@ 56 0 da39a3ee5e6b4b0d 2
+=42
++      private static var m_initGameStarted:Boolean = false;
+@@ 69 1 06f1460ce33b5d42 1
++      private static const DEBUGCONST:Boolean = false;
+@@ 71 1 7f33c1d2a8a77b51 1
++      private static var m_lazyDebug:Boolean = false;
+@@ 73 1 9a60e8be76b102e4 3
++      public static var FORCEDEBUGOFF:Boolean = false;
+=42
++      public static var DEBUGAUTHED:Boolean = true;
+@@ 83 1 554d011b51d9ec8b 1
++      private static var m_pendingDiscordJoin:Object = null;
+## public function Main()
+## why: boot on ADDED_TO_STAGE so Main works when stage is null at construction (body moved to startWithStage)
+@@ 87 1 a5dc3bfd276bea6f 0
+@@ 106 28 5f4f33d63eb62305 1
++         if(Boolean(stage))
+@@ 135 17 a7d4873a75fbd871 6
++            this.startWithStage();
+=95
+=199
+=93
++            addEventListener(Event.ADDED_TO_STAGE,this.onAddedToStageBoot);
+=95
+## private static function handleGlobalKeypress(_:KeyboardEvent) : void
+## why: mods: ModHost.dispatchKey first; F5 toggles lazy debug; backtick opens the console while it is on
+@@ 177 0 da39a3ee5e6b4b0d 4
++         if(ModHost.dispatchKey(e))
+=93
++            return;
+=95
+@@ 190 0 da39a3ee5e6b4b0d 24
+=95
++         if(e.keyCode === 192)
+=93
++            if(Boolean(m_lazyDebug) && Boolean(MenuController.debugConsole))
+=140
++               MenuController.debugConsole.forceShow();
+=150
+=95
++         if(e.keyCode === 116)
+=93
++            m_lazyDebug = !m_lazyDebug;
++            MultiplayerManager.notify("Lazy Debug toggled: " + m_lazyDebug);
++            if(GameController.constantDebugger != null)
+=140
++               GameController.constantDebugger.updateVisibility();
+=150
++            if(GameController.stageData != null)
+=140
++               if(!m_lazyDebug)
+=142
++                  GameController.stageData.createFPSTimer();
+=149
++               GameController.stageData.setFPSTimerVisible(!m_lazyDebug);
+=150
+## private static function resourceLoadProgress(_:Number) : void
+## why: boot: progress leaves room for costume sync; boot ModHost, wait for mods, load expansion UI/classic packs
+@@ 330 2 1fe8ba174e091165 58
++         var _loc0_:Number = 100 * (1 / 20) + 15 / 20 * percent;
++         Main.preloader.pCent.text = "" + Math.floor(_loc0_);
++         Main.preloader.progressBar.scaleX = Math.floor(_loc0_);
+=152
+=42
++      private static function costumeSyncProgress(param1:Number) : void
+=86
++         var _loc2_:Number = 80 + 20 * param1 / 100;
++         if(_loc2_ > 100)
+=93
++            _loc2_ = 100;
+=95
++         if(Boolean(Main.preloader))
+=93
++            Main.preloader.pCent.text = "" + Math.floor(_loc2_);
++            Main.preloader.progressBar.scaleX = Math.floor(_loc2_);
+=95
+=152
+=42
++      private static function onCoreResourcesComplete() : void
+=86
++         var _local_2:* = undefined;
+=92
+=93
+=339
+=140
++               _local_2 = SaveDataMigrations.postLoadMigrations;
++               _local_2[0]();
+=342
+=150
+=95
++         catch(migErr:*)
+=93
+=98
+=95
+=361
+=362
++         ModHost.runHook(ModHooks.BOOT_AFTER_RESOURCES,{});
++         ModHost.runHook(ModHooks.BOOT_START,{});
++         ModHost.boot();
++         ModHost.runHook(ModHooks.AFTER_BOOT,{});
++         ModHost.whenBootModsReady(function():void
+=93
++            ModHost.loadRealExpansionUiTemplates(function():void
+=140
++               try
+=142
++                  ModHost.applyClassicJsonPacks();
+=149
++               catch(classicErr:*)
+=142
+=149
++               MenuController.init();
++               UnlockController.init();
++               MultiplayerManager.makeNotifier();
++               initGame();
++            });
+=466
+## private static function initGame() : void
+## why: palette sync door during load, reentry guard, append expansion costumes, init Discord SDK; drop analytics
+@@ 336 2 de1679688903bcc5 3
++         var _loc1_:uint = 0;
++         var _loc0_:* = undefined;
++         if(!m_initGameStarted)
+@@ 339 1 8979fc85ab51321f 3
++            m_initGameStarted = true;
++            _loc0_ = ModHost.door(ModPatches.PALETTE_SYNC_DURING_LOAD,[costumeSyncProgress,initGame],false);
++            if(_loc0_ == true)
+@@ 341 2 962f7d453c3f684a 1
++               return;
+@@ 345 1 8fed3858d91967fc 2
+=365
++         if(Boolean(Main.preloader))
+@@ 347 1 507a2669afa718c0 2
++            Main.preloader.pCent.text = "100";
++            Main.preloader.progressBar.scaleX = 100;
+@@ 349 18 c63a5f7e3504750d 1
++         if(Boolean(Main.preloader) && Boolean(Main.preloader.parent))
+@@ 384 0 da39a3ee5e6b4b0d 43
+=95
++         ResourceManager.appendExpansionCostumes();
+=92
+=93
++            m_sdk = new DiscordGameSDK();
++            if(Boolean(m_sdk))
+=140
++               m_sdk.initialize("1377619298104901703",{});
++               try
+=142
++                  m_sdk.addEventListener("ON_ACTIVITY_JOIN_REQUEST",Main.handleDiscordJoinRequest);
+=149
++               catch(e:Error)
+=142
+=149
++               try
+=142
++                  m_sdk.addEventListener("ON_ACTIVITY_INVITE",Main.handleDiscordInvite);
+=149
++               catch(e:Error)
+=142
+=149
++               try
+=142
++                  m_sdk.addEventListener("ON_ACTIVITY_JOIN",Main.handleDiscordJoin);
+=149
++               catch(e:Error)
+=142
+=149
++               m_sdkTimer = new Timer(1000);
++               m_sdkTimer.addEventListener(TimerEvent.TIMER,Main.updateDiscordSDK);
++               m_sdkTimer.start();
++               _loc1_ = uint(new Date().time / 1000);
++               m_sdk.updateActivity({
++                  "details":"Starting up",
++                  "partyCurrentSize":0,
++                  "partyMaxSize":0,
++                  "timestampStart":_loc1_.toString()
++               });
+=150
+=95
++         catch(e:Error)
+=93
+## public static function get DEBUG() : Boolean
+## why: lazy debug: DEBUG stays off until F5 sets m_lazyDebug
+@@ 427 1 8407424eed46e04a 6
++         return (Boolean(DEBUGCONST) || Boolean(m_lazyDebug)) && !FORCEDEBUGOFF;
+=152
+=42
++      public static function get LAZYDEBUG() : Boolean
+=86
++         return m_lazyDebug;
+## public static function turnOffDebug() : void
+## why: Discord join/invite handlers, and startWithStage (vanilla boot plus already-loaded root check)
+@@ 443 0 da39a3ee5e6b4b0d 185
+=152
+=42
++      private static function updateDiscordSDK(param1:TimerEvent) : void
+=86
++         if(Boolean(m_sdk))
+=93
++            m_sdk.runCallbacks();
+=95
+=152
+=42
++      public static function handleDiscordJoin(param1:DiscordEvent) : void
+=86
++         var joinSecret:String = null;
++         var joinData:Object = null;
++         joinSecret = param1.data as String;
++         if(!joinSecret || joinSecret.length == 0)
+=93
++            MultiplayerManager.notify("Invalid Discord invite data");
++            return;
+=95
+=92
+=93
++            joinData = JSON.parse(joinSecret);
++            m_pendingDiscordJoin = {
++               "room_key":joinData.k,
++               "room_code":joinData.c,
++               "room_password":joinData.p || "",
++               "room_capacity":joinData.m || 4,
++               "timestamp":new Date().time
++            };
++            MultiplayerManager.notify("Discord invite received! Preparing to join room...");
++            if(!MultiplayerManager.Connected)
+=140
++               if(!MenuController.onlineMenu.isOnscreen())
+=142
++                  MenuController.disposeAllMenus();
++                  MenuController.onlineMenu.show();
+=149
+=150
+=184
+=140
++               processDiscordJoin();
+=150
+=95
++         catch(error:Error)
+=93
++            MultiplayerManager.notify("Invalid Discord invite format: " + error.message);
+=95
+=152
+=42
++      public static function handleDiscordJoinRequest(param1:DiscordEvent) : void
+=86
++         var _loc3_:Object = null;
++         var _loc4_:OnlinePromptMenu = null;
+=92
+=93
++            _loc3_ = JSON.parse(param1.data as String);
++            _loc4_ = MenuController.onlinePromptMenu;
++            _loc4_.message = StringUtil.substitute("{0} from Discord wants to join your online lobby.\nAccept?",_loc3_.username);
++            _loc4_.onAccept = Main.acceptDiscordJoinRequest;
++            _loc4_.onDismiss = Main.rejectDiscordJoinRequest;
++            _loc4_.data = Utils.cloneObject(_loc3_);
++            if(!_loc4_.isOnscreen())
+=140
++               _loc4_.show();
+=150
+=95
++         catch(error:Error)
+=93
+=95
+=152
+=42
++      public static function handleDiscordInvite(param1:DiscordEvent) : void
+=86
++         MultiplayerManager.notify("Discord invite sent!");
+=152
+=42
++      private static function acceptDiscordJoinRequest() : void
+=86
++         var _loc1_:OnlinePromptMenu = MenuController.onlinePromptMenu;
++         if(Boolean(m_sdk) && Boolean(_loc1_.data) && Boolean(_loc1_.data.id))
+=93
++            m_sdk.sendRequestReply(_loc1_.data.id,1);
+=95
++         _loc1_.removeSelf();
+=152
+=42
++      private static function rejectDiscordJoinRequest() : void
+=86
++         var _loc1_:OnlinePromptMenu = MenuController.onlinePromptMenu;
++         if(Boolean(m_sdk) && Boolean(_loc1_.data) && Boolean(_loc1_.data.id))
+=93
++            m_sdk.sendRequestReply(_loc1_.data.id,0);
+=95
++         _loc1_.removeSelf();
+=152
+=42
++      public static function processDiscordJoin() : void
+=86
++         var _loc1_:String = null;
++         var _loc2_:String = null;
++         var _loc3_:Object = null;
++         if(Boolean(m_pendingDiscordJoin) && Boolean(MultiplayerManager.Connected))
+=93
++            _loc1_ = m_pendingDiscordJoin.room_key;
++            _loc2_ = m_pendingDiscordJoin.room_password || "";
++            _loc3_ = m_pendingDiscordJoin;
++            m_pendingDiscordJoin = null;
++            if(Boolean(MenuController.pleaseWaitMenu))
+=140
++               MenuController.pleaseWaitMenu.show();
+=150
++            MultiplayerManager.notify("Requesting to join room from Discord invite...");
++            MultiplayerManager.requestToJoinRoom(_loc1_,_loc2_);
+=95
+=152
+=42
++      public static function get hasPendingDiscordJoin() : Boolean
+=86
++         return m_pendingDiscordJoin != null;
+=152
+=42
++      private function onAddedToStageBoot(param1:Event) : void
+=86
++         removeEventListener(Event.ADDED_TO_STAGE,this.onAddedToStageBoot);
++         this.startWithStage();
+=152
+=42
++      private function startWithStage() : void
+=86
++         var myMenu:ContextMenu = null;
++         stage.align = "";
+=106
++         this.x = 0;
++         this.y = 0;
+=107
+=108
+=109
+=110
+=111
+=112
+=113
+=114
+=115
+=116
+=117
+=118
+=119
+=121
+=122
+=123
+=124
+=125
+=126
+=127
+=128
+=129
+=130
++         if(ROOT.loaderInfo.bytesLoaded > 0 && ROOT.loaderInfo.bytesLoaded >= ROOT.loaderInfo.bytesTotal)
+=93
++            ROOT.onRootLoadComplete(null);
+=95
+=131
+=132
+=133
+=93
++            var _loc1_:* = undefined;
++            var _loc2_:int = 0;
++            var _loc3_:int = 0;
++            var _loc4_:Vector.<Gamepad> = GamepadManager.getGamepads();
++            for(_loc1_ in SaveData.PortInputs)
+=140
++               _loc2_ = 0;
++               while(_loc2_ < _loc4_.length)
+=142
++                  if(SaveData.PortInputs[_loc1_] === _loc4_[_loc2_].Name + " " + _loc4_[_loc2_].Port && Boolean(SaveData.Gamepads[_loc4_[_loc2_].Name]))
+=144
++                     _loc3_ = int(parseInt(_loc1_));
++                     SaveData.Controllers[_loc3_ - 1].GamepadInstance = _loc4_[_loc2_];
++                     _loc4_[_loc2_].importControls(SaveData.Gamepads[_loc4_[_loc2_].Name].ports["port" + _loc4_[_loc2_].Port]);
+=148
++                  _loc2_++;
+=149
+=150
+=151
+## protected function onRootLoadComplete(_:Event) : void
+## why: boot: core resource completion goes to onCoreResourcesComplete (ModHost boot) instead of initGame
+@@ 465 1 3b4c8a5c6cc28f5f 1
++            "oncomplete":onCoreResourcesComplete

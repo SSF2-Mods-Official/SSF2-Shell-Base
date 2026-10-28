@@ -1,0 +1,151 @@
+# com/mcleodgaming/ssf2/menus/TargetTestMenu.as
+## class header
+## why: target test: m_stage_id public; display import for greying out icons
+@@ 12 0 da39a3ee5e6b4b0d 5
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modes.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.display.*;
++   import flash.events.*;
+@@ 16 1 4212976880e47266 1
++      public var m_stage_id:int = 0;
+## override public function setPlayer(_:int, _:String, _:Number = -1) : void
+## why: target test: Character BTT with an expansion char picks/cycles only expansions that ship a target test
+@@ 59 0 da39a3ee5e6b4b0d 46
++      override public function setPlayer(param1:int, param2:String, param3:Number = -1) : void
+=19
++         var stageID:String = null;
++         try
+=28
++            stageID = ResourceManager.getResourceByID("targets_mode").getProp("targetStageList")[this.m_stage_id].id;
+=31
++         catch(e:Error)
+=28
++            stageID = null;
+=31
++         if((stageID === "Character" || stageID === "character") && param2 == "xp")
+=28
++            if(!ResourceManager.anyExpansionHasTargetTest())
+=65
++               SoundQueue.instance.playSoundEffect("menu_error");
+=67
+=68
++            if(Boolean(isNaN(param3)) || param3 < 0 || !ResourceManager.expansionHasTargetTest(Stats.resolveExpansionStatsName(param3)))
+=65
++               param3 = Number(ResourceManager.getFirstExpansionWithTargetTest());
+=68
+=31
++         super.setPlayer(param1,param2,param3);
+=23
+=15
++      override public function incrementExpansion(param1:Number) : void
+=19
++         var _loc2_:String = null;
++         var _loc3_:Chip = null;
++         var _loc4_:Number = Number(NaN);
++         if(Boolean(m_game) && Boolean(m_playerChips) && param1 - 1 < m_playerChips.length)
+=28
++            _loc2_ = ResourceManager.getResourceByID("targets_mode").getProp("targetStageList")[this.m_stage_id].id;
++            if((_loc2_ === "Character" || _loc2_ === "character") && Boolean(ResourceManager.anyExpansionHasTargetTest()))
+=65
++               _loc3_ = m_playerChips[param1 - 1];
++               _loc4_ = Number(ResourceManager.getNextExpansionWithTargetTest(_loc3_.ExpansionNum));
++               _loc3_.ExpansionNum = _loc4_;
++               this.setPlayer(param1,"xp",_loc4_);
+=67
+=68
+=31
++         super.incrementExpansion(param1);
+=23
+=15
+## override public function initMatch() : void
+## why: target test: refuse expansion chars without a target test; null-safe icon lookup (xp->cxp)
+@@ 61 1 072f665200870580 14
++         var _loc0_:String = m_game.PlayerSettings[0].character;
++         var _loc1_:String = _loc0_ == "xp" ? "cxp" : _loc0_;
++         var _loc2_:MovieClip = m_charMCHash[_loc1_] as MovieClip;
++         var _loc3_:String = ResourceManager.getResourceByID("targets_mode").getProp("targetStageList")[this.m_stage_id].id;
++         if((_loc3_ === "Character" || _loc3_ === "character") && _loc0_ == "xp")
+=28
++            if(!ResourceManager.anyExpansionHasTargetTest() || !ResourceManager.expansionHasTargetTest(Stats.resolveExpansionStatsName(m_game.PlayerSettings[0].expansion)))
+=65
++               SoundQueue.instance.playSoundEffect("menu_error");
+=66
+=67
+=68
+=31
++         if(Boolean(_loc2_) && Boolean(_loc2_.__blocked))
+@@ 73 1 4d221efdae0e72ac 1
++         m_game.LevelData.customModeID = _loc3_;
+@@ 77 0 da39a3ee5e6b4b0d 26
+=23
+=15
++      private function blockCharSelectIcon(param1:MovieClip) : void
+=19
++         var _loc2_:Array = null;
++         var _loc3_:int = 0;
++         if(!param1)
+=28
++            return;
+=31
++         _loc2_ = new Array();
++         if(Boolean(param1.filters))
+=28
++            _loc3_ = 0;
++            while(_loc3_ < param1.filters.length)
+=65
++               _loc2_.push(param1.filters[_loc3_]);
++               _loc3_++;
+=68
+=31
++         param1.__oldFilters = _loc2_;
++         param1.__blocked = true;
++         Utils.setColorFilter(param1,{
++            "saturation":-100,
++            "brightness":-75
+=85
+## override public function show() : void
+## why: unclear - calls super.show() before updateTargetTestDisplay instead of after
+@@ 100 0 da39a3ee5e6b4b0d 1
+=101
+@@ 101 1 31f805888e850918 0
+## public function updateTargetTestDisplay() : void
+## why: target test: grey out chars/expansions with no target test; totals over Stats.getCharacterList
+@@ 158 0 da39a3ee5e6b4b0d 1
++         var _loc1_:MovieClip = null;
+@@ 159 1 fe16067ba5cc574b 0
+@@ 164 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Boolean = stageID === "Character" || stageID === "character";
+@@ 168 1 98ee673db3e8fdc7 1
++            if(m_charMCHash[ct].__oldFilters != undefined)
+@@ 172 0 da39a3ee5e6b4b0d 1
++               m_charMCHash[ct].__oldFilters = undefined;
+@@ 174 1 4028866891af706d 1
++         if(_loc0_)
+@@ 179 1 bc15a32007de40b7 1
++               if(!(ct === "cxp" || ct === "xp"))
+@@ 181 2 5bebe27188cbb1d8 1
++                  if(ct === "random" || !(Boolean(ResourceManager.getResourceByID("targettest_" + ct)) && Boolean(mappings_original.stage["targettest_" + ct]) && (Boolean(ResourceManager.getResourceByID("targettest_" + ct).EncryptedFileName) || Boolean(ResourceManager.getResourceByID("targettest_" + ct).FileName))))
+@@ 184 5 d74e306b19c2550d 1
++                     this.blockCharSelectIcon(m_charMCHash[ct]);
+@@ 190 6 9c37f64bc3b7f464 20
+=196
+=68
++            _loc1_ = m_charMCHash["cxp"] as MovieClip;
++            if(!_loc1_)
+=65
++               _loc1_ = m_charMCHash["xp"] as MovieClip;
+=68
++            if(Boolean(_loc1_) && !ResourceManager.anyExpansionHasTargetTest())
+=65
++               this.blockCharSelectIcon(_loc1_);
+=68
++            if(Boolean(m_game && m_game.PlayerSettings[0]) && Boolean(m_game.PlayerSettings[0].character == "xp") && Boolean(ResourceManager.anyExpansionHasTargetTest()))
+=65
++               if(!ResourceManager.expansionHasTargetTest(Stats.resolveExpansionStatsName(m_game.PlayerSettings[0].expansion)))
+=180
++                  this.setPlayer(1,"xp",ResourceManager.getFirstExpansionWithTargetTest());
++                  if(Boolean(m_playerChips) && m_playerChips.length > 0)
+=183
++                     m_playerChips[0].ExpansionNum = m_game.PlayerSettings[0].expansion;
+=189

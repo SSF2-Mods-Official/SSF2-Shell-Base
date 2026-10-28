@@ -1,0 +1,19 @@
+# com/mcleodgaming/ssf2/engine/HitBoxSprite.as
+## class header
+## why: ModHost import for the hitbox hook
+@@ 6 0 da39a3ee5e6b4b0d 2
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.geom.*;
+## public function HitBoxSprite(_:uint, _:Rectangle, _:Boolean = false, _:Object = null, _:Point = null, _:Point = null, _:Number = 0, _:Matrix = null, _:int = 0, _:int = -1)
+## why: HITBOX_CREATE hook for mods
+@@ 111 0 da39a3ee5e6b4b0d 10
++         if(ModHost.hasHook(ModHooks.HITBOX_CREATE))
+=119
++            ModHost.runHook(ModHooks.HITBOX_CREATE,{
++               "hitBox":this,
++               "type":type,
++               "rectangle":rectangle,
++               "circular":circular,
++               "customData":customData
++            });
+=121

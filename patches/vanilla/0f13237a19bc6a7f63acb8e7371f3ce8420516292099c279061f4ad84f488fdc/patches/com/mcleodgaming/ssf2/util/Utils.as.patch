@@ -1,0 +1,60 @@
+# com/mcleodgaming/ssf2/util/Utils.as
+## public static function advanceFrame(_:MovieClip) : void
+## why: mods: advanceEffectFrame default for the StageData patch point; empty palette/goto stubs that ModHost patches replace
+@@ 836 1 b17e15597e173b40 0
+@@ 840 0 da39a3ee5e6b4b0d 55
+=81
+=34
++      public static function advanceEffectFrame(param1:MovieClip) : void
+=79
++         if(!param1)
+=104
+=391
+=106
++         if(Boolean(param1.bypassTicker))
+=104
+=391
+=106
++         if(param1.currentFrame == param1.totalFrames && param1.totalFrames > 1)
+=104
++            param1.stop();
++            if(Boolean(param1.parent))
+=175
++               param1.parent.removeChild(param1);
+=197
+=391
+=106
++         try
+=104
++            param1.nextFrame();
+=106
++         catch(e:*)
+=104
+=106
++         param1.stop();
+=81
+=34
++      public static function replacePaletteDeep(param1:DisplayObject, param2:Object, param3:int = 12, param4:Boolean = false, param5:Boolean = false, param6:Boolean = false) : void
+=79
+=81
+=34
++      public static function combinePaletteBlocks(param1:Object, param2:Object) : Object
+=79
++         return param1 || param2;
+=81
+=34
++      public static function restoreDeepPaletteOriginals(param1:DisplayObject, param2:int = 12) : void
+=79
+=81
+=34
++      public static function restorePaletteOriginals(param1:MovieClip, param2:int = 2) : void
+=79
+=81
+=34
++      public static function safeGotoAndStop(param1:MovieClip, param2:String, param3:Boolean = false) : Boolean
+=79
++         return false;
+=81
+=34
++      public static function removeActionScriptDeep(param1:MovieClip, param2:int = 8) : void
+=79

@@ -1,0 +1,222 @@
+# com/mcleodgaming/ssf2/engine/Stats.as
+## class header
+## why: ModHost import for the STATS_SYNC hook
+@@ 4 0 da39a3ee5e6b4b0d 2
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
+@@ 10 1 183152728039aea5 1
++      private static var m_statObjects:Object = {};
+## public static function init() : void
+## why: skip mappings entries without a file; split expansion loading into syncExpansionsFromResources
+@@ 20 2 48bccbc9f4960bc7 0
+@@ 25 5 8171f5a44675485d 8
++            if(!(!mappings.character[k] || !mappings.character[k].file))
+=57
++               Stats.writeStats({"cData":{
++                  "statsName":k,
++                  "displayName":mappings.character[k].name,
++                  "seriesIcon":mappings.character[k].seriesIcon || null
++               }});
+=63
+@@ 33 2 a2fc6606db743faa 5
++            if(!(!mappings.character[k] || !mappings.character[k].file))
+=57
++               ResourceManager.addResource(new Resource(k,mappings.character[k].file,mappings.character[k].file_pub,mappings.character[k].guid,Resource.CHARACTER));
++               ResourceManager.manifestJSONData.character[k] = mappings.character[k];
+=63
+@@ 51 0 da39a3ee5e6b4b0d 7
++         Stats.syncExpansionsFromResources();
+=15
+=7
++      public static function syncExpansionsFromResources() : void
+=13
++         var _loc1_:int = 0;
++         var _loc2_:int = 0;
+## public static function syncExpansionsFromResources() : void
+## why: expansion characters: re-runnable expansion stats sync + palette auto-link and STATS_SYNC hook
+@@ 52 1 cc66c2d247a1b1b2 2
++         _loc1_ = 0;
++         while(ResourceManager.getExpansionCharacter(_loc1_) != null)
+@@ 54 3 932865358066de8a 3
++            Stats.m_expansions.push(new Vector.<CharacterData>());
++            _loc2_ = 0;
++            while(ResourceManager.getExpansionCharacterObject(_loc1_,_loc2_) != null)
+@@ 58 1 2d2164c068c614a3 1
++               if(!Stats.loadExpansionData(_loc1_,ResourceManager.getExpansionCharacterObject(_loc1_,_loc2_)))
+@@ 60 1 74ab4ec1a226567a 0
+@@ 62 1 7614eabb3effa33c 1
++               _loc2_++;
+@@ 64 1 1f9a1d1e00600adf 1
++            _loc1_++;
+@@ 66 0 da39a3ee5e6b4b0d 8
+=119
+=24
++            ModHost.door(ModPatches.PALETTE_ENSURE_AUTO_FORM_LINKS,[true],undefined);
+=30
++         catch(autoLinkErr:Error)
+=24
+=30
++         ModHost.runHook(ModHooks.STATS_SYNC,{"expansionCount":Stats.m_expansions.length});
+## public static function getStats(_:String, _:Number = -1) : CharacterData
+## why: expansion characters: 'xp' resolves the active expansion; adds resolveExpansionStatsName/CharacterData
+@@ 99 0 da39a3ee5e6b4b0d 12
++         if(charName == "xp")
+=24
++            if(Boolean(isNaN(expansionID)) || expansionID < 0)
+=57
++               expansionID = Number(ResourceManager.ActiveXpExpansion);
+=63
++            if(Boolean(isNaN(expansionID)) || expansionID < 0)
+=57
++               expansionID = 0;
+=63
+=101
+=30
+@@ 104 0 da39a3ee5e6b4b0d 92
+=15
+=7
++      public static function resolveExpansionStatsName(param1:Number) : String
+=13
++         var _loc2_:CharacterData = null;
++         var _loc3_:Object = null;
++         var _loc4_:int = 0;
++         var _loc5_:int = 0;
++         var _loc6_:int = 0;
++         if(Boolean(isNaN(param1)) || param1 < 0)
+=24
++            param1 = 0;
+=30
++         _loc4_ = int(param1);
++         _loc2_ = Stats.getStats("xp",_loc4_);
++         if(Boolean(_loc2_) && Boolean(_loc2_.StatsName))
+=24
++            return _loc2_.StatsName;
+=30
++         Stats.syncExpansionsFromResources();
++         if(_loc4_ < 0 || _loc4_ >= Stats.m_expansions.length)
+=24
++            _loc4_ = 0;
+=30
++         _loc2_ = Stats.getStats("xp",_loc4_);
++         if(Boolean(_loc2_) && Boolean(_loc2_.StatsName))
+=24
++            return _loc2_.StatsName;
+=30
++         _loc5_ = _loc4_;
++         while(_loc5_ < ResourceManager.TotalExpansions)
+=24
++            _loc6_ = 0;
++            _loc3_ = ResourceManager.getExpansionCharacterObject(_loc5_,_loc6_);
++            while(_loc3_ != null)
+=57
++               if(Boolean(_loc3_.cData) && Boolean(_loc3_.cData.statsName))
+=59
++                  return String(_loc3_.cData.statsName);
+=61
++               _loc6_++;
++               _loc3_ = ResourceManager.getExpansionCharacterObject(_loc5_,_loc6_);
+=63
++            _loc5_++;
+=30
++         _loc5_ = 0;
++         while(_loc5_ < ResourceManager.TotalExpansions)
+=24
++            _loc3_ = ResourceManager.getExpansionCharacterObject(_loc5_,0);
++            if(Boolean(_loc3_) && Boolean(_loc3_.cData) && Boolean(_loc3_.cData.statsName))
+=57
++               return String(_loc3_.cData.statsName);
+=63
++            _loc5_++;
+=30
++         if(Stats.m_expansions.length > 0 && Stats.m_expansions[0].length > 0)
+=24
++            _loc2_ = Stats.m_expansions[0][0];
++            if(Boolean(_loc2_) && Boolean(_loc2_.StatsName))
+=57
++               return _loc2_.StatsName;
+=63
+=30
++         return null;
+=15
+=7
++      public static function resolveExpansionCharacterData(param1:Number) : CharacterData
+=13
++         var _loc2_:CharacterData = null;
++         var _loc3_:String = null;
++         var _loc4_:int = 0;
++         if(Boolean(isNaN(param1)) || param1 < 0)
+=24
++            param1 = 0;
+=30
++         _loc4_ = int(param1);
++         _loc2_ = Stats.getStats("xp",_loc4_);
++         if(Boolean(_loc2_))
+=24
++            return _loc2_;
+=30
++         _loc3_ = Stats.resolveExpansionStatsName(_loc4_);
++         if(Boolean(_loc3_))
+=24
++            _loc2_ = Stats.getStats("xp",_loc4_);
++            if(Boolean(_loc2_))
+=57
++               return _loc2_;
+=63
++            return Stats.getStats(_loc3_,-1);
+=30
++         return null;
+## private static function loadExpansionData(_:int, _:Object) : Boolean
+## why: expansion characters: reject entries without statsName; default missing series icon/thumbnail
+@@ 117 0 da39a3ee5e6b4b0d 4
++         var statObject:Object = null;
++         var statsName:String = null;
++         var cData:Object = null;
++         var linkage:String = null;
+@@ 121 0 da39a3ee5e6b4b0d 4
++            if(!expObj || !expObj.cData || !expObj.cData.statsName)
+=57
++               return false;
+=63
+@@ 122 2 9f6e739059c59b25 13
++            statsName = String(parameters.cData.statsName);
++            cData = parameters.cData;
++            linkage = cData.linkage_id != null ? String(cData.linkage_id) : null;
++            if(!cData.seriesIcon || cData.seriesIcon == statsName || Boolean(linkage) && Boolean(cData.seriesIcon == linkage))
+=57
++               cData.seriesIcon = "smash_symbol";
+=63
++            if(!cData.thumbnail || cData.thumbnail == statsName || Boolean(linkage) && Boolean(cData.thumbnail == linkage))
+=57
++               cData.thumbnail = statsName + "_stock";
+=63
++            statObject = {
++               "cData":cData,
+@@ 127 1 892e8b1264f45f8d 6
++            };
++            exp = Stats.createCharacterDataFrom(statObject);
++            if(!exp || !exp.StatsName)
+=57
++               return false;
+=63
+@@ 132 1 0a382ff89e9560dc 0
+## private static function getExpansionData(_:Number, _:String = null) : CharacterData
+## why: expansion characters: look up by StatsName across expansion lists; guard empty lists
+@@ 171 0 da39a3ee5e6b4b0d 1
++         var _loc0_:Number = Number(NaN);
+@@ 180 1 9a88452e71a88b87 2
++               _loc0_ = 0;
++               while(_loc0_ < Stats.m_expansions[i].length)
+@@ 182 1 8da0340510324050 8
++                  if(Stats.m_expansions[i][_loc0_].StatsName == charName)
++                  {
++                     if(Stats.m_expansions[i][_loc0_].StatsName == charName)
++                     {
++                        return Stats.m_expansions[i][_loc0_];
++                     }
++                  }
++                  _loc0_++;
+@@ 185 0 da39a3ee5e6b4b0d 4
+=174
+=30
++         if(!Stats.m_expansions[idNum] || Stats.m_expansions[idNum].length == 0)
+=24

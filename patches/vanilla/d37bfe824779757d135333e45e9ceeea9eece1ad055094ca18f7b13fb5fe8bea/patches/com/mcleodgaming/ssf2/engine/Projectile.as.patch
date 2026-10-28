@@ -1,0 +1,335 @@
+# com/mcleodgaming/ssf2/engine/Projectile.as
+## class header
+## why: ModHost import; fields for repainting the owner's custom-costume palette on projectiles
+@@ 15 0 da39a3ee5e6b4b0d 7
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.items.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.geom.*;
+@@ 22 0 da39a3ee5e6b4b0d 8
+=18
++      private var m_inheritPaletteInjectTicks:int;
+=18
++      private var m_inheritPaletteBurstTicks:int;
+=18
++      private var m_cachedInheritPaint:Object;
+=18
++      private var m_lastInheritPaintFrame:int;
+@@ 75 1 24371dcdd9b62bf8 1
++      private var __attemptToMovePointCache:Point;
+## public function Projectile(_:Object, _:ProjectileAttack, _:StageData)
+## why: custom costumes: projectiles inherit owner palette (incl. beastganon form remap) and repaint for 16 frames
+@@ 79 0 da39a3ee5e6b4b0d 1
++         this.__attemptToMovePointCache = new Point();
+@@ 93 1 237932e6a09df81b 0
+@@ 120 5 192a2e783a97aba5 0
+@@ 210 0 da39a3ee5e6b4b0d 138
++         this.m_inheritPaletteInjectTicks = 0;
++         this.m_inheritPaletteBurstTicks = 0;
++         this.m_cachedInheritPaint = null;
++         this.m_lastInheritPaintFrame = -1;
++         if(this.shouldInheritOwnerPalette())
+=103
++            this.applyOwnerCostumePalette(true);
+=106
+=210
+=18
++      private function shouldInheritOwnerPalette() : Boolean
+=78
++         var _loc1_:String = null;
++         if(!(this.m_owner is Character))
+=103
+=1308
+=106
++         if(Boolean(this.m_projectileStats) && Boolean(this.m_projectileStats.InheritPalette))
+=103
+=914
+=106
++         _loc1_ = Boolean(this.m_projectileStats) ? String(this.m_projectileStats.LinkageID) : "";
++         if(Boolean(_loc1_) && _loc1_.indexOf("beastganon") >= 0)
+=103
+=914
+=106
+=916
+=210
+=18
++      private function applyOwnerCostumePalette(param1:Boolean) : void
+=78
++         var ownerChar:Character = null;
++         var teamColor:String = null;
++         var costume:Object = null;
++         var remapped:Object = null;
++         var linkage:String = null;
++         var forceBeast:Boolean = false;
++         var template:Object = null;
++         var formName:String = null;
++         if(!(this.m_owner is Character))
+=103
+=332
+=106
++         ownerChar = Character(this.m_owner);
++         this.m_owner.applyPalette(m_sprite);
++         linkage = Boolean(this.m_projectileStats) ? String(this.m_projectileStats.LinkageID) : "";
++         forceBeast = Boolean(linkage) && linkage.indexOf("beastganon") >= 0;
++         if(Boolean(this.m_cachedInheritPaint))
+=103
++            setPaletteSwap(this.m_cachedInheritPaint.paletteSwap,this.m_cachedInheritPaint.paletteSwapPA);
++            this.scheduleInheritPalettePaint(param1);
+=332
+=106
++         if(Boolean(forceBeast) && Boolean(ownerChar.CachedInheritProjectilePaint) && Boolean(ownerChar.CachedInheritProjectilePaint.paletteSwap))
+=103
++            this.m_cachedInheritPaint = ownerChar.CachedInheritProjectilePaint;
++            setPaletteSwap(this.m_cachedInheritPaint.paletteSwap,this.m_cachedInheritPaint.paletteSwapPA);
++            this.scheduleInheritPalettePaint(param1);
+=332
+=106
++         if(!forceBeast)
+=103
++            this.m_cachedInheritPaint = {
++               "paletteSwap":this.m_owner.PaletteSwapData,
++               "paletteSwapPA":this.m_owner.PaletteSwapPAData
++            };
++            setPaletteSwap(this.m_cachedInheritPaint.paletteSwap,this.m_cachedInheritPaint.paletteSwapPA);
++            this.scheduleInheritPalettePaint(param1);
+=332
+=106
++         teamColor = null;
++         try
+=103
++            if(Boolean(this.STAGEDATA) && Boolean(this.STAGEDATA.GameRef) && !ModeFeatures.hasFeature(ModeFeatures.IGNORE_TEAM_COSTUME,this.STAGEDATA.GameRef.GameMode))
+=232
++               teamColor = Utils.getColorString(ownerChar.Team);
+=268
+=106
++         catch(teamErr:*)
+=103
++            teamColor = null;
+=106
++         costume = ResourceManager.getCostume(ownerChar.CostumeName,teamColor,ownerChar.CostumeID);
++         if(!costume || !costume.paletteSwap)
+=103
++            costume = {
++               "paletteSwap":this.m_owner.PaletteSwapData,
++               "paletteSwapPA":this.m_owner.PaletteSwapPAData
++            };
+=106
++         if(Boolean(ModHost.door(ModPatches.PALETTE_IS_CUSTOM_COSTUME,[costume],false)) || forceBeast)
+=103
++            formName = "beastganon";
++            remapped = ModHost.door(ModPatches.PALETTE_GET_TRANSFORM_COSTUME_PALETTE,[ownerChar.CostumeName,formName,ownerChar.CostumeID + 1],null);
++            if(!remapped || !remapped.paletteSwap)
+=232
++               template = ModHost.door(ModPatches.PALETTE_GET_FORM_PALETTE_TEMPLATE,[formName],null);
++               if(!template)
+=238
++                  template = {
++                     "paletteSwap":this.m_owner.PaletteSwapData,
++                     "paletteSwapPA":this.m_owner.PaletteSwapPAData
++                  };
+=240
++               remapped = ModHost.door(ModPatches.PALETTE_REMAP_COSTUME_ONTO_FORM_TEMPLATE,[costume,template],null);
+=268
++            if(Boolean(remapped) && Boolean(remapped.paletteSwap))
+=232
++               this.m_cachedInheritPaint = remapped;
+=268
+=318
+=232
++               this.m_cachedInheritPaint = {
++                  "paletteSwap":this.m_owner.PaletteSwapData,
++                  "paletteSwapPA":this.m_owner.PaletteSwapPAData
++               };
+=268
+=106
+=107
+=103
++            this.m_cachedInheritPaint = {
++               "paletteSwap":this.m_owner.PaletteSwapData,
++               "paletteSwapPA":this.m_owner.PaletteSwapPAData
++            };
+=106
++         ownerChar.CachedInheritProjectilePaint = this.m_cachedInheritPaint;
++         setPaletteSwap(this.m_cachedInheritPaint.paletteSwap,this.m_cachedInheritPaint.paletteSwapPA);
++         this.scheduleInheritPalettePaint(param1);
+=210
+=18
++      private function scheduleInheritPalettePaint(param1:Boolean) : void
+=78
++         if(param1)
+=103
++            this.m_inheritPaletteInjectTicks = -1;
++            this.m_inheritPaletteBurstTicks = 16;
++            this.m_lastInheritPaintFrame = -1;
+=106
+## override public function get CurrentAnimation() : HitBoxAnimation
+## why: custom costumes: adds updatePaletteSwap override that paints combined owner palette blocks
+@@ 215 0 da39a3ee5e6b4b0d 10
+=210
+=18
++      override public function updatePaletteSwap() : void
+=78
++         var _loc1_:Object = null;
++         if(Boolean(m_sprite) && (Boolean(m_paletteSwapData) || Boolean(m_paletteSwapPAData)))
+=103
++            _loc1_ = ModHost.applyPatch(ModPatches.COMBINE_PALETTE_BLOCKS,[m_paletteSwapData,m_paletteSwapPAData],null) as Object;
++            Utils.replacePalette(m_sprite,_loc1_,10,true,false);
+=106
+## private function projectileMove() : void
+## why: trail effect attached via the projectile with a null-guard (missing trail linkage crashed)
+@@ 1009 0 da39a3ee5e6b4b0d 3
++         var _loc0_:MovieClip = null;
++         var _loc1_:Number = Number(NaN);
++         var _loc2_:Number = Number(NaN);
+@@ 1013 3 143b0f9bfaa5ea12 0
+@@ 1189 4 88d9542fae62fba0 5
++               _loc0_ = this.attachEffectOverlay(this.m_projectileStats.TrailEffect,{
++                  "resize":false,
++                  "flip":false
+=2040
++               if(Boolean(_loc0_))
+@@ 1194 5 e677422b3e7a28c7 3
++                  _loc0_.x = OverlayX;
++                  _loc0_.y = OverlayY;
++                  if(!m_facingForward)
+@@ 1200 3 73122c3bd7060042 1
++                     _loc0_.scaleX *= -1;
+@@ 1204 1 5fc254a77ad57654 1
++                  if(this.m_projectileStats.TrailEffectRotate)
+@@ 1206 3 b694c2a16266e480 12
++                     if(Boolean(this.m_projectileStats.ControlDirection) && Boolean(this.m_projectileStats.CalcAngle))
+=310
++                        _loc1_ = Number(this.m_angle);
++                        _loc1_ = Number(Utils.forceBase360(m_facingForward ? -_loc1_ : -_loc1_ + 180));
++                        _loc0_.rotation = _loc1_;
+=314
+=2208
+=310
++                        _loc2_ = Number(Utils.getAngleBetween(new Point(0,0),new Point(m_xSpeed,m_ySpeed)));
++                        _loc2_ = Number(Utils.forceBase360(m_facingForward ? -_loc2_ : -_loc2_ + 180));
++                        _loc0_.rotation = _loc2_;
+=314
+## override public function reactionHit(_:InteractiveSprite, _:HitBoxCollisionResult) : Boolean
+## why: BEFORE_PROJECTILE_HIT hook so mods can cancel projectile hits
+@@ 1755 0 da39a3ee5e6b4b0d 11
++         var _loc0_:Object = {
++            "cancel":false,
++            "projectile":this,
++            "other":otherSprite,
++            "hitBoxResult":hBoxResult,
++            "attack":attackDamage
++         };
++         if(ModHost.runHook(ModHooks.BEFORE_PROJECTILE_HIT,_loc0_))
+=103
+=1308
+=106
+## override public function attackCollisionTest() : void
+## why: time stop: frozen projectiles don't hit; Boolean() wraps are cosmetic
+@@ 1821 0 da39a3ee5e6b4b0d 4
++         if(this.IsFrozenInTime)
+=103
+=332
+=106
+@@ 1827 2 2f1afea7317f43dd 0
+## override public function PERFORMALL() : void
+## why: time stop: skip the projectile tick while frozen
+@@ 2223 2 dcfd3086d9431ecc 1
++            if(!this.IsFrozenInTime)
+@@ 2226 1 0014717a11472e79 7
++               checkTimers();
++               if(this.m_projectileStats.TimeMax > 0 && !isHitStunOrParalysis() && !this.m_projectileStats.Suspend)
+=238
++                  ++this.m_time;
+=240
++               this.checkWall();
++               this.m_groundCollisionTest();
+@@ 2228 2 7d957839f3acc30a 0
+@@ 2231 5 6f27ebf7b5ec3c3c 8
++            if(!this.IsFrozenInTime)
+=232
++               this.checkReverse();
++               this.projectileMove();
++               this.m_pushAwayOpponents();
++               m_forces();
++               updateSelfPlatform();
+=268
+@@ 2238 1 1833575f47b94694 4
++            if(!this.IsFrozenInTime)
+=232
++               checkHitStun();
+=268
+@@ 2240 2 7c8aae16f06e77a4 5
++            if(!this.IsFrozenInTime)
+=232
++               updateCamerBox();
+=438
+=268
+## override protected function PREPERFORM() : void
+## why: time stop: don't advance projectile animation while frozen
+@@ 2253 2 1b4fb04a740fae3d 5
++               if(!this.IsFrozenInTime)
+=238
++                  Utils.advanceFrame(m_sprite.stance);
++                  Utils.recursiveMovieClipPlay(m_sprite.stance,true);
+=240
+## override protected function POSTPERFORM() : void
+## why: time stop freeze + per-frame repaint of the inherited owner costume palette
+@@ 2265 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = 0;
+@@ 2267 2 ac1534c9099c7ee2 22
++            if(!this.IsFrozenInTime)
+=232
++               super.POSTPERFORM();
++               m_apiInstance.update();
++               if(this.m_inheritPaletteInjectTicks > 0 || this.m_inheritPaletteInjectTicks == -1 || this.m_inheritPaletteBurstTicks > 0)
+=238
++                  if(this.m_inheritPaletteInjectTicks > 0)
+=262
++                     --this.m_inheritPaletteInjectTicks;
+=266
++                  _loc0_ = CurrentFrameNum;
++                  if(this.m_inheritPaletteBurstTicks > 0 || _loc0_ != this.m_lastInheritPaintFrame)
+=262
++                     if(this.m_inheritPaletteBurstTicks > 0)
+=310
++                        --this.m_inheritPaletteBurstTicks;
+=314
++                     this.m_lastInheritPaintFrame = _loc0_;
++                     this.updatePaletteSwap();
+=266
+=240
+=268
+@@ 2270 0 da39a3ee5e6b4b0d 30
++         else if((this.m_inheritPaletteInjectTicks > 0 || this.m_inheritPaletteInjectTicks == -1 || this.m_inheritPaletteBurstTicks > 0) && !this.IsFrozenInTime)
+=103
++            if(this.m_inheritPaletteInjectTicks > 0)
+=232
++               --this.m_inheritPaletteInjectTicks;
+=268
++            _loc0_ = CurrentFrameNum;
++            if(this.m_inheritPaletteBurstTicks > 0 || _loc0_ != this.m_lastInheritPaintFrame)
+=232
++               if(this.m_inheritPaletteBurstTicks > 0)
+=238
++                  --this.m_inheritPaletteBurstTicks;
+=240
++               this.m_lastInheritPaintFrame = _loc0_;
++               this.updatePaletteSwap();
+=268
+=106
+=210
+=18
++      override public function get IsFrozenInTime() : Boolean
+=78
++         if(Boolean(this.m_owner) && this.m_owner != this)
+=103
++            if(this.STAGEDATA.InTimeStop && this.m_owner is Character)
+=232
++               return this.m_owner.IsFrozenInTime || Boolean(STAGEDATA.getCharacterTimeStopperBypassOptions(this.m_owner.UID)) && !STAGEDATA.getCharacterTimeStopperBypassOptions(this.m_owner.UID).bypassProjectile;
+=268
++            return this.m_owner.IsFrozenInTime;
+=106
++         return this.STAGEDATA.InTimeStop;

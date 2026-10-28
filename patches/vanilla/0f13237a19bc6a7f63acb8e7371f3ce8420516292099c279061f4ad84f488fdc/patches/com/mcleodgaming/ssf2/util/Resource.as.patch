@@ -1,0 +1,432 @@
+# com/mcleodgaming/ssf2/util/Resource.as
+## class header
+## why: flash.filesystem import and numChildren cache for the loaded movie
+@@ 16 1 c7570dde85fbc2c1 7
++   import com.mcleodgaming.ssf2.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.filesystem.*;
++   import flash.net.*;
++   import flash.system.*;
++
+@@ 110 0 da39a3ee5e6b4b0d 2
++      public var numChildren:int = 0;
+=19
+## public function Resource(_:String, _:String, _:String, _:String, _:int)
+## why: mappings: read plaintext data/misc/mappings.json and drop entries whose SWF is missing (logged to game.log)
+@@ 115 1 0573fff3fbad550f 0
+@@ 141 0 da39a3ee5e6b4b0d 180
+=141
+=19
++      private static function tryLoadPlaintextMappingsJson() : Object
+=111
++         var _loc1_:File = null;
++         var _loc2_:FileStream = null;
++         var _loc3_:String = null;
++         var _loc4_:Object = null;
++         try
+=114
++            _loc1_ = File.applicationDirectory.resolvePath("data/misc/mappings.json");
++            if(!_loc1_ || !_loc1_.exists)
+=172
++               return null;
+=174
++            _loc2_ = new FileStream();
++            _loc2_.open(_loc1_,FileMode.READ);
++            _loc3_ = _loc2_.readUTFBytes(_loc2_.bytesAvailable);
++            _loc2_.close();
++            _loc4_ = JSON.parse(_loc3_) as Object;
++            if(Boolean(_loc4_))
+=172
++               Resource.dropMissingMappedFiles(_loc4_);
+=174
++            return _loc4_;
+=117
++         catch(err:Error)
+=114
+=117
+=217
+=141
+=19
++      private static function dropMissingMappedFiles(param1:Object) : void
+=111
++         var file:File;
++         var stream:FileStream;
++         var dropped:Array = [];
++         Resource.dropMissingSection(param1,"character",dropped);
++         Resource.dropMissingSection(param1,"stage",dropped);
++         if(dropped.length == 0)
+=114
++            return;
+=117
++         Resource.stripMappedIds(param1.character_select_screen,dropped);
++         if(Boolean(param1.stage_select_screen))
+=114
++            Resource.stripMappedIds(param1.stage_select_screen.normal,dropped);
++            Resource.stripMappedIds(param1.stage_select_screen.past,dropped);
+=117
++         file = null;
++         stream = null;
++         try
+=114
++            file = File.applicationDirectory.resolvePath("data/misc/mappings.json");
++            stream = new FileStream();
++            stream.open(file,FileMode.WRITE);
++            stream.writeUTFBytes(JSON.stringify(param1));
++            stream.close();
++            GameLog.write("[mappings] dropped missing " + dropped.join(","));
+=117
++         catch(writeErr:Error)
+=114
++            GameLog.write("[mappings] drop write failed " + writeErr.message);
+=117
+=141
+=19
++      private static function dropMissingSection(param1:Object, param2:String, param3:Array) : void
+=111
++         var _loc4_:Object = param1[param2];
++         var _loc5_:String = null;
++         var _loc6_:Array = [];
++         var _loc7_:int = 0;
++         if(!_loc4_)
+=114
++            return;
+=117
++         for(_loc5_ in _loc4_)
+=114
++            if(Boolean(_loc4_[_loc5_]) && Boolean(_loc4_[_loc5_].file) && !Resource.mappedFileExists(param2,String(_loc4_[_loc5_].file),String(_loc4_[_loc5_].file_pub || "")))
+=172
++               _loc6_.push(_loc5_);
+=174
+=117
++         _loc7_ = 0;
++         while(_loc7_ < _loc6_.length)
+=114
++            param3.push(_loc6_[_loc7_]);
++            delete _loc4_[_loc6_[_loc7_]];
++            _loc7_++;
+=117
+=141
+=19
++      private static function mappedFileExists(param1:String, param2:String, param3:String) : Boolean
+=111
++         if(Resource.oneMappedFileExists(param1,param2))
+=114
++            return true;
+=117
++         return Boolean(param3) && Boolean(Resource.oneMappedFileExists(param1,param3));
+=141
+=19
++      private static function oneMappedFileExists(param1:String, param2:String) : Boolean
+=111
++         var _loc4_:String = null;
++         if(!param2)
+=114
++            return false;
+=117
++         if(param1 == "character")
+=114
++            if(param2.indexOf("expansions/") == 0)
+=172
++               param2 = "expansions/character/" + param2.substring(11);
+=174
++            else if(param2.indexOf("data/") != 0)
+=172
++               param2 = "data/character/" + param2;
+=174
+=117
++         else if(param1 == "stage")
+=114
++            if(param2.indexOf("expansions/stages/") != 0 && param2.indexOf("data/") != 0)
+=172
++               param2 = "data/stage/" + param2;
+=174
+=117
++         if(File.applicationDirectory.resolvePath(param2).exists)
+=114
++            return true;
+=117
++         _loc4_ = param2;
++         if(param2.length > 4 && param2.substr(param2.length - 4).toLowerCase() == ".swf")
+=114
++            _loc4_ = param2.substr(0,param2.length - 4) + ".ssf";
+=117
++         else if(param2.length > 4 && param2.substr(param2.length - 4).toLowerCase() == ".ssf")
+=114
++            _loc4_ = param2.substr(0,param2.length - 4) + ".swf";
+=117
++         return File.applicationDirectory.resolvePath(_loc4_).exists;
+=141
+=19
++      private static function stripMappedIds(param1:Object, param2:Array) : void
+=111
++         var _loc3_:Array = null;
++         var _loc4_:Array = null;
++         var _loc5_:int = 0;
++         var _loc6_:* = 0;
++         var _loc7_:int = 0;
++         var _loc8_:String = null;
++         if(!param1 || !(param1.rows is Array))
+=114
++            return;
+=117
++         _loc3_ = param1.rows as Array;
++         _loc5_ = 0;
++         while(_loc5_ < _loc3_.length)
+=114
++            _loc4_ = _loc3_[_loc5_] as Array;
++            if(Boolean(_loc4_))
+=172
++               _loc6_ = int(_loc4_.length - 1);
++               while(_loc6_ >= 0)
+=306
++                  _loc8_ = String(_loc4_[_loc6_]);
++                  _loc7_ = 0;
++                  while(_loc7_ < param2.length)
++                  {
++                     if(_loc8_.toLowerCase() == String(param2[_loc7_]).toLowerCase())
++                     {
++                        _loc4_.splice(_loc6_,1);
++                        break;
++                     }
++                     _loc7_++;
++                  }
++                  _loc6_--;
+=308
+=174
++            _loc5_++;
+=117
+## public function get Location() : String
+## why: expansion packs: resolve expansions/packs, ssf2mm/ and expansions/ paths for characters and stages
+@@ 191 0 da39a3ee5e6b4b0d 12
++            if(this.m_fileName != null && this.m_fileName.indexOf("expansions/packs/") == 0)
+=172
++               return prefix + this.m_fileName;
+=174
++            if(this.m_fileName != null && this.m_fileName.indexOf("ssf2mm/") == 0)
+=172
++               return prefix + "data/" + this.m_fileName;
+=174
++            if(this.m_fileName != null && this.m_fileName.indexOf("expansions/") == 0)
+=172
++               return prefix + "expansions/character/" + this.m_fileName.substring("expansions/".length);
+=174
+@@ 198 0 da39a3ee5e6b4b0d 12
+=174
++            if(this.m_fileName != null && this.m_fileName.indexOf("expansions/packs/") == 0)
+=172
++               return prefix + this.m_fileName;
+=174
++            if(this.m_fileName != null && this.m_fileName.indexOf("ssf2mm/") == 0)
+=172
++               return prefix + "data/" + this.m_fileName;
+=174
++            if(this.m_fileName != null && this.m_fileName.indexOf("expansions/stages/") == 0)
+=172
++               return prefix + this.m_fileName;
+## public function getProp(_:String) : *
+## why: mappings: prefer plaintext mappings.json; decode packed metadata; add useFileThatExists (.ssf/.swf fallback)
+@@ 301 0 da39a3ee5e6b4b0d 20
++         var _loc1_:* = undefined;
++         var _loc2_:* = undefined;
++         var _loc0_:String = null;
++         if(this.m_id === "mappings")
+=114
++            _loc0_ = "mp" + propName;
++            if(Boolean(this.m_metadata[_loc0_]))
+=172
++               return this.m_metadata[_loc0_];
+=174
++            if(propName === "metadata")
+=172
++               _loc1_ = Resource.tryLoadPlaintextMappingsJson();
++               if(Boolean(_loc1_))
+=306
++                  this.m_metadata[_loc0_] = Utils.cloneObject(_loc1_);
++                  return this.m_metadata[_loc0_];
+=308
+=174
+=117
+@@ 303 1 a7b0228763492bf2 1
++            if(this.m_id === "mappings" && (propName === "metadata" || propName === "metadata_original" || propName === "metadata_dev"))
+@@ 305 6 e92a693f99df9527 3
++               _loc2_ = JSON.parse(Base64.decode(Utils.d(Base64.decode(this.MC.getProp(propName)),"b7d60849-fa99-4514-b41e-16693ce7acc0")));
++               this.m_metadata["mp" + propName] = _loc2_;
++               return _loc2_;
+@@ 315 0 da39a3ee5e6b4b0d 53
+=141
+=19
++      private function useFileThatExists() : void
+=111
++         var _loc1_:String = null;
++         var _loc2_:String = null;
++         var _loc3_:String = null;
++         var _loc4_:String = null;
++         var _loc5_:File = null;
++         if(Boolean(Main.ENCRYPTED) || this.m_urlOverride != null || this.m_fileName == null)
+=114
++            return;
+=117
++         _loc1_ = this.m_fileName.toLowerCase();
++         if(_loc1_.length < 4)
+=114
++            return;
+=117
++         if(_loc1_.substr(_loc1_.length - 4) == ".ssf")
+=114
++            _loc2_ = this.m_fileName.substr(0,this.m_fileName.length - 4) + ".swf";
+=117
+=118
+=114
++            if(_loc1_.substr(_loc1_.length - 4) != ".swf")
+=172
++               return;
+=174
++            _loc2_ = this.m_fileName.substr(0,this.m_fileName.length - 4) + ".ssf";
+=117
++         _loc4_ = this.Location;
++         if(_loc4_ == null || _loc4_.indexOf("http") == 0)
+=114
++            return;
+=117
++         _loc5_ = File.applicationDirectory.resolvePath(_loc4_);
++         if(_loc5_.exists)
+=114
++            return;
+=117
++         _loc3_ = this.m_fileName;
++         this.m_fileName = _loc2_;
++         _loc4_ = this.Location;
++         if(_loc4_ == null)
+=114
++            this.m_fileName = _loc3_;
++            return;
+=117
++         _loc5_ = File.applicationDirectory.resolvePath(_loc4_);
++         if(!_loc5_.exists)
+=114
++            this.m_fileName = _loc3_;
+=117
+## public function load(_:Function = null, _:Function = null) : void
+## why: load whichever of .ssf or .swf exists on disk
+@@ 324 0 da39a3ee5e6b4b0d 1
++            this.useFileThatExists();
+## private function initialLoadComplete(_:Event) : void
+## why: load plain (non-zlib-container) SWFs, drop 50ms delay, free URL bytes, use SwfRelease loader context
+@@ 385 0 da39a3ee5e6b4b0d 5
++            var _loc0_:ByteArray = null;
++            var _loc1_:ByteArray = null;
++            var _loc2_:int = 0;
++            var _loc3_:int = 0;
++            var _loc4_:int = 0;
+@@ 390 6 b8792e92fde05276 2
++            _loc0_ = null;
++            _loc1_ = null;
+@@ 398 14 ce94fe2e01c4d480 1
++               if(!m_urlLoader || !m_loader)
+@@ 415 0 da39a3ee5e6b4b0d 50
++               _loc1_ = m_urlLoader.data as ByteArray;
++               if(!_loc1_)
+=306
+=413
+=308
++               _loc0_ = new ByteArray();
++               try
+=306
++                  _loc1_.uncompress(CompressionAlgorithm.ZLIB);
++                  _loc2_ = _loc1_.readInt();
++                  _loc3_ = _loc1_.readInt();
++                  _loc4_ = 0;
++                  while(_loc4_ < _loc3_)
++                  {
++                     _loc1_.readInt();
++                     _loc4_ += 1;
++                  }
++                  _loc0_.writeBytes(_loc1_,_loc1_.position,_loc2_);
++                  _loc1_ = _loc0_;
++                  _loc0_ = null;
+=308
++               catch(err:*)
+=306
++                  _loc0_ = new ByteArray();
++                  _loc1_.position = 0;
++                  _loc0_.writeBytes(_loc1_);
++                  _loc1_ = _loc0_;
++                  _loc0_ = null;
+=308
++               try
+=306
++                  if(Boolean(m_urlLoader))
++                  {
++                     m_urlLoader.data = null;
++                  }
+=308
++               catch(clrErr:*)
+=306
+=308
++               m_urlLoader = null;
++               if(!m_loader)
+=306
+=413
+=308
++               m_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,loadError);
++               m_loader.contentLoaderInfo.addEventListener(Event.INIT,loadComplete);
++               m_loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadComplete);
++               m_loaderContext = SwfRelease.context();
++               m_loader.loadBytes(_loc1_,m_loaderContext);
++               _loc1_ = null;
+@@ 416 6 08e012b8abbcfa5c 10
++            catch(outerErr:*)
+=172
++               try
+=306
++                  loadError(null);
+=308
++               catch(le:*)
+=306
+=308
+=174
+## private function loadComplete(_:Event) : void
+## why: record the movie's child count after load
+@@ 430 1 ca1ad0aff94d977b 1
++         this.numChildren = this.m_movie.numChildren;
+## public function unload(_:Boolean = false) : void
+## why: memory: stop/empty the movie and release the Loader via SwfRelease instead of unloadAndStop only
+@@ 464 0 da39a3ee5e6b4b0d 2
++         var _loc0_:Loader = null;
++         var _loc1_:MovieClip = null;
+@@ 468 1 f0a02a91aefc4015 0
+@@ 471 2 4ea72883188e7d02 4
++               _loc0_ = this.m_loader;
++               _loc1_ = this.m_movie;
+=474
++               this.m_loader = null;
+@@ 474 1 b1187998125aca94 0
+@@ 481 0 da39a3ee5e6b4b0d 27
++               if(Boolean(_loc1_))
+=306
++                  try
++                  {
++                     _loc1_.stop();
++                  }
++                  catch(stopErr:*)
++                  {
++                  }
++                  try
++                  {
++                     while(_loc1_.numChildren > 0)
++                     {
++                        _loc1_.removeChildAt(_loc1_.numChildren - 1);
++                     }
++                  }
++                  catch(childErr:*)
++                  {
++                  }
++                  _loc1_ = null;
+=308
++               if(Boolean(_loc0_))
+=306
++                  SwfRelease.release(_loc0_);
++                  _loc0_ = null;
+=308
+=472

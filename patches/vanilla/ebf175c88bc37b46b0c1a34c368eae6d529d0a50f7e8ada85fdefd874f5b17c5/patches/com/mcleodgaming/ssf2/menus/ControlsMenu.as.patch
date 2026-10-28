@@ -1,0 +1,256 @@
+# com/mcleodgaming/ssf2/menus/ControlsMenu.as
+## class header
+## why: ModHost import + per-port rumble checkbox fields
+@@ 15 0 da39a3ee5e6b4b0d 6
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.events.*;
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import flash.events.*;
+@@ 31 0 da39a3ee5e6b4b0d 2
++      private var m_rumbleCheckBox:CheckBox;
+=18
+@@ 34 0 da39a3ee5e6b4b0d 2
+=18
++      private var m_rumbleTxt:TextField;
+## public function ControlsMenu()
+## why: controller: wire the rumble checkbox from the controls menu clip
+@@ 55 0 da39a3ee5e6b4b0d 2
++         this.m_rumbleCheckBox = m_subMenu.rumble;
++         this.m_rumbleTxt = m_subMenu.rumbleTxt;
+## public function get RumbleCheckBox() : CheckBox
+## why: controller: expose the rumble checkbox to ControlsSelectHand
+@@ 167 0 da39a3ee5e6b4b0d 5
++      public function get RumbleCheckBox() : CheckBox
+=46
++         return this.m_rumbleCheckBox;
+=112
+=18
+## override public function show() : void
+## why: ModHost: CONTROLS_MENU_SHOW hook
+@@ 171 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.CONTROLS_MENU_SHOW,{"menu":this});
+## override public function makeEvents() : void
+## why: controller: listen for rumble toggle and show the saved rumble setting
+@@ 197 0 da39a3ee5e6b4b0d 4
++         if(this.m_rumbleCheckBox)
+=117
++            this.m_rumbleCheckBox.addEventListener(Event.CHANGE,this.rumble_CHANGE);
+=119
+@@ 219 0 da39a3ee5e6b4b0d 12
+=119
++         if(this.m_rumbleCheckBox)
+=117
++            this.RumbleCheckBox.selected = SaveData.getRumbleEnabled(this.playNum);
+=119
++         if(this.m_rumbleCheckBox)
+=117
++            this.RumbleCheckBox.visible = true;
+=119
++         if(this.m_rumbleTxt)
+=117
++            this.m_rumbleTxt.visible = true;
+## override public function killEvents() : void
+## why: controller: remove rumble/gamepad listeners when the menu closes
+@@ 245 0 da39a3ee5e6b4b0d 4
++         if(this.m_rumbleCheckBox)
+=117
++            this.m_rumbleCheckBox.removeEventListener(Event.CHANGE,this.rumble_CHANGE);
+=119
+@@ 254 0 da39a3ee5e6b4b0d 1
++            SaveData.Controllers[this.playNum - 1].GamepadInstance.removeEventListener(GamepadEvent.BUTTON_DOWN,this.onGamepadButtonDown);
+## public function inputTypeChanged(_:Event) : void
+## why: controller: unbind a gamepad from other ports when assigned here; show rumble only for gamepads
+@@ 299 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = 0;
+@@ 306 0 da39a3ee5e6b4b0d 1
++            oldGamepad.removeEventListener(GamepadEvent.BUTTON_DOWN,this.onGamepadButtonDown);
+@@ 313 0 da39a3ee5e6b4b0d 13
++            if(gamepad != null)
+=140
++               _loc0_ = 0;
++               while(_loc0_ < SaveData.Controllers.length)
+=278
++                  if(_loc0_ != this.playNum - 1 && SaveData.Controllers[_loc0_].GamepadInstance === gamepad)
++                  {
++                     SaveData.Controllers[_loc0_].GamepadInstance = null;
++                     SaveData.PortInputs[_loc0_ + 1] = null;
++                  }
++                  _loc0_++;
+=281
+=142
+@@ 319 0 da39a3ee5e6b4b0d 1
++            gamepad.addEventListener(GamepadEvent.BUTTON_DOWN,this.onGamepadButtonDown);
+@@ 335 0 da39a3ee5e6b4b0d 8
++            if(this.m_rumbleCheckBox)
+=140
++               this.m_rumbleCheckBox.visible = true;
+=142
++            if(this.m_rumbleTxt)
+=140
++               this.m_rumbleTxt.visible = true;
+=142
+@@ 342 0 da39a3ee5e6b4b0d 8
++            if(this.m_rumbleCheckBox)
+=140
++               this.m_rumbleCheckBox.visible = false;
+=142
++            if(this.m_rumbleTxt)
+=140
++               this.m_rumbleTxt.visible = false;
+=142
+## public function updateControls() : void
+## why: controller: show/hide and refresh the rumble checkbox with the input type
+@@ 570 1 742cfd8c1e286f2b 1
++            if(!isNaN(this.controlStickDashZone))
+@@ 572 1 955e2cfeae9189a9 0
+@@ 581 0 da39a3ee5e6b4b0d 8
++            if(this.m_rumbleCheckBox)
+=140
++               this.m_rumbleCheckBox.visible = true;
+=142
++            if(this.m_rumbleTxt)
+=140
++               this.m_rumbleTxt.visible = true;
+=142
+@@ 604 0 da39a3ee5e6b4b0d 8
++            if(this.m_rumbleCheckBox)
+=140
++               this.m_rumbleCheckBox.visible = false;
+=142
++            if(this.m_rumbleTxt)
+=140
++               this.m_rumbleTxt.visible = false;
+=142
+@@ 608 0 da39a3ee5e6b4b0d 4
++         if(this.m_rumbleCheckBox)
+=117
++            this.RumbleCheckBox.selected = SaveData.getRumbleEnabled(this.playNum);
+=119
+## private function p1Controls_CLICK(_:MouseEvent) : void
+## why: controller: move gamepad listeners when switching to player 1 tab
+@@ 678 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = this.playNum;
+@@ 679 0 da39a3ee5e6b4b0d 1
++         this.updateGamepadListeners(_loc0_,this.playNum);
+## private function p2Controls_CLICK(_:MouseEvent) : void
+## why: controller: move gamepad listeners when switching to player 2 tab
+@@ 688 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = this.playNum;
+@@ 689 0 da39a3ee5e6b4b0d 1
++         this.updateGamepadListeners(_loc0_,this.playNum);
+## private function p3Controls_CLICK(_:MouseEvent) : void
+## why: controller: move gamepad listeners when switching to player 3 tab
+@@ 698 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = this.playNum;
+@@ 699 0 da39a3ee5e6b4b0d 1
++         this.updateGamepadListeners(_loc0_,this.playNum);
+## private function p4Controls_CLICK(_:MouseEvent) : void
+## why: controller: move gamepad listeners when switching to player 4 tab
+@@ 735 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = this.playNum;
+@@ 736 0 da39a3ee5e6b4b0d 1
++         this.updateGamepadListeners(_loc0_,this.playNum);
+## private function rumble_CHANGE(_:Event) : void
+## why: controller: save rumble on/off per port and buzz the pad as feedback
+@@ 819 0 da39a3ee5e6b4b0d 15
++      private function rumble_CHANGE(param1:Event) : void
+=46
++         var _loc2_:Boolean = Boolean(this.m_rumbleCheckBox.selected);
++         SaveData.setRumbleEnabled(_loc2_,this.playNum);
+=644
++         if(_loc2_)
+=117
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"menu",
++               "controllerIndex":this.playNum - 1
++            });
+=119
+=791
+=112
+=18
+## private function updateGamepadListeners(_:int, _:int) : void
+## why: controller: rebind axis/button listeners per port; TAUNT on the pad toggles rumble with a toast
+@@ 835 0 da39a3ee5e6b4b0d 81
+=18
++      private function updateGamepadListeners(param1:int, param2:int) : void
+=46
++         var _loc3_:Gamepad = null;
++         var _loc4_:Gamepad = null;
++         if(param1 >= 1 && param1 <= 4)
+=117
++            _loc3_ = SaveData.Controllers[param1 - 1].GamepadInstance;
++            if(Boolean(_loc3_))
+=140
++               _loc3_.removeEventListener(GamepadEvent.AXIS_CHANGED,this.onAxisChanged);
++               _loc3_.removeEventListener(GamepadEvent.BUTTON_DOWN,this.onGamepadButtonDown);
+=142
+=119
++         if(param2 >= 1 && param2 <= 4)
+=117
++            _loc4_ = SaveData.Controllers[param2 - 1].GamepadInstance;
++            if(Boolean(_loc4_))
+=140
++               _loc4_.addEventListener(GamepadEvent.AXIS_CHANGED,this.onAxisChanged);
++               _loc4_.addEventListener(GamepadEvent.BUTTON_DOWN,this.onGamepadButtonDown);
++               m_subMenu.controlStickConfig.visible = true;
++               m_subMenu.cStickConfig.visible = true;
++               if(this.m_rumbleCheckBox)
+=278
++                  this.m_rumbleCheckBox.visible = true;
+=281
++               if(this.m_rumbleTxt)
+=278
++                  this.m_rumbleTxt.visible = true;
+=281
++               if(this.m_rumbleCheckBox)
+=278
++                  this.m_rumbleCheckBox.selected = SaveData.getRumbleEnabled(param2);
+=281
+=142
+=328
+=140
++               m_subMenu.controlStickConfig.visible = false;
++               m_subMenu.cStickConfig.visible = false;
++               if(this.m_rumbleCheckBox)
+=278
++                  this.m_rumbleCheckBox.visible = false;
+=281
++               if(this.m_rumbleTxt)
+=278
++                  this.m_rumbleTxt.visible = false;
+=281
+=142
+=119
+=112
+=18
++      private function onGamepadButtonDown(param1:GamepadEvent) : void
+=46
++         var enabled:Boolean = false;
++         var state:Object = param1.controlState;
++         if(Boolean(state) && Boolean(state.inputs) && state.inputs.indexOf("TAUNT") >= 0)
+=117
++            enabled = !SaveData.getRumbleEnabled(this.playNum);
++            SaveData.setRumbleEnabled(enabled,this.playNum);
++            SaveData.saveGame();
++            if(this.m_rumbleCheckBox)
+=140
++               this.RumbleCheckBox.selected = enabled;
+=142
++            MultiplayerManager.makeNotifier();
++            if(enabled)
+=140
++               MultiplayerManager.notify("Controller Rumble for Player " + this.playNum + ": ON");
++               ModHost.runHook(ModHooks.RUMBLE,{
++                  "kind":"menu",
++                  "controllerIndex":this.playNum - 1
+=288
+=142
+=328
+=140
++               MultiplayerManager.notify("Controller Rumble for Player " + this.playNum + ": OFF");
+=142
++            SoundQueue.instance.playSoundEffect("menu_movecursor");
+=119
+=112

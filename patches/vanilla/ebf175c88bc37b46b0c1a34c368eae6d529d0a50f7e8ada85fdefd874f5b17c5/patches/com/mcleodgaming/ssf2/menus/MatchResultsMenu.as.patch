@@ -1,0 +1,73 @@
+# com/mcleodgaming/ssf2/menus/MatchResultsMenu.as
+## class header
+## why: modhost: import ModAPI/ModHost for match init/deinit and results hook
+@@ 19 1 c7570dde85fbc2c1 10
++   import com.mcleodgaming.mgn.events.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modapi.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import flash.display.*;
++   import flash.events.*;
++
+## override public function show() : void
+## why: modhost: RESULTS_SHOW hook when the results screen opens
+@@ 59 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.RESULTS_SHOW,{"menu":this});
+## private function gotoCharScreen(_:MouseEvent) : void
+## why: modhost: tear down ModAPI/ModHost match state when returning to CSS
+@@ 266 0 da39a3ee5e6b4b0d 2
++            ModAPI.deinit();
++            ModHost.matchDeinit();
+## private function waitForPlayers(_:Event) : void
+## why: modhost: tear down ModAPI/ModHost match state when continuing online
+@@ 320 0 da39a3ee5e6b4b0d 2
++            ModAPI.deinit();
++            ModHost.matchDeinit();
+## private function onlineModeReady(_:* = null) : void
+## why: modhost: tear down ModAPI/ModHost match state when online mode is ready
+@@ 349 0 da39a3ee5e6b4b0d 2
++         ModAPI.deinit();
++         ModHost.matchDeinit();
+## private function drawPlayerV2(_:int) : void
+## why: results: skip drawing a player whose char anim/linkage is missing (expansion chars) instead of crashing
+@@ 574 0 da39a3ee5e6b4b0d 4
++         if(!resultsMC || !resultsMC["charAnim"] || !charResultsMC)
+=60
+=448
+=62
+@@ 588 1 750cb49f42de0471 10
++         if(!poseMC)
+=60
+=448
+=62
++         var _loc0_:MovieClip = ResourceManager.getLibraryMC(player.LinkageName);
++         if(!_loc0_)
+=60
+=448
+=62
++         var charMC:MovieClip = poseMC.addChild(_loc0_) as MovieClip;
+@@ 592 1 6fc8636da6f78387 12
++         var _loc1_:MovieClip = ResourceManager.getLibraryMC(player.LinkageName);
++         if(!_loc1_)
+=60
+=580
+=581
+=582
+=583
++               "charMC":charMC
+=585
+=448
+=62
++         var charShadow:MovieClip = poseMC.addChild(_loc1_) as MovieClip;
+## private function displayMatchResults() : void
+## why: modhost: init ModAPI/ModHost match state (replaces SSF2API.init); rest is decompile local renumbering/reorder
+@@ 650 0 da39a3ee5e6b4b0d 2
++         ModAPI.init(GameController.stageData);
++         ModHost.matchInit(GameController.stageData);
+@@ 652 1 e086f38f14321f27 0
+@@ 698 1 1b88671b3e257937 0
+@@ 709 1 61986ab3fde6b597 0
+@@ 732 1 f87946792cea792f 0

@@ -1,0 +1,176 @@
+# com/mcleodgaming/ssf2/net/MultiplayerManager.as
+## class header
+## why: ModHost import + store the room password for Discord join secrets
+@@ 22 1 c7570dde85fbc2c1 9
++   import com.mcleodgaming.mgn.events.*;
++   import com.mcleodgaming.mgn.net.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.controllers.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.menus.*;
++   import com.mcleodgaming.ssf2.modes.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++
+@@ 53 0 da39a3ee5e6b4b0d 2
+=25
++      private static var m_roomPassword:String;
+## private static function initializeMultiplayerManager() : void
+## why: online: clear stored room password on init
+@@ 128 0 da39a3ee5e6b4b0d 1
++         m_roomPassword = null;
+## public static function get RoomKey() : String
+## why: Discord: expose RoomCode and RoomPassword for building the rich-presence join secret
+@@ 164 0 da39a3ee5e6b4b0d 10
+=79
+=25
++      public static function get RoomCode() : String
+=77
++         return m_onlineInterface.RoomName;
+=79
+=25
++      public static function get RoomPassword() : String
+=77
++         return m_roomPassword;
+## public static function get DiscordPartyID() : String
+## why: Discord: expose the current party id for rich presence
+@@ 256 0 da39a3ee5e6b4b0d 5
++      public static function get DiscordPartyID() : String
+=77
++         return m_onlineInterface.CurrentPartyID;
+=79
+=25
+## public static function reset() : void
+## why: Discord: reset rich presence to 'In menus' when multiplayer resets
+@@ 263 0 da39a3ee5e6b4b0d 17
++         var _loc0_:String = null;
++         var _loc1_:String = null;
++         if(Boolean(Main.m_sdk))
+=113
++            _loc0_ = Math.random().toString();
++            _loc1_ = JSON.stringify({"invalid":Math.random().toString()});
++            Main.m_sdk.updateActivity({
++               "state":null,
++               "details":"In menus",
++               "partyID":_loc0_,
++               "partyCurrentSize":0,
++               "partyMaxSize":0,
++               "matchSecret":_loc0_,
++               "joinSecret":_loc1_,
++               "instance":true
++            });
+=115
+## public static function notify(_:String, _:Boolean = false) : void
+## why: online: make sure the notifier exists before showing; NET_NOTIFY hook for mods
+@@ 307 0 da39a3ee5e6b4b0d 1
+=340
+@@ 322 1 223b55239a2cc73c 4
++         ModHost.runHook(ModHooks.NET_NOTIFY,{
++            "message":msg,
++            "permanentBox":permanentBox
++         });
+## public static function makeNotifier() : void
+## why: online: re-attach the notifier on top of the stage every time so toasts are visible from any menu
+@@ 331 1 e8f9bf42b18b3d04 0
+@@ 334 0 da39a3ee5e6b4b0d 4
+=115
++         if(Boolean(m_notifier) && Boolean(Main.Root) && Boolean(Main.Root.stage))
+=113
+=331
+## public static function disconnect() : void
+## why: Discord: reset rich presence to 'In menus' on disconnect
+@@ 345 0 da39a3ee5e6b4b0d 17
++         var _loc0_:String = null;
++         var _loc1_:String = null;
++         if(Boolean(Main.m_sdk))
+=113
++            _loc0_ = Math.random().toString();
++            _loc1_ = JSON.stringify({"invalid":Math.random().toString()});
++            Main.m_sdk.updateActivity({
++               "state":null,
++               "details":"In menus",
++               "partyID":_loc0_,
++               "partyCurrentSize":0,
++               "partyMaxSize":0,
++               "matchSecret":_loc0_,
++               "joinSecret":_loc1_,
++               "instance":true
++            });
+=115
+## public static function createRoom(_:String, _:String, _:int, _:Object) : void
+## why: Discord: remember room password when creating a room
+@@ 356 0 da39a3ee5e6b4b0d 1
++         m_roomPassword = roomPassword;
+## public static function requestToJoinRoom(_:String, _:String) : void
+## why: Discord: remember room password when requesting to join
+@@ 361 0 da39a3ee5e6b4b0d 1
++         m_roomPassword = roomPassword;
+## public static function createJoinRoom(_:String, _:String, _:int, _:Object) : void
+## why: Discord: remember room password on create-or-join
+@@ 367 0 da39a3ee5e6b4b0d 1
++         m_roomPassword = roomPassword;
+## public static function leaveRoom() : void
+## why: Discord: set presence back to lobby on leave; NET_LOBBY_LEAVE hook
+@@ 382 0 da39a3ee5e6b4b0d 19
++         var _loc0_:String = null;
++         var _loc1_:String = null;
++         var _loc2_:Object = null;
++         if(Boolean(Main.m_sdk))
+=113
++            _loc0_ = Math.random().toString();
++            _loc1_ = JSON.stringify({"invalid":Math.random().toString()});
++            _loc2_ = {
++               "state":null,
++               "details":"In Online Lobby",
++               "partyID":_loc0_,
++               "partyCurrentSize":0,
++               "partyMaxSize":0,
++               "matchSecret":_loc0_,
++               "joinSecret":_loc1_,
++               "instance":true
++            };
++            Main.m_sdk.updateActivity(_loc2_);
+=115
+@@ 383 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.NET_LOBBY_LEAVE,{});
+## private static function onLeaveRoom(_:MGNEvent) : void
+## why: Discord: forget room password after leaving a room
+@@ 432 0 da39a3ee5e6b4b0d 1
++         m_roomPassword = null;
+## private static function handlemgn_PLAYER_JOINED(_:MGNEvent) : void
+## why: Discord: update party size in presence when a player joins
+@@ 631 0 da39a3ee5e6b4b0d 1
++         m_onlineInterface.updateDiscordActivity();
+## private static function handlemgn_PLAYER_LEFT(_:MGNEvent) : void
+## why: Discord: update party size in presence when a player leaves
+@@ 644 0 da39a3ee5e6b4b0d 1
++         m_onlineInterface.updateDiscordActivity();
+## private static function handlemgn_MATCH_START(_:MGNEvent) : void
+## why: online: load expansion fighters for match start, NET_COSTUME_RESOLVE + palette costume resolve before load
+@@ 680 2 e46a21a228acfd83 0
+@@ 683 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.ROOM_DATA_RECEIVED,{"roomData":e.data.room_data});
+@@ 767 1 0e01655e1ffd6c93 1
++            if(playerSettings[i].character != null)
+@@ 769 1 f36ccb7559c75528 1
++               ResourceManager.queuePlayerCharacterResource(playerSettings[i],i);
+@@ 786 1 d117b1c8b6da882f 11
++         ModHost.runHook(ModHooks.NET_COSTUME_RESOLVE,{
++            "playerSettings":MultiplayerManager.GameInstance.PlayerSettings,
++            "game":MultiplayerManager.GameInstance
++         });
++         ModHost.door(ModPatches.PALETTE_RESOLVE_PLAYER_SETTINGS_COSTUMES,[MultiplayerManager.GameInstance.PlayerSettings,function():void
+=113
++            ResourceManager.load({
++               "oncomplete":onMatchReady,
++               "flushUnused":true
++            });
++         }],undefined);
+## public static function toWaitingRoom(_:Game, _:Function) : void
+## why: online: queue expansion fighters in the waiting room via queuePlayerCharacterResource
+@@ 843 4 9741162ccc26c486 1
++            ResourceManager.queuePlayerCharacterResource(game.PlayerSettings[i - 1],i - 1);
+@@ 848 1 1dc0b7be22d0a946 4
++         ResourceManager.load({
++            "oncomplete":callback,
++            "flushUnused":true
++         });

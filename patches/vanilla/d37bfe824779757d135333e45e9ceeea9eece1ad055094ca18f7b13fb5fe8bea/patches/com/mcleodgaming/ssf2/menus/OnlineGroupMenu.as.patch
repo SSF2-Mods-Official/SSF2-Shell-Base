@@ -1,0 +1,34 @@
+# com/mcleodgaming/ssf2/menus/OnlineGroupMenu.as
+## override public function show() : void
+## why: Discord: refresh rich presence when the online group lobby opens
+@@ 59 0 da39a3ee5e6b4b0d 1
++         this.updateDiscordPresenceForOnlineGroup();
+## private function updateDiscordPresenceForOnlineGroup() : void
+## why: Discord: 'Waiting for players' rich presence with party size and join secret
+@@ 214 0 da39a3ee5e6b4b0d 26
+=15
++      private function updateDiscordPresenceForOnlineGroup() : void
+=25
++         var _loc1_:String = null;
++         var _loc2_:String = null;
++         var _loc3_:String = null;
++         var _loc4_:int = 0;
++         var _loc5_:int = 0;
++         var _loc6_:String = null;
++         var _loc7_:String = null;
++         if(Boolean(Main.m_sdk) && Boolean(Config.rich_presence) && Boolean(MultiplayerManager.Connected))
+=34
++            _loc1_ = MultiplayerManager.RoomKey;
++            _loc2_ = MultiplayerManager.RoomCode;
++            if(_loc1_ == null || _loc1_ == "" || _loc2_ == null || _loc2_ == "")
++            {
++               return;
++            }
++            _loc3_ = MultiplayerManager.RoomPassword;
++            _loc4_ = int(MultiplayerManager.Players.length);
++            _loc5_ = int(MultiplayerManager.ROOM_CAPACITY);
++            _loc6_ = MenuController.buildDiscordJoinSecret(_loc1_,_loc2_,_loc3_,_loc5_);
++            _loc7_ = MultiplayerManager.DiscordPartyID;
++            MenuController.updateDiscordPresence("In Online Lobby","Waiting for players",MenuController.getCurrentTimestamp(),0,"ssf2","Super Smash Flash 2","online",null,_loc7_,_loc4_,_loc5_,_loc1_,_loc6_);
+=36
+=41

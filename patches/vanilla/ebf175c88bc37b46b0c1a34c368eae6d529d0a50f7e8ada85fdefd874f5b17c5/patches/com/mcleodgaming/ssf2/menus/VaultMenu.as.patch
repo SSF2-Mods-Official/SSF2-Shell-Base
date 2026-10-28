@@ -1,0 +1,734 @@
+# com/mcleodgaming/ssf2/menus/VaultMenu.as
+## class header
+## why: vault: imports and state for the Palette Maker button, manage-costumes grid and cache-pick mode
+@@ 18 1 c7570dde85fbc2c1 10
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.engine.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import com.mcleodgaming.ssf2.util.*;
++   import flash.events.*;
++   import flash.geom.*;
++   import flash.ui.*;
++
+@@ 30 0 da39a3ee5e6b4b0d 6
++      private var m_paletteMakerNode:MenuMapperNode;
+=21
++      private var m_characterGridNodes:Vector.<MenuMapperNode>;
+=21
++      private var m_mainMenuMapper:MenuMapper;
+=21
+@@ 31 0 da39a3ee5e6b4b0d 14
+=21
++      private var PaletteMakerButton:MovieClip = ResourceManager.getLibraryMC("PaletteMakerButton");
+=21
++      private var container:MovieClip;
+=21
++      private var containerButton:Vector.<EventButton>;
+=21
++      private var characters:Array;
+=21
++      private var selectedCharacter:String;
+=21
++      private var cachePickMode:Boolean = false;
+=21
++      private var cachePickSelected:Object = null;
+## override public function initMenuMappings() : void
+## why: vault: add the Palette Maker button to controller navigation
+@@ 52 4 9aa9db22661a1ffc 12
++         if(Boolean(this.PaletteMakerButton))
+=69
++            this.m_paletteMakerNode = new MenuMapperNode(this.PaletteMakerButton);
+=72
++         this.m_replayNode.updateNodes(null,[this.m_paletteMakerNode],[this.m_intro3Node],[this.m_introNode],this.replay_MOUSE_OVER,null,this.replay_CLICK,this.back_CLICK_vault,null,null);
++         this.m_introNode.updateNodes(null,[this.m_paletteMakerNode],[this.m_replayNode],[this.m_intro2Node],this.intro_MOUSE_OVER,null,this.play_intro,this.back_CLICK_vault,null,null);
++         this.m_intro2Node.updateNodes(null,[this.m_paletteMakerNode],[this.m_introNode],[this.m_intro3Node],this.intro2_MOUSE_OVER,null,this.play_intro2,this.back_CLICK_vault,null,null);
++         this.m_intro3Node.updateNodes(null,[this.m_paletteMakerNode],[this.m_intro2Node],[this.m_replayNode],this.intro3_MOUSE_OVER,null,this.play_intro3,this.back_CLICK_vault,null,null);
++         if(Boolean(this.m_paletteMakerNode))
+=69
++            this.m_paletteMakerNode.updateNodes([this.m_replayNode],[this.m_replayNode],null,null,this.paletteMaker_MOUSE_OVER,this.paletteMaker_MOUSE_OUT,this.paletteMaker_CLICK,this.back_CLICK_vault,null,null);
+=72
+@@ 57 0 da39a3ee5e6b4b0d 1
++         this.m_mainMenuMapper = m_menuMapper;
+## override public function show() : void
+## why: modhost: VAULT_SHOW hook
+@@ 64 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.VAULT_SHOW,{"menu":this});
+## override public function makeEvents() : void
+## why: vault: show Palette Maker button only when the palette_maker mod is on; Ctrl+Shift+C hotkey
+@@ 90 0 da39a3ee5e6b4b0d 19
++         if(ModHost.isModEnabled("palette_maker"))
+=69
++            this.injectBnuys();
++            if(Boolean(this.PaletteMakerButton))
+=123
++               this.PaletteMakerButton.visible = true;
++               this.PaletteMakerButton.addEventListener(MouseEvent.MOUSE_OVER,this.paletteMaker_MOUSE_OVER);
++               this.PaletteMakerButton.addEventListener(MouseEvent.MOUSE_OUT,this.paletteMaker_MOUSE_OUT);
++               this.PaletteMakerButton.addEventListener(MouseEvent.CLICK,this.paletteMaker_CLICK);
+=125
+=72
++         else if(Boolean(this.PaletteMakerButton))
+=69
++            this.PaletteMakerButton.visible = false;
++            if(Boolean(this.PaletteMakerButton.parent))
+=123
++               this.PaletteMakerButton.parent.removeChild(this.PaletteMakerButton);
+=125
+=72
+@@ 91 0 da39a3ee5e6b4b0d 1
++         Main.Root.stage.addEventListener(KeyboardEvent.KEY_DOWN,this.onVaultKeyDown,false,0,true);
+## override public function killEvents() : void
+## why: vault: remove Palette Maker listeners; Ctrl+Shift+C Palette Maker cache rebuild / cache-pick mode
+@@ 112 0 da39a3ee5e6b4b0d 6
++         if(Boolean(this.PaletteMakerButton))
+=69
++            this.PaletteMakerButton.removeEventListener(MouseEvent.MOUSE_OVER,this.paletteMaker_MOUSE_OVER);
++            this.PaletteMakerButton.removeEventListener(MouseEvent.MOUSE_OUT,this.paletteMaker_MOUSE_OUT);
++            this.PaletteMakerButton.removeEventListener(MouseEvent.CLICK,this.paletteMaker_CLICK);
+=72
+@@ 113 0 da39a3ee5e6b4b0d 256
++         Main.Root.stage.removeEventListener(KeyboardEvent.KEY_DOWN,this.onVaultKeyDown);
+=44
+=21
++      private function onVaultKeyDown(param1:KeyboardEvent) : void
+=33
++         if(!param1 || !param1.ctrlKey || !param1.shiftKey)
+=69
++            return;
+=72
++         if(param1.keyCode != Keyboard.C)
+=69
++            return;
+=72
++         if(!ModHost.isModEnabled("palette_maker"))
+=69
++            return;
+=72
++         param1.preventDefault();
++         param1.stopPropagation();
++         if(this.isManageCostumesGridOpen())
+=69
++            this.onManageCostumesCacheHotkey();
++            return;
+=72
++         if(!MenuController.paletteMakerMenu)
+=69
++            MultiplayerManager.notify("Palette Maker not ready");
++            return;
+=72
+=220
++         MenuController.paletteMakerMenu.batchRegenerateAllColorSheets();
+=44
+=21
++      private function isManageCostumesGridOpen() : Boolean
+=33
++         return this.containerButton && this.containerButton.length > 0 && Boolean(this.characters) && this.characters.length > 0;
+=44
+=21
++      private function onManageCostumesCacheHotkey() : void
+=33
++         var _loc1_:int = 0;
++         if(!this.cachePickMode)
+=69
++            this.enterCachePickMode();
++            return;
+=72
++         _loc1_ = int(this.countCachePickSelected());
++         if(_loc1_ <= 0)
+=69
++            MultiplayerManager.notify("Click characters to select, then Ctrl+Shift+C again");
++            SoundQueue.instance.playSoundEffect("menu_error");
++            return;
+=72
++         this.confirmCachePickRebuild();
+=44
+=21
++      private function enterCachePickMode() : void
+=33
++         this.cachePickMode = true;
++         this.cachePickSelected = {};
++         if(Boolean(this.selectedCharacter))
+=69
++            this.cachePickSelected[this.selectedCharacter] = true;
+=72
++         this.refreshCachePickVisuals();
++         this.updateCachePickDesc();
+=220
++         MultiplayerManager.notify("Cache pick: click characters, Ctrl+Shift+C to rebuild");
+=44
+=21
++      private function exitCachePickMode(param1:Boolean = true) : void
+=33
++         this.cachePickMode = false;
++         this.cachePickSelected = null;
++         this.refreshCachePickVisuals();
++         if(Boolean(m_subMenu) && Boolean(m_subMenu.desc_txt))
+=69
+=212
+=72
++         if(param1)
+=69
++            SoundQueue.instance.playSoundEffect("menu_back");
+=72
+=44
+=21
++      private function countCachePickSelected() : int
+=33
++         var _loc1_:int = 0;
++         var _loc2_:String = null;
++         _loc1_ = 0;
++         if(!this.cachePickSelected)
+=69
++            return 0;
+=72
++         for(_loc2_ in this.cachePickSelected)
+=69
++            if(Boolean(this.cachePickSelected[_loc2_]))
+=123
++               _loc1_++;
+=125
+=72
++         return _loc1_;
+=44
+=21
++      private function getCachePickSelectedNames() : Array
+=33
++         var _loc1_:Array = null;
++         var _loc2_:String = null;
++         _loc1_ = [];
++         if(!this.cachePickSelected)
+=69
++            return _loc1_;
+=72
++         for(_loc2_ in this.cachePickSelected)
+=69
++            if(Boolean(this.cachePickSelected[_loc2_]))
+=123
++               _loc1_.push(_loc2_);
+=125
+=72
++         _loc1_.sort();
++         return _loc1_;
+=44
+=21
++      private function toggleCachePickCharacter(param1:String) : void
+=33
++         if(!this.cachePickMode || !param1)
+=69
++            return;
+=72
++         if(!this.cachePickSelected)
+=69
++            this.cachePickSelected = {};
+=72
++         if(Boolean(this.cachePickSelected[param1]))
+=69
++            delete this.cachePickSelected[param1];
+=72
+=128
+=69
++            this.cachePickSelected[param1] = true;
+=72
++         this.refreshCachePickVisuals();
++         this.updateCachePickDesc();
+=192
+=44
+=21
++      private function refreshCachePickVisuals() : void
+=33
++         var _loc1_:int = 0;
++         var _loc2_:EventButton = null;
++         var _loc3_:String = null;
++         var _loc4_:Boolean = false;
++         var _loc5_:ColorTransform = null;
++         if(!this.containerButton || !this.characters)
+=69
++            return;
+=72
++         _loc1_ = 0;
++         while(_loc1_ < this.containerButton.length && _loc1_ < this.characters.length)
+=69
++            _loc2_ = this.containerButton[_loc1_];
++            _loc3_ = String(this.characters[_loc1_]);
++            _loc4_ = Boolean(this.cachePickMode) && Boolean(this.cachePickSelected) && Boolean(this.cachePickSelected[_loc3_]);
++            if(Boolean(_loc2_) && Boolean(_loc2_.ButtonInstance))
+=123
++               _loc5_ = new ColorTransform();
++               if(_loc4_)
+=234
++                  _loc5_.redMultiplier = 0.55;
++                  _loc5_.greenMultiplier = 0.85;
++                  _loc5_.blueMultiplier = 1.35;
++                  _loc5_.redOffset = 40;
++                  _loc5_.greenOffset = 60;
++                  _loc5_.blueOffset = 90;
+=305
++               _loc2_.ButtonInstance.transform.colorTransform = _loc5_;
+=125
++            _loc1_++;
+=72
+=44
+=21
++      private function updateCachePickDesc() : void
+=33
++         var _loc1_:int = 0;
++         if(!m_subMenu || !m_subMenu.desc_txt)
+=69
++            return;
+=72
++         if(!this.cachePickMode)
+=69
++            return;
+=72
++         _loc1_ = int(this.countCachePickSelected());
++         m_subMenu.desc_txt.text = "Rebuild cache: " + _loc1_ + " selected — click to toggle, Ctrl+Shift+C to run, Back to cancel.";
+=44
+=21
++      private function confirmCachePickRebuild() : void
+=33
++         var names:Array = null;
++         names = null;
++         var count:int = 0;
++         names = this.getCachePickSelectedNames();
++         count = int(names.length);
++         if(count <= 0)
+=69
++            return;
+=72
++         MenuController.onlinePromptMenu.message = "Rebuild Palette Maker cache for " + count + " character" + (count == 1 ? "" : "s") + "?\n" + "(discover + unique sprites)";
++         MenuController.onlinePromptMenu.onAccept = function():void
+=69
++            MenuController.onlinePromptMenu.removeSelf();
++            runCachePickRebuild(names);
+=311
++         MenuController.onlinePromptMenu.onDismiss = function():void
+=69
++            MenuController.onlinePromptMenu.removeSelf();
+=311
++         MenuController.onlinePromptMenu.show();
+=44
+=21
++      private function runCachePickRebuild(param1:Array) : void
+=33
++         var names:Array = param1;
++         if(!names || names.length == 0)
+=69
++            return;
+=72
++         try
+=69
++            ModHost.door(ModPatches.PALETTE_SET_WARM_DISCOVER_HANDLER,[function(param1:String):void
+=123
++               MenuController.paletteMakerMenu.warmDiscoverCache(param1);
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_WARM_UNIQUE_HANDLER,[function(param1:String):void
+=123
++               MenuController.paletteMakerMenu.warmUniqueSpriteCache(param1);
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_WARM_UNIQUE_INCREMENTAL_START_HANDLER,[function(param1:String):Boolean
+=123
++               return MenuController.paletteMakerMenu.warmUniqueSpriteCacheIncrementalStart(param1);
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_WARM_UNIQUE_INCREMENTAL_STEP_HANDLER,[function():Boolean
+=123
++               return MenuController.paletteMakerMenu.warmUniqueSpriteCacheIncrementalStep();
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_INVALIDATE_CACHES_BATCH,[names],undefined);
++            this.exitCachePickMode(false);
++            MultiplayerManager.notify("Rebuilding cache for " + names.length + "…");
++            SoundQueue.instance.playSoundEffect("menu_select");
++            ModHost.door(ModPatches.PALETTE_START_PRELOAD,[{"pendingChars":names}],undefined);
+=72
++         catch(err:Error)
+=69
++            MultiplayerManager.notify("Cache rebuild failed: " + err.message);
+=72
+## private function replay_CLICK(_:MouseEvent) : void
+## why: modhost: VAULT_REPLAY hook can take over replay loading
+@@ 218 0 da39a3ee5e6b4b0d 2
++         var hookCtx:Object = null;
++         var _loc0_:MouseEvent = e;
+@@ 221 0 da39a3ee5e6b4b0d 16
++         hookCtx = {
++            "cancel":false,
++            "menu":this
+=311
++         try
+=69
++            if(Boolean(ModHost.runHook(ModHooks.VAULT_REPLAY,hookCtx)) || Boolean(hookCtx.cancel))
+=123
++               return;
+=125
+=72
++         catch(hookErr:*)
+=69
+=72
++         replayTimer = null;
++         replayFunc = null;
+## private function back_CLICK_vault(_:MouseEvent = null) : void
+## why: modhost: VAULT_HIDE hook on back; optional param so the controller mapper can call it
+@@ 331 1 e7eef903813b2d46 1
++      private function back_CLICK_vault(param1:MouseEvent = null) : void
+@@ 333 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.VAULT_HIDE,{
++            "menu":this,
++            "reason":"back"
++         });
+## private function home_CLICK(_:MouseEvent) : void
+## why: modhost: VAULT_HIDE hook on home
+@@ 345 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.VAULT_HIDE,{
++            "menu":this,
++            "reason":"home"
++         });
+## private function injectBnuys() : void
+## why: vault: Palette Maker manage-costumes character grid (stock icons, controller nav, cache warm prompt)
+@@ 350 0 da39a3ee5e6b4b0d 346
+=21
++      private function injectBnuys() : void
+=33
++         if(!this.PaletteMakerButton)
+=69
++            return;
+=72
++         m_subMenu.addChild(this.PaletteMakerButton);
++         this.PaletteMakerButton.x = 110;
++         this.PaletteMakerButton.y = 100;
+=44
+=21
++      private function makeStocksButtons() : void
+=33
++         var _loc1_:EventButton = null;
++         var _loc2_:String = null;
++         var _loc3_:MovieClip = null;
++         var _loc4_:int = 14;
++         this.characters = ModHost.door(ModPatches.PALETTE_GET_CHARS_COMPATIBLE_WITH_COSTUMES,[],[]);
++         this.container = new MovieClip();
++         this.container.x = -295;
++         this.container.y = -120;
++         this.containerButton = new Vector.<EventButton>();
++         this.m_characterGridNodes = new Vector.<MenuMapperNode>();
++         m_subMenu.addChild(this.container);
++         var _loc5_:int = 0;
++         while(_loc5_ < this.characters.length)
+=69
++            _loc1_ = new EventButton(ResourceManager.getLibraryMC("StockButtonContainer"));
++            _loc2_ = this.characters[_loc5_];
++            _loc3_ = ModHost.door(ModPatches.PALETTE_GET_STOCK_ICON,[_loc2_,_loc2_ != "peach"],null);
++            this.containerButton.push(_loc1_);
++            this.container.addChild(_loc1_.ButtonInstance);
++            _loc1_.ButtonInstance.x = _loc5_ % _loc4_ * 45;
++            _loc1_.ButtonInstance.y = int(_loc5_ / _loc4_) * 40;
++            _loc1_.ButtonInstance.self.ph.addChild(_loc3_);
++            _loc1_.ButtonInstance.addEventListener(MouseEvent.MOUSE_OVER,this.containerButton_OVER);
++            _loc1_.ButtonInstance.addEventListener(MouseEvent.CLICK,this.containerButton_CLICK);
++            _loc1_.ButtonInstance.addEventListener(MouseEvent.MOUSE_OUT,this.containerButton_OUT);
++            this.m_characterGridNodes.push(new MenuMapperNode(_loc1_.ButtonInstance));
++            _loc5_++;
+=72
++         this.setupCharacterGridNavigation(_loc4_);
+=44
+=21
++      private function setupCharacterGridNavigation(param1:int) : void
+=33
++         var cols:int = param1;
++         var i:int = 0;
++         var leftNode:Array = null;
++         var rightNode:Array = null;
++         var upNode:Array = null;
++         var downNode:Array = null;
++         var charIndex:int = 0;
++         var hoverFunc:Function = null;
++         var charCount:int = int(this.m_characterGridNodes.length);
++         i = 0;
++         while(i < charCount)
+=69
++            leftNode = i % cols > 0 ? [this.m_characterGridNodes[i - 1]] : [];
++            rightNode = i % cols < cols - 1 && i + 1 < charCount ? [this.m_characterGridNodes[i + 1]] : [];
++            upNode = i >= cols ? [this.m_characterGridNodes[i - cols]] : [];
++            downNode = i + cols < charCount ? [this.m_characterGridNodes[i + cols]] : [];
++            charIndex = i;
++            hoverFunc = (function(param1:int):Function
+=123
++               var index:* = undefined;
++               index = undefined;
++               index = param1;
++               return function(param1:MouseEvent = null):void
+=234
++                  containerButton_OVER_ByIndex(index);
++               };
++            })(charIndex);
++            this.m_characterGridNodes[i].updateNodes(upNode,downNode,leftNode,rightNode,hoverFunc,this.containerButton_OUT,this.containerButton_CLICK,this.back_CHARACTER_GRID,null,null);
++            i++;
+=72
+=44
+=21
++      private function containerButton_OVER_ByIndex(param1:int) : void
+=33
++         if(param1 >= 0 && param1 < this.characters.length)
+=69
++            this.selectedCharacter = this.characters[param1];
++            SoundQueue.instance.playSoundEffect("menu_hover");
++            if(this.cachePickMode)
+=123
++               this.updateCachePickDesc();
+=125
++            else
+=123
++               m_subMenu.desc_txt.text = "Manage costumes for " + Stats.getStats(this.characters[param1]).DisplayName + ".";
+=125
+=72
+=44
+=21
++      private function containerButton_OUT(param1:MouseEvent = null) : void
+=33
++         if(this.cachePickMode)
+=69
++            this.updateCachePickDesc();
++            return;
+=72
+=210
+=69
+=212
+=72
+=44
+=21
++      private function removeStocksButtons() : void
+=33
++         var _loc1_:EventButton = null;
++         this.exitCachePickMode(false);
++         var _loc2_:int = 0;
++         while(_loc2_ < this.containerButton.length)
+=69
++            _loc1_ = this.containerButton[_loc2_];
++            _loc1_.ButtonInstance.removeEventListener(MouseEvent.MOUSE_OVER,this.containerButton_OVER);
++            _loc1_.ButtonInstance.removeEventListener(MouseEvent.CLICK,this.containerButton_CLICK);
++            _loc1_.ButtonInstance.removeEventListener(MouseEvent.MOUSE_OUT,this.containerButton_OUT);
++            if(_loc1_.ButtonInstance.parent != null)
+=123
++               _loc1_.ButtonInstance.parent.removeChild(_loc1_.ButtonInstance);
+=125
++            _loc2_++;
+=72
++         this.containerButton = null;
+=44
+=21
++      private function containerButton_CLICK(param1:MouseEvent = null) : void
+=33
++         var _loc2_:String = null;
++         var _loc3_:int = 0;
++         if(this.cachePickMode)
+=69
++            _loc3_ = -1;
++            if(Boolean(param1) && Boolean(param1.target))
+=123
++               _loc3_ = int(this.findEvent(param1.target as MovieClip));
+=125
++            if(_loc3_ >= 0 && _loc3_ < this.characters.length)
+=123
++               this.toggleCachePickCharacter(String(this.characters[_loc3_]));
+=125
++            else if(Boolean(this.selectedCharacter))
+=123
++               this.toggleCachePickCharacter(this.selectedCharacter);
+=125
++            return;
+=72
++         ModHost.door(ModPatches.PALETTE_SHOW_LOADING_SCREEN,[this.selectedCharacter,true],undefined);
++         _loc2_ = ResourceManager.getResourceIdForCharacter(this.selectedCharacter);
++         ResourceManager.queueResources([_loc2_]);
++         ModHost.door(ModPatches.PALETTE_LOAD_COSTUME_FILE,[this.selectedCharacter],undefined);
++         ResourceManager.load({"oncomplete":this.onComplete});
++         SoundQueue.instance.playSoundEffect("pm_mark");
+=44
+=21
++      private function onComplete(param1:* = null) : void
+=33
++         var e:* = param1;
++         var timer:Timer = new Timer(30,1);
++         timer.addEventListener(TimerEvent.TIMER_COMPLETE,function(param1:TimerEvent):void
+=69
+=121
++            ModHost.door(ModPatches.PALETTE_MENU_SET_CHARACTER,[selectedCharacter],undefined);
++            MenuController.paletteMakerMenu.show();
++         });
++         timer.start();
+=44
+=21
++      private function containerButton_OVER(param1:MouseEvent) : void
+=33
++         var _loc2_:int = int(this.findEvent(param1.target as MovieClip));
++         if(_loc2_ >= 0 && _loc2_ < this.characters.length)
+=69
++            this.containerButton_OVER_ByIndex(_loc2_);
+=72
+=44
+=21
++      private function back_CHARACTER_GRID(param1:MouseEvent = null) : void
+=33
++         if(this.cachePickMode)
+=69
++            this.exitCachePickMode(true);
++            return;
+=72
++         ModHost.door(ModPatches.PALETTE_CANCEL_FRESHNESS_CHECK,[],undefined);
++         this.removeStocksButtons();
++         this.gtfo(0);
++         this.PaletteMakerButton.y = 100;
++         this.PaletteMakerButton.addEventListener(MouseEvent.CLICK,this.paletteMaker_CLICK);
++         this.PaletteMakerButton.addEventListener(MouseEvent.MOUSE_OVER,this.paletteMaker_MOUSE_OVER);
++         m_subMenu.bg_top.back_btn.removeEventListener(MouseEvent.CLICK,this.back_CHARACTER_GRID);
+=75
++         this.restoreMainMenuMapper();
+=334
+=44
+=21
++      private function paletteMaker_CLICK(param1:MouseEvent = null) : void
+=33
++         this.showManageCostumesGrid();
+=220
+=44
+=21
++      public function showManageCostumesGrid() : void
+=33
++         if(Boolean(this.PaletteMakerButton))
+=69
++            this.PaletteMakerButton.removeEventListener(MouseEvent.CLICK,this.paletteMaker_CLICK);
++            this.PaletteMakerButton.removeEventListener(MouseEvent.MOUSE_OVER,this.paletteMaker_MOUSE_OVER);
++            this.PaletteMakerButton.y = 9999;
+=72
+=97
++         m_subMenu.bg_top.back_btn.addEventListener(MouseEvent.CLICK,this.back_CHARACTER_GRID);
++         this.makeStocksButtons();
++         this.gtfo(9999);
++         this.switchToCharacterGridMapper();
++         this.startPaletteMakerCacheWarm();
+=44
+=21
++      private function startPaletteMakerCacheWarm() : void
+=33
++         try
+=69
++            ModHost.door(ModPatches.PALETTE_SET_WARM_DISCOVER_HANDLER,[function(param1:String):void
+=123
++               MenuController.paletteMakerMenu.warmDiscoverCache(param1);
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_WARM_UNIQUE_HANDLER,[function(param1:String):void
+=123
++               MenuController.paletteMakerMenu.warmUniqueSpriteCache(param1);
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_WARM_UNIQUE_INCREMENTAL_START_HANDLER,[function(param1:String):Boolean
+=123
++               return MenuController.paletteMakerMenu.warmUniqueSpriteCacheIncrementalStart(param1);
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_WARM_UNIQUE_INCREMENTAL_STEP_HANDLER,[function():Boolean
+=123
++               return MenuController.paletteMakerMenu.warmUniqueSpriteCacheIncrementalStep();
++            }],undefined);
++            ModHost.door(ModPatches.PALETTE_START_FRESHNESS_CHECK,[this.onPaletteMakerFreshnessReady],undefined);
+=72
++         catch(err:Error)
+=69
+=72
+=44
+=21
++      private function onPaletteMakerFreshnessReady(param1:Array) : void
+=33
++         var count:int = 0;
++         var pending:Array = null;
++         pending = null;
++         count = 0;
++         pending = param1;
++         count = 0;
++         if(!pending || pending.length == 0)
+=69
++            ModHost.door(ModPatches.PALETTE_CACHE_DEBUG_LOG,["Freshness check: all characters cached"],undefined);
++            return;
+=72
++         if(Boolean(ModHost.door(ModPatches.PALETTE_GET_BATCH_CACHE_PROMPT_ANSWERED,[],false)))
+=69
++            ModHost.door(ModPatches.PALETTE_CACHE_DEBUG_LOG,["Freshness check: prompt already answered this session, skipping (" + pending.length + " pending)"],undefined);
++            return;
+=72
++         if(Boolean(ModHost.door(ModPatches.PALETTE_GET_USER_DECLINED_BATCH_CACHE,[],false)))
+=69
++            ModHost.door(ModPatches.PALETTE_CACHE_DEBUG_LOG,["Freshness check: user previously declined batch cache, skipping prompt"],undefined);
++            return;
+=72
++         count = int(pending.length);
++         ModHost.door(ModPatches.PALETTE_CACHE_DEBUG_LOG,["Freshness check: " + count + " need warm — showing Yes/No prompt"],undefined);
++         MenuController.onlinePromptMenu.message = count + " characters need caching.\nCache together now?";
++         MenuController.onlinePromptMenu.onAccept = function():void
+=69
++            MenuController.onlinePromptMenu.removeSelf();
++            ModHost.door(ModPatches.PALETTE_SET_BATCH_CACHE_PROMPT_ANSWERED,[true],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_USER_DECLINED_BATCH_CACHE,[false],undefined);
++            ModHost.door(ModPatches.PALETTE_CACHE_DEBUG_LOG,["User chose YES — starting batch warm for " + count + " characters"],undefined);
++            ModHost.door(ModPatches.PALETTE_START_PRELOAD,[{"pendingChars":pending}],undefined);
+=311
++         MenuController.onlinePromptMenu.onDismiss = function():void
+=69
++            MenuController.onlinePromptMenu.removeSelf();
++            ModHost.door(ModPatches.PALETTE_SET_BATCH_CACHE_PROMPT_ANSWERED,[true],undefined);
++            ModHost.door(ModPatches.PALETTE_SET_USER_DECLINED_BATCH_CACHE,[true],undefined);
++            ModHost.door(ModPatches.PALETTE_CACHE_DEBUG_LOG,["User chose NO — batch warm skipped; on-demand will use lenient cache if files exist"],undefined);
+=311
++         MenuController.onlinePromptMenu.show();
+=44
+=21
++      private function switchToCharacterGridMapper() : void
+=33
++         if(Boolean(this.m_characterGridNodes) && this.m_characterGridNodes.length > 0)
+=69
++            m_menuMapper = new MenuMapper(this.m_characterGridNodes[0]);
++            m_menuMapper.init();
+=72
+=44
+=21
++      private function restoreMainMenuMapper() : void
+=33
++         m_menuMapper = this.m_mainMenuMapper;
+=57
+=44
+=21
++      private function gtfo(param1:Number) : void
+=33
++         MovieClip(m_subMenu.intro_btn).y = param1;
++         MovieClip(m_subMenu.intro2_btn).y = param1;
++         MovieClip(m_subMenu.intro3_btn).y = param1;
++         MovieClip(m_subMenu.replays_btn).y = param1;
+=44
+=21
++      private function paletteMaker_MOUSE_OVER(param1:MouseEvent = null) : void
+=33
+=192
++         m_subMenu.desc_txt.text = "Manage custom character palettes.";
+=44
+=21
++      private function paletteMaker_MOUSE_OUT(param1:MouseEvent = null) : void
+=33
+=210
+=69
+=212
+=72
+=44
+=21
++      private function findEvent(param1:MovieClip) : int
+=33
++         var _loc2_:int = 0;
++         if(Boolean(param1) && !param1.visible)
+=69
++            return -1;
+=72
++         while(_loc2_ < this.containerButton.length)
+=69
++            if(this.containerButton[_loc2_].ButtonInstance == param1)
+=123
++               return _loc2_;
+=125
++            _loc2_++;
+=72
++         return -1;
+=44

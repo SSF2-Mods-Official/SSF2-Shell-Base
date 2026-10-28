@@ -1,0 +1,14 @@
+# com/mcleodgaming/ssf2/engine/CharacterData.as
+## override public function importData(_:Object) : Boolean
+## why: expansion characters: null-guard sounds when importing mod character data
+@@ 865 0 da39a3ee5e6b4b0d 1
++         var _loc0_:* = undefined;
+@@ 866 1 f5c3cbaa9a26bf71 0
+@@ 881 1 9a2c12439d1ca585 1
++                     if(data[obj] != null && this.m_sounds != null)
+@@ 883 1 e57e5b76dea26be8 4
++                        for(_loc0_ in data[obj])
++                        {
++                           this.m_sounds[_loc0_] = data[obj][_loc0_];
++                        }
+@@ 894 1 e68730321b1b2759 0

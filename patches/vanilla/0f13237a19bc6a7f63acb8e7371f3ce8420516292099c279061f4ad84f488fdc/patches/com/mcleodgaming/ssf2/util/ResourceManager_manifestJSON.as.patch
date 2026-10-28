@@ -1,0 +1,4 @@
+# com/mcleodgaming/ssf2/util/ResourceManager_manifestJSON.as
+## class header
+## why: embed wiring: point the manifest Embed at the build's _assets path
+@@ 4 1 9cd0bb0b03bf0273 0
