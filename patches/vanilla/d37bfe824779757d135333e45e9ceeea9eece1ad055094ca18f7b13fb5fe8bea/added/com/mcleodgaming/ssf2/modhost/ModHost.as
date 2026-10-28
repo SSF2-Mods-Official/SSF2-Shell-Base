@@ -550,7 +550,6 @@ package com.mcleodgaming.ssf2.modhost
          var id:String = null;
          var inst:* = undefined;
          var stageData:StageData = null;
-         StageData.holdTelemetry();
          for(id in m_matchInstances)
          {
             inst = m_matchInstances[id];
@@ -589,10 +588,6 @@ package com.mcleodgaming.ssf2.modhost
          if(Boolean(stageData))
          {
             matchInit(stageData);
-         }
-         if(m_pendingSwfLoads == 0)
-         {
-            StageData.releaseTelemetry();
          }
          GameLog.write("[ModHost] live enable state applied");
       }
@@ -2378,10 +2373,6 @@ package com.mcleodgaming.ssf2.modhost
          if(m_pendingSwfLoads > 0)
          {
             --m_pendingSwfLoads;
-         }
-         if(m_pendingSwfLoads == 0)
-         {
-            StageData.releaseTelemetry();
          }
       }
       

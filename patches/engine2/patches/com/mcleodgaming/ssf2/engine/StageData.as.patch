@@ -1,7 +1,7 @@
 # com/mcleodgaming/ssf2/engine/StageData.as
 ## class header
-## why: imports + fields for menu preview, profiler telemetry, timestop and countdown skip
-@@ 37 1 c7570dde85fbc2c1 15
+## why: imports + fields for menu preview, timestop and countdown skip
+@@ 37 1 c7570dde85fbc2c1 14
 +   import com.mcleodgaming.mgn.events.*;
 +   import com.mcleodgaming.mgn.net.*;
 +   import com.mcleodgaming.ssf2.*;
@@ -15,13 +15,10 @@
 +   import flash.filesystem.*;
 +   import flash.geom.*;
 +   import flash.system.ApplicationDomain;
-+   import flash.utils.getDefinitionByName;
 =1266
-@@ 40 0 da39a3ee5e6b4b0d 4
+@@ 40 0 da39a3ee5e6b4b0d 2
 =40
 +      private static var s_buildingMenuPreview:Boolean = false;
-=40
-+      private static var s_telemetryLookup:TelemetryLookup = new TelemetryLookup();
 @@ 185 0 da39a3ee5e6b4b0d 2
 +      private var m_skipCountdownAfterEntrance:Boolean;
 =40
@@ -59,8 +56,8 @@
 +         this.m_timestop = false;
 +         this.m_timestopStateTimer = new Object();
 ## public static function createMenuPreview(_:Game) : StageData
-## why: menu preview: stub StageData for CSS/stage-select previews; telemetry hold/release for profiler
-@@ 733 0 da39a3ee5e6b4b0d 64
+## why: menu preview: stub StageData for CSS/stage-select previews
+@@ 733 0 da39a3ee5e6b4b0d 44
 +      public static function createMenuPreview(param1:Game) : StageData
 =330
 +         var stageMC:MovieClip = null;
@@ -103,26 +100,6 @@
 =369
 +         s_buildingMenuPreview = false;
 +         return sd;
-=731
-=40
-+      public static function holdTelemetry() : void
-=330
-+         s_telemetryLookup.holdOff();
-=731
-=40
-+      public static function releaseTelemetry() : void
-=330
-+         s_telemetryLookup.release();
-=731
-=40
-+      private static function telemetryClass() : *
-=330
-+         return s_telemetryLookup.resolve(lookupAirTelemetry);
-=731
-=40
-+      private static function lookupAirTelemetry() : *
-=330
-+         return getDefinitionByName("AirTelemetry");
 =731
 =40
 ## public function get BASE_CLASSES() : Object
@@ -1034,54 +1011,6 @@
 ## why: mod-resolvable Game for sudden death; carry palette vault colorVaultId into it
 @@ 2243 1 25670cc763194f86 1
 +         GameController.currentGame = ModHost.create(Game,[GameController.tmpGame.PlayerSettings.length,GameController.tmpGame.GameMode]) as Game;
-## private function telemetryStart(_:String) : void
-## why: profiler: telemetry timing helpers feeding the mod manager GameProfiler
-@@ 2280 0 da39a3ee5e6b4b0d 18
-+      private function telemetryStart(param1:String) : void
-=330
-+         var _loc2_:* = telemetryClass();
-+         if(_loc2_)
-=366
-+            _loc2_.startTiming(param1);
-=369
-=731
-=40
-+      private function telemetryEnd(param1:String) : void
-=330
-+         var _loc2_:* = telemetryClass();
-+         if(_loc2_)
-=366
-+            _loc2_.endTiming(param1);
-=369
-=731
-=40
-## private function performAllEvents(_:Event) : void
-## why: profiler: start match.draw timing
-@@ 2282 0 da39a3ee5e6b4b0d 1
-+         this.telemetryStart("match.draw");
-## private function renderComplete(_:Event) : void
-## why: profiler: time each match tick; FrameBudget GC when a frame runs long
-@@ 2287 1 b862f7f1af2d8c4f 20
-+         var t0:int = 0;
-+         var spent:int = 0;
-+         this.telemetryEnd("match.draw");
-+         this.telemetryStart("match");
-+         t0 = int(getTimer());
-=2444
-=366
-+            this.PERFORMALL();
-=369
-+         finally
-=366
-+            spent = getTimer() - t0;
-+            this.telemetryEnd("match");
-+            if(FrameBudget.shouldCollect(spent))
-=422
-+               this.telemetryStart("match.gc");
-+               FrameBudget.afterTick(spent);
-+               this.telemetryEnd("match.gc");
-=424
-=369
 ## public function startOnlineMatch() : Boolean
 ## why: room data goes through BEFORE_SEND_ROOM_DATA so mods can add a top-level key
 @@ 2327 1 74d147b46227d3b9 1
@@ -1169,7 +1098,7 @@
 @@ 2756 1 dc5d6233ceb755fd 1
 +         if(Boolean(this.m_fsCutscene) || Boolean(this.m_fsCutins > 0) || Boolean(this.m_timestop))
 ## private function PERFORMALL() : void
-## why: timestop gating, profiler timings, null-safe HUD; stage script errors don't kill the match
+## why: timestop gating, null-safe HUD; stage script errors don't kill the match
 @@ 2895 2 626b9022964cb484 0
 @@ 2970 1 6c1976fe92c31dd3 1
 +               if(!this.m_event && !this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
@@ -1191,8 +1120,7 @@
 =434
 =435
 =436
-@@ 3062 1 ad3a88c557fefc1c 2
-+               this.telemetryStart("match.stage");
+@@ 3062 1 ad3a88c557fefc1c 1
 +               if(!this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
 @@ 3066 1 ad3a88c557fefc1c 1
 +               if(!this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
@@ -1208,19 +1136,7 @@
 +                  catch(stageScriptErr:Error)
 =434
 =435
-@@ 3078 0 da39a3ee5e6b4b0d 2
-+               this.telemetryEnd("match.stage");
-+               this.telemetryStart("match.chars");
-@@ 3079 0 da39a3ee5e6b4b0d 1
-+               this.telemetryEnd("match.chars");
-@@ 3080 0 da39a3ee5e6b4b0d 1
-+               this.telemetryStart("match.stage");
-@@ 3081 0 da39a3ee5e6b4b0d 1
-+               this.telemetryEnd("match.stage");
-@@ 3086 0 da39a3ee5e6b4b0d 1
-+               this.telemetryStart("match.hits");
-@@ 3098 1 ad3a88c557fefc1c 2
-+               this.telemetryEnd("match.hits");
+@@ 3098 1 ad3a88c557fefc1c 1
 +               if(!this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
 ## public function getCharacterByMC(_:MovieClip) : Character
 ## why: SSF2API.getCharacter: match nested clips/stance and skip null entries

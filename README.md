@@ -129,7 +129,7 @@ There is one file per class, `patches/engine2/patches/<package path>/<Class>.as.
 - Hunks have no context lines. Deleted text is stored only as a hash, so a patch never contains a line that the shell drops. A line the shell keeps that is already in the base is `=<line number>`, not a second copy of that text.
 - Positions are exact, because the base is pinned by hash per class.
 - `apply_patch` stops on any hash mismatch. It never fuzzes.
-- `patches/engine2/added/` holds the 14 classes that exist only in the shell: ModHost, ModAPI, GameLog, SwfRelease, FrameBudget, TelemetryLookup, and the Discord and rumble ANE wrappers.
+- `patches/engine2/added/` holds the 13 classes that exist only in the shell: ModHost, ModAPI, GameLog, SwfRelease, and the Discord and rumble ANE wrappers.
 - No embedded data is stored. The manifest is generated from vanilla at build time, so the repo carries no SSF2 asset.
 - Patches carry only real edits. A method the shell doesn't change has vanilla's decompiled text in the shell source too (see [rebaseline](#rebaseline)). The 75 patches store kept vanilla lines as line numbers. The text they add is the shell's own edit.
 

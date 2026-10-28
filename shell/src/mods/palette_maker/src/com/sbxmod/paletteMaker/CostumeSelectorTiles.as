@@ -17,15 +17,13 @@ package com.sbxmod.paletteMaker
 	import flash.filters.BlurFilter;
 	import flash.filters.GlowFilter;
 	import flash.filters.DropShadowFilter;
-	import flash.utils.getDefinitionByName;
-	import flash.utils.getTimer;
 	import flash.utils.getQualifiedClassName;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import com.mcleodgaming.ssf2.util.PaletteDeep;
 
-    /** Costume tiles: build, preview recolor, vault ownership, tile alpha, telemetry. Part of the CostumeSelectorDisplay chain. */
+    /** Costume tiles: build, preview recolor, vault ownership, tile alpha. Part of the CostumeSelectorDisplay chain. */
     public class CostumeSelectorTiles extends PaletteMenuBase
     {
         public function CostumeSelectorTiles()
@@ -454,52 +452,6 @@ package com.sbxmod.paletteMaker
 			PaletteDeep.note("[palette_maker] " + msg);
 		}
 
-		private static var s_telemetry:*;
-
-		private static var s_telemetryAt:int = -10000;
-
-		private static function telemetryClass():*
-		{
-			var now:int;
-			if (s_telemetry)
-			{
-				return s_telemetry;
-			};
-			now = getTimer();
-			if (now - s_telemetryAt < 1000)
-			{
-				return null;
-			};
-			s_telemetryAt = now;
-			try
-			{
-				s_telemetry = getDefinitionByName("AirTelemetry");
-			}
-			catch (err:*)
-			{
-				s_telemetry = null;
-			};
-			return s_telemetry;
-		}
-
-		private static function telemetryStart(name:String):void
-		{
-			var C:* = telemetryClass();
-			if (C)
-			{
-				C.startTiming(name);
-			};
-		}
-
-		private static function telemetryEnd(name:String, fields:Object):void
-		{
-			var C:* = telemetryClass();
-			if (C)
-			{
-				C.endTiming(name, -1, fields);
-			};
-		}
-
 		protected function applyCostumePreview(mc:MovieClip, costume:Object, usePA:Boolean):void
 		{
 			var palette:Object;
@@ -536,14 +488,10 @@ package com.sbxmod.paletteMaker
 					paLog("PA frame " + heldFrame + "->" + mc.currentFrame + "/" + mc.totalFrames + " bmp=" + (info ? info.bitmaps : "?") + " shp=" + (info ? info.shapes : "?") + " gfx=" + (info ? info.gfx : "?") + " kids=" + mc.numChildren);
 				};
 				PaletteDeep.restoreDeepPaletteOriginals(mc);
-				telemetryStart("paint.replace");
 				PaletteDeep.replacePaletteDeep(mc, palette, 12, true, false, true);
-				telemetryEnd("paint.replace", null);
 				if (!info || int(info.bitmaps) == 0)
 				{
-					telemetryStart("paint.raster");
 					rasterInfo = PaletteDeep.rasterRecolor(mc, palette);
-					telemetryEnd("paint.raster", rasterInfo ? {"w": rasterInfo.w, "h": rasterInfo.h, "hits": rasterInfo.hits} : null);
 					paLog("PA raster " + (rasterInfo ? (rasterInfo.w + "x" + rasterInfo.h + " hits=" + rasterInfo.hits + " kids=" + rasterInfo.kids) : "none"));
 				};
 			}
