@@ -1,0 +1,15 @@
+# com/mcleodgaming/ssf2/menus/TrainingMenu.as
+## class header
+## why: modhost: import ModHost/ModHooks for the hooks below
+@@ 7 0 da39a3ee5e6b4b0d 3
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.events.*;
+## override public function backMain_CLICK(_:MouseEvent) : void
+## why: rumble: stop menu vibration when leaving the menu
+@@ 64 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.RUMBLE,{"kind":"menuStop"});
+## private function home_CLICK(_:MouseEvent) : void
+## why: rumble: stop menu vibration when leaving the menu
+@@ 70 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.RUMBLE,{"kind":"menuStop"});

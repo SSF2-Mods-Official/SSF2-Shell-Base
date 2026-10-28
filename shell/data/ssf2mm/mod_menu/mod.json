@@ -1,0 +1,9 @@
+{
+	"id": "mod_menu",
+	"name": "Mod Menu",
+	"description": "Press F1 for a shortcut menu. Other packs can register entries.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "ModMenuMod",
+	"enabledByDefault": true
+}

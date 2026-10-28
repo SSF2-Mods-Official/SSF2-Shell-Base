@@ -1,0 +1,9 @@
+{
+	"id": "controller_profiles",
+	"name": "Controller Profiles + Nametags",
+	"description": "Nametag list on the character select edit button, and a Profiles dropdown on Controls. Each name keeps its own keyboard and controller bindings, including tap jump, auto-dash, and d-tap dash.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "ControllerProfilesMod",
+	"enabledByDefault": true
+}

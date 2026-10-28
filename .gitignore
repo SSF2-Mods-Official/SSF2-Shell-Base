@@ -1,0 +1,6 @@
+Build/
+work/
+__pycache__/
+*.pyc
+shell/src/mods/**/fixture/*.swf
+tools/fixtures/**/*.swf

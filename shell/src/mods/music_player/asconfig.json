@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "source-path": ["src", "../_shared/src"],
+    "output": "../../../data/ssf2mm/music_player/mod.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "debug": false,
+    "warnings": true
+  },
+  "mainClass": "MusicPlayerMod",
+  "config": "air"
+}

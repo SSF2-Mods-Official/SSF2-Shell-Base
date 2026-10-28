@@ -1,0 +1,18 @@
+{
+	"id": "palette_maker",
+	"name": "Palette Maker",
+	"description": "Costume editor, Color Vault, and manage-costumes tools.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "PaletteMakerMod",
+	"enabledByDefault": true,
+	"resources": [
+		{
+			"id": "vcontent",
+			"file": "menu_palette_maker.swf",
+			"type": "menu",
+			"guid": "67fbc775-2290-45d4-bb43-d02b5d48705f",
+			"softFail": true
+		}
+	]
+}

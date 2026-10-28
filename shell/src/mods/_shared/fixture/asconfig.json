@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "source-path": [".", "../src"],
+    "output": "HsvWheelFixture.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "warnings": true,
+    "strict": true
+  },
+  "mainClass": "HsvWheelFixture",
+  "config": "air"
+}

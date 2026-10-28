@@ -1,0 +1,200 @@
+# com/mcleodgaming/ssf2/menus/HudMenu.as
+## class header
+## why: mods: beforeSnapshot/afterSnapshot callbacks around the camera-icon screenshot
+@@ 16 0 da39a3ee5e6b4b0d 7
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.enums.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import com.mcleodgaming.ssf2.net.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.text.*;
+@@ 19 0 da39a3ee5e6b4b0d 4
+=19
++      public static var beforeSnapshot:Function = null;
+=19
++      public static var afterSnapshot:Function = null;
+## override public function manageMenuMappings(_:Event) : void
+## why: HUD: null-safe stageData check so menu mapping does not throw during match setup/teardown
+@@ 150 1 bc1a9368b64d1b2e 14
++         var sd:* = null;
++         try
+=134
++            sd = GameController.stageData;
+=136
++         catch(sdErr:*)
+=134
+=153
+=136
++         if(!sd || !sd.GameRef)
+=134
+=153
+=136
++         if(Boolean(sd.FreezeKeys) && Boolean(sd.GameRef.GameMode == Mode.TRAINING) && this.m_speedNode != null)
+## private function spaceHealthBoxes() : void
+## why: HUD: optional centered player HUDs (center_player_huds session flag) for any player count
+@@ 219 7 eaf0a80347353529 10
++         var _loc1_:int = 0;
++         var _loc2_:Number = -275;
++         var _loc3_:Number = 300;
++         var _loc4_:Number = 150;
++         var _loc5_:Number = 1;
++         var _loc6_:Number = 0;
++         var _loc7_:int = int(this.m_healthBoxes.length);
++         var _loc8_:Number = _loc2_;
++         var _loc9_:Number = 125;
++         if(_loc7_ > 4)
+@@ 227 2 d6338152f83e4940 3
++            _loc4_ = (_loc3_ - _loc2_) / _loc7_;
++            _loc5_ = 1 - 0.4 * ((_loc7_ - 4) / 4);
++            _loc9_ = _loc4_;
+@@ 230 1 b34e5028e40589c2 1
++         if(_loc7_ > 0 && Boolean(ModHost.getSessionFlag("center_player_huds",false)))
+@@ 232 6 a9cb11d214bd8e2e 12
++            _loc8_ = -((_loc7_ - 1) * _loc4_ + _loc9_ * _loc5_) / 2;
+=136
++         _loc1_ = 0;
++         while(_loc1_ < _loc7_)
+=134
++            this.m_healthBoxes[_loc1_].x = _loc8_ + _loc6_ * _loc4_;
++            this.m_healthBoxes[_loc1_].y = 133.5;
++            this.m_healthBoxes[_loc1_].scaleX = _loc5_;
++            this.m_healthBoxes[_loc1_].scaleY = _loc5_;
++            this.m_damageCounterContainer.addChild(this.m_healthBoxes[_loc1_]);
++            _loc6_++;
++            _loc1_++;
+## override public function killEvents() : void
+## why: HUD: wrap each teardown step in try/catch so one missing clip does not abort killEvents
+@@ 386 3 fd8e7f2b2955f0c4 1
++         try
+@@ 390 1 046bed5943685895 2
++            m_subMenu.pause_menu.removeEventListener(MouseEvent.CLICK,this.pausemenu_CLICK);
++            m_subMenu.camIcon.removeEventListener(MouseEvent.CLICK,this.camIcon_CLICK);
+@@ 392 1 eb342aede385ef2c 1
++         catch(btnErr:*)
+@@ 394 23 18d813f739862d1e 0
+@@ 418 1 8e194dd3e700e6c6 1
++         try
+@@ 420 2 d40159041a40fca9 4
++            if(Boolean(Main.Root) && Boolean(Main.Root.stage))
+=202
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.manageMenuMappings);
+=204
+@@ 423 1 55120d350493dfa6 53
++         catch(mapErr:*)
+=134
+=136
++         try
+=134
++            if(Boolean(Boolean(GameController.stageData)) && Boolean(GameController.stageData.GameRef) && GameController.stageData.GameRef.GameMode == Mode.TRAINING)
+=202
++               m_subMenu.training_menu.prev_item.removeEventListener(MouseEvent.CLICK,this.prev_item_CLICK);
++               m_subMenu.training_menu.next_item.removeEventListener(MouseEvent.CLICK,this.next_item_CLICK);
++               m_subMenu.training_menu.make_item.removeEventListener(MouseEvent.CLICK,this.make_item_CLICK);
++               m_subMenu.training_menu.prev_speed.removeEventListener(MouseEvent.CLICK,this.prev_speed_CLICK);
++               m_subMenu.training_menu.next_speed.removeEventListener(MouseEvent.CLICK,this.next_speed_CLICK);
++               m_subMenu.training_menu.prev_cpuNum.removeEventListener(MouseEvent.CLICK,this.prev_cpuNum_CLICK);
++               m_subMenu.training_menu.next_cpuNum.removeEventListener(MouseEvent.CLICK,this.next_cpuNum_CLICK);
++               m_subMenu.training_menu.prev_cpuAction.removeEventListener(MouseEvent.CLICK,this.prev_cpuAction_CLICK);
++               m_subMenu.training_menu.next_cpuAction.removeEventListener(MouseEvent.CLICK,this.next_cpuAction_CLICK);
++               m_subMenu.training_menu.prev_cpuDamage.removeEventListener(MouseEvent.MOUSE_DOWN,this.prev_cpuDamage_DOWN);
++               m_subMenu.training_menu.next_cpuDamage.removeEventListener(MouseEvent.MOUSE_DOWN,this.next_cpuDamage_DOWN);
++               m_subMenu.training_menu.prev_cpuDamage.removeEventListener(MouseEvent.MOUSE_UP,this.prev_cpuDamage_UP);
++               m_subMenu.training_menu.next_cpuDamage.removeEventListener(MouseEvent.MOUSE_UP,this.next_cpuDamage_UP);
++               m_subMenu.training_menu.prev_cpuDamage.removeEventListener(MouseEvent.MOUSE_OUT,this.prev_cpuDamage_UP);
++               m_subMenu.training_menu.next_cpuDamage.removeEventListener(MouseEvent.MOUSE_OUT,this.next_cpuDamage_UP);
++               m_subMenu.training_menu.prev_hitBoxes.removeEventListener(MouseEvent.CLICK,this.prev_showHitboxes_CLICK);
++               m_subMenu.training_menu.next_hitBoxes.removeEventListener(MouseEvent.CLICK,this.next_showHitboxes_CLICK);
++               m_subMenu.training_menu.prev_HUD.removeEventListener(MouseEvent.CLICK,this.prev_HUD_CLICK);
++               m_subMenu.training_menu.next_HUD.removeEventListener(MouseEvent.CLICK,this.next_HUD_CLICK);
++               m_subMenu.training_menu.finish_btn.removeEventListener(MouseEvent.CLICK,this.finish_CLICK);
++               m_subMenu.training_menu.reset_btn.removeEventListener(MouseEvent.CLICK,this.reset_CLICK);
++               m_subMenu.training_menu.prev_camMode.removeEventListener(MouseEvent.CLICK,this.prev_camMode_CLICK);
++               m_subMenu.training_menu.next_camMode.removeEventListener(MouseEvent.CLICK,this.next_camMode_CLICK);
+=204
+=136
++         catch(trainErr:*)
+=134
+=136
++         try
+=134
++            if(Boolean(Boolean(GameController.stageData)) && Boolean(GameController.stageData.GameRef) && GameController.stageData.GameRef.GameMode === Mode.ONLINE_WAITING_ROOM)
+=202
++               m_subMenu.onlineStartButton.visible = false;
++               m_subMenu.onlineStartButton.stop();
+=204
+=136
++         catch(onlineErr:*)
+=134
+=136
++         try
+=134
++            m_subMenu.onlineStartButton.removeEventListener(MouseEvent.CLICK,this.onOnlineStartButtonClicked);
+=136
++         catch(startErr:*)
+=134
+=136
+## private function camIcon_CLICK(_:MouseEvent) : void
+## why: mods: run beforeSnapshot/afterSnapshot around the camera screenshot (e.g. hide overlays)
+@@ 459 0 da39a3ee5e6b4b0d 10
++         if(HudMenu.beforeSnapshot != null)
+=134
++            try
+=202
++               HudMenu.beforeSnapshot();
+=204
++            catch(preErr:Error)
+=202
+=204
+=136
+@@ 463 0 da39a3ee5e6b4b0d 10
++         if(HudMenu.afterSnapshot != null)
+=134
++            try
+=202
++               HudMenu.afterSnapshot();
+=204
++            catch(postErr:Error)
+=202
+=204
+=136
+## public function updateHealthBoxVisibility() : void
+## why: HUD: null-safe players/hitboxes in HUD fade check (StandBy/missing HitBox no longer throws)
+@@ 1169 1 3cbd04b721ffe69a 2
++         var sd:* = null;
++         try
+@@ 1171 1 fafef9b410893189 14
++            sd = GameController.stageData;
+=136
++         catch(sdErr:*)
+=134
+=153
+=136
++         if(!sd || !sd.Players)
+=134
+=153
+=136
++         i = 0;
++         while(i < sd.Players.length)
+=134
++            if(sd.Players[i] != null && Boolean(sd.Players[i].UsingFinalSmash) && (sd.Players[i].SpecialType == 4 || sd.Players[i].SpecialType == 5))
+@@ 1175 0 da39a3ee5e6b4b0d 1
++            i++;
+@@ 1176 1 b34e5028e40589c2 2
++         i = 0;
++         while(i < this.m_healthBoxes.length)
+@@ 1183 1 72b7365dbc3c68e6 1
++               while(j < sd.Players.length && !collision)
+@@ 1185 1 423e9d0b0e3b0677 1
++                  if(Boolean(sd.Players[j] != null && !sd.Players[j].Dead && !sd.Players[j].StandBy && sd.Players[j].HasHitBox) && Boolean(sd.Players[j].HitBox) && Boolean(sd.Players[j].HitBox.hitTestObject(hBox)))
+@@ 1191 1 25f730bde416e4a4 2
+=1182
++               while(j < this.m_hudDectionMCs.length)
+@@ 1193 1 2c7102a58751249c 1
++                  if(Boolean(this.m_hudDectionMCs[j]) && Boolean(this.m_hudDectionMCs[j].hitTestObject(hBox)))
+@@ 1197 0 da39a3ee5e6b4b0d 1
+=1189
+@@ 1198 1 bd1437925cb3da63 1
++               if(Boolean(sd.getQualitySettings().hud_alpha))
+@@ 1218 0 da39a3ee5e6b4b0d 1
++            i++;

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<application xmlns="http://ns.adobe.com/air/application/32.0">
+  <id>SwfReleaseFixture</id>
+  <versionNumber>1.0.0</versionNumber>
+  <filename>SwfReleaseFixture</filename>
+  <initialWindow>
+    <content>SwfReleaseFixture.swf</content>
+    <visible>false</visible>
+  </initialWindow>
+</application>

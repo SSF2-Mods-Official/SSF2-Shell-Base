@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "source-path": [".", "../../../../work/build/engine2/src"],
+    "output": "SwfReleaseFixture.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "warnings": false
+  },
+  "mainClass": "SwfReleaseFixture",
+  "config": "air"
+}

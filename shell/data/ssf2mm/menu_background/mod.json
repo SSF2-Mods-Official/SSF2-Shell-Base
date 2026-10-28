@@ -1,0 +1,18 @@
+{
+	"id": "menu_background",
+	"name": "Menu Background",
+	"description": "Use a stage camera background as the menu backdrop. Stage Select TAUNT+SHIELD picks a stage.",
+	"version": "1.0.0",
+	"lifetime": "boot",
+	"entryClass": "MenuBackgroundMod",
+	"enabledByDefault": false,
+	"settings": [
+		{
+			"id": "stageId",
+			"label": "Stage",
+			"type": "dropdown",
+			"value": "battlefield22",
+			"optionsSource": "stages"
+		}
+	]
+}

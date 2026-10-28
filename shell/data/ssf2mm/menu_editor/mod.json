@@ -1,0 +1,9 @@
+{
+	"id": "menu_editor",
+	"name": "Menu Editor",
+	"description": "F1 Edit Character Select and F1 Edit Stages. Drag icons to rearrange. SXP cycles Stage Select pages.",
+	"version": "2.0.0",
+	"lifetime": "boot",
+	"entryClass": "MenuEditorMod",
+	"enabledByDefault": true
+}

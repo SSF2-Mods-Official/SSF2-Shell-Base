@@ -1,0 +1,28 @@
+# com/mcleodgaming/ssf2/input/GamepadManager.as
+## class header
+## why: ModHost import
+@@ 12 0 da39a3ee5e6b4b0d 7
++   import com.iam2bam.ane.nativejoystick.event.*;
++   import com.iam2bam.ane.nativejoystick.intern.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.events.*;
++   import flash.system.*;
++   import flash.ui.*;
+## protected static function onDeviceAttached(_:GameInputEvent) : void
+## why: ModHost: GAMEPAD_EVENT hook when a gamepad is attached
+@@ 81 0 da39a3ee5e6b4b0d 5
++         ModHost.runHook(ModHooks.GAMEPAD_EVENT,{
++            "type":"attached",
++            "gamepad":gamepad,
++            "deviceName":device.name
++         });
+## protected static function onDeviceInput(_:Event) : void
+## why: ModHost: GAMEPAD_EVENT hook for every gamepad input
+@@ 92 0 da39a3ee5e6b4b0d 6
++            ModHost.runHook(ModHooks.GAMEPAD_EVENT,{
++               "type":"input",
++               "gamepad":gamepad,
++               "controlId":control.id,
++               "value":control.value
++            });

@@ -1,0 +1,1943 @@
+# com/mcleodgaming/ssf2/engine/StageData.as
+## class header
+## why: imports + fields for menu preview, profiler telemetry, timestop and countdown skip
+@@ 37 1 c7570dde85fbc2c1 15
++   import com.mcleodgaming.mgn.events.*;
++   import com.mcleodgaming.mgn.net.*;
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.api.*;
++   import com.mcleodgaming.ssf2.events.*;
++   import com.mcleodgaming.ssf2.input.*;
++   import com.mcleodgaming.ssf2.modapi.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.display.*;
++   import flash.events.*;
++   import flash.filesystem.*;
++   import flash.geom.*;
++   import flash.system.ApplicationDomain;
++   import flash.utils.getDefinitionByName;
+=1266
+@@ 40 0 da39a3ee5e6b4b0d 4
+=40
++      private static var s_buildingMenuPreview:Boolean = false;
+=40
++      private static var s_telemetryLookup:TelemetryLookup = new TelemetryLookup();
+@@ 185 0 da39a3ee5e6b4b0d 2
++      private var m_skipCountdownAfterEntrance:Boolean;
+=40
+@@ 307 1 2c9129e5a64747d2 1
++      private var m_soundMemory:com.mcleodgaming.ssf2.util.Dictionary;
+@@ 329 0 da39a3ee5e6b4b0d 8
++      private var m_timestop:Boolean;
+=40
++      private var m_timestopStateTimer:Object;
+=40
++      private var m_isMenuPreview:Boolean = false;
+=40
++      private var m_menuPreviewBaseClasses:Object = null;
+=40
+## public function StageData(_:Vector.<Controller>, _:MovieClip, _:Class, _:MovieClip, _:HudMenu, _:VcamSettings, _:Game, _:SoundQueue, _:String, _:Number)
+## why: menu preview: build without a match; else init ModAPI/ModHost and fire MATCH_START hook
+@@ 338 0 da39a3ee5e6b4b0d 5
++         if(s_buildingMenuPreview)
+=366
++            this.initAsMenuPreview(controllers,root,stageMC,camParam,game,soundQueue);
+=1014
+=369
+@@ 339 0 da39a3ee5e6b4b0d 6
++         ModAPI.init(this);
++         ModHost.matchInit(this);
++         ModHost.runHook(ModHooks.MATCH_START,{
++            "stageData":this,
++            "game":game
+=1330
+@@ 550 0 da39a3ee5e6b4b0d 1
++         this.m_skipCountdownAfterEntrance = false;
+@@ 653 0 da39a3ee5e6b4b0d 1
++         this.applyHostPresentationDoors();
+@@ 724 0 da39a3ee5e6b4b0d 2
++         this.m_timestop = false;
++         this.m_timestopStateTimer = new Object();
+## public static function createMenuPreview(_:Game) : StageData
+## why: menu preview: stub StageData for CSS/stage-select previews; telemetry hold/release for profiler
+@@ 733 0 da39a3ee5e6b4b0d 64
++      public static function createMenuPreview(param1:Game) : StageData
+=330
++         var stageMC:MovieClip = null;
++         var terrain:MovieClip = null;
++         var camSettings:VcamSettings = null;
++         var sd:StageData = null;
++         if(!param1)
+=366
+=1299
+=369
++         s_buildingMenuPreview = true;
+=2444
+=366
++            stageMC = new MovieClip();
++            terrain = new MovieClip();
++            stageMC.addChild(terrain);
++            stageMC.terrain = terrain;
++            stageMC.camBoundary = new MovieClip();
++            stageMC.camBoundary.graphics.beginFill(0,0);
++            stageMC.camBoundary.graphics.drawRect(-400,-400,800,800);
++            stageMC.camBoundary.graphics.endFill();
++            stageMC.deathBoundary = new MovieClip();
++            stageMC.deathBoundary.graphics.beginFill(0,0);
++            stageMC.deathBoundary.graphics.drawRect(-600,-600,1200,1200);
++            stageMC.deathBoundary.graphics.endFill();
++            stageMC.smashBallBoundary = new MovieClip();
++            stageMC.smashBallBoundary.graphics.beginFill(0,0);
++            stageMC.smashBallBoundary.graphics.drawRect(-400,-400,800,800);
++            stageMC.smashBallBoundary.graphics.endFill();
++            camSettings = new VcamSettings({
++               "width":Main.Width,
++               "height":Main.Height,
++               "mainTerrain":stageMC.camBoundary
++            });
++            sd = new StageData(SaveData.Controllers || new Vector.<Controller>(),new MovieClip(),null,stageMC,null,camSettings,param1,SoundQueue.instance,null,0);
+=369
++         catch(err:*)
+=366
++            sd = null;
+=369
++         s_buildingMenuPreview = false;
++         return sd;
+=731
+=40
++      public static function holdTelemetry() : void
+=330
++         s_telemetryLookup.holdOff();
+=731
+=40
++      public static function releaseTelemetry() : void
+=330
++         s_telemetryLookup.release();
+=731
+=40
++      private static function telemetryClass() : *
+=330
++         return s_telemetryLookup.resolve(lookupAirTelemetry);
+=731
+=40
++      private static function lookupAirTelemetry() : *
+=330
++         return getDefinitionByName("AirTelemetry");
+=731
+=40
+## public function get BASE_CLASSES() : Object
+## why: expansion stages: null-safe BASE_CLASSES from the stage resource; stub for menu preview
+@@ 735 1 b35c2cec853ea9ca 29
++         var _loc0_:Resource = null;
++         var _loc1_:Object = null;
++         var _loc2_:Object = null;
++         if(this.m_isMenuPreview)
+=366
++            if(!this.m_menuPreviewBaseClasses)
+=422
++               this.m_menuPreviewBaseClasses = {
++                  "SSF2CollisionBoundary":null,
++                  "SSF2Platform":null
++               };
+=424
++            return this.m_menuPreviewBaseClasses;
+=369
++         _loc0_ = ResourceManager.getResourceByID(this.GAME.LevelData.stage,true);
++         if(!_loc0_)
+=366
++            _loc0_ = ResourceManager.getResourceByID(this.GAME.LevelData.stage,false);
+=369
++         _loc1_ = Boolean(_loc0_) ? _loc0_.MetaData : null;
++         _loc2_ = Boolean(_loc1_) ? _loc1_.BASE_CLASSES : null;
++         if(!_loc2_)
+=366
++            return {
++               "SSF2CollisionBoundary":null,
++               "SSF2Platform":null
+=2046
+=369
++         return _loc2_;
+## public function shakeCamera(_:int) : void
+## why: menu preview: null-safe CAM plus preview stage init, character spawn/destroy, effect cleanup, dispose
+@@ 1306 1 c35efb0d981e7ae9 615
++         if(Boolean(this.CAM))
+=366
++            this.CAM.shake(num);
+=369
+=731
+=40
++      private function initAsMenuPreview(param1:Vector.<Controller>, param2:MovieClip, param3:MovieClip, param4:VcamSettings, param5:Game, param6:SoundQueue) : void
+=330
++         var _loc7_:int = 0;
++         this.m_isMenuPreview = true;
++         this.m_apiInstance = null;
++         this.GAME = param5;
++         this.CONTROLLERS = param1 || new Vector.<Controller>();
++         this.SOUNDQUEUE = param6 || SoundQueue.instance;
++         this.ROOT = param2 || new MovieClip();
++         this.STAGEPARENT = param3;
++         this.STAGE = param3.terrain;
++         this.STAGEBACKGROUND = new MovieClip();
++         this.STAGEFOREGROUND = new MovieClip();
+=506
++         this.HUD = null;
++         this.HUDFOREGROUND = new MovieClip();
+=474
+=475
++         this.WEATHER = new MovieClip();
++         this.CUTSCENE = new MovieClip();
++         this.TAGS = new MovieClip();
+=486
+=496
+=507
++         this.CAMBOUNDS = param3.camBoundary;
++         this.SMASHBALLBOUNDS = param3.smashBallBoundary;
++         this.DEATHBOUNDS = param3.deathBoundary;
++         if(Boolean(param4))
+=366
++            param4.mainTerrain = this.CAMBOUNDS;
+=369
++         this.CAM = new Vcam(param4 || new VcamSettings(),this.STAGE,this.ROOT);
+=2444
+=366
++            this.CAM.disableMenuPreview();
+=369
++         catch(camOffErr:*)
+=366
+=369
+=526
+=527
+=528
+=529
+=530
+=531
+=532
+=533
+=534
+=535
+=536
+=537
+=538
+=539
+=540
+=541
+=542
+=543
+=544
+=574
+=659
++            "sizeRatio":(Boolean(this.GAME) ? this.GAME.SizeRatio : 1),
++            "frequency":ItemSettings.FREQUENCY_OFF,
++            "itemData":(Boolean(this.GAME) && Boolean(this.GAME.Items) ? this.GAME.Items.items : {})
+=519
++         this.TIMER = null;
++         this.m_replayData = new ReplayData(Boolean(this.GAME) && Boolean(this.GAME.PlayerSettings) ? int(this.GAME.PlayerSettings.length) : 4);
+=416
+=670
+=546
+=545
++         this.m_event = false;
+=672
+=674
+=675
+=468
++         this.ONLINEMODE = false;
++         this.REPLAYMODE = false;
++         this.m_hazardsOn = false;
+=550
++         this.m_collisionsEnabled = false;
+=562
++         this.m_disableCeilingDeath = true;
++         this.m_disableFallDeath = true;
+=413
+=390
+=391
+=392
+=393
+=394
+=395
+=405
+=406
+=407
+=409
+=410
+=411
+=414
+=345
++            "stage_effects":false,
+=347
++            "global_effects":true,
++            "hit_effects":true,
++            "hud_alpha":false,
++            "knockback_smoke":false,
++            "screen_flash":false,
++            "shadows":false,
+=354
++            "weather":false,
++            "ambient_lighting":false,
++            "menu_bg":false
+=358
++         this.m_timestop = false;
++         this.m_timestopStateTimer = new Object();
++         _loc7_ = 0;
++         while(_loc7_ < this.EFFECT_LIMIT)
+=366
+=398
+=399
+=400
+=401
+=402
+=403
++            _loc7_++;
+=369
++         _loc7_ = 0;
++         while(_loc7_ < this.GAME.PlayerSettings.length)
+=366
+=666
++            _loc7_++;
+=369
+=338
++         SSF2API.enableMenuPreview(null);
+=731
+=40
++      public function get IsMenuPreview() : Boolean
+=330
++         return this.m_isMenuPreview;
+=731
+=40
++      private function menuPreviewSoundsEmpty(param1:Array) : Boolean
+=330
++         var _loc2_:* = undefined;
++         if(!param1)
+=366
++            return true;
+=369
++         var _loc3_:int = 0;
++         var _loc4_:* = param1;
++         var _loc5_:int = 0;
++         var _loc6_:* = _loc4_;
++         var _loc7_:int = 0;
++         var _loc8_:* = _loc6_;
++         var _loc9_:int = 0;
++         var _loc10_:* = _loc8_;
++         var _loc11_:int = 0;
++         var _loc12_:* = _loc10_;
++         var _loc13_:int = 0;
++         var _loc14_:* = _loc12_;
++         var _loc15_:int = 0;
++         var _loc16_:* = _loc14_;
++         var _loc17_:int = 0;
++         var _loc18_:* = _loc16_;
++         for(_loc2_ in _loc18_)
+=366
+=2210
+=369
+=2277
+=731
+=40
++      private function bindMenuPreviewExtApi(param1:String) : void
+=330
++         var _loc3_:Resource = null;
++         var _loc4_:ApplicationDomain = null;
++         var _loc5_:Class = null;
++         var _loc6_:MovieClip = null;
++         var _loc7_:Function = null;
++         var _loc8_:Function = null;
++         if(!param1)
+=366
+=1014
+=369
+=2444
+=366
++            _loc3_ = ResourceManager.getResourceByID(param1);
++            if(!_loc3_ || !_loc3_.MC)
+=422
+=1631
+=424
++            _loc6_ = _loc3_.MC as MovieClip;
++            if(Boolean(_loc6_) && Boolean(_loc6_.loaderInfo) && Boolean(_loc6_.loaderInfo.applicationDomain))
+=422
++               _loc4_ = _loc6_.loaderInfo.applicationDomain;
++               if(_loc4_.hasDefinition("SSF2API"))
+=431
++                  _loc5_ = _loc4_.getDefinition("SSF2API") as Class;
++                  if(Boolean(_loc5_))
+=434
++                     try
+=802
++                        if("deinit" in _loc5_)
+=1033
++                           (_loc5_["deinit"] as Function)();
+=1041
+=804
++                     catch(deinitErr:*)
+=802
+=804
++                     (_loc5_["init"] as Function)(SSF2API);
+=2907
+=435
+=436
+=424
++            if(Boolean(_loc6_) && "initAPI" in _loc6_)
+=422
++               if("deinitAPI" in _loc6_)
+=431
++                  _loc7_ = _loc6_["deinitAPI"] as Function;
++                  if(_loc7_ != null)
+=434
++                     _loc7_.call(_loc6_);
+=435
+=436
++               _loc8_ = _loc6_["initAPI"] as Function;
++               if(_loc8_ != null)
+=431
++                  _loc8_.call(_loc6_,SSF2API);
+=436
+=424
+=369
++         catch(err:*)
+=366
+=369
+=731
+=40
++      private function resolveMenuPreviewClassAPI(param1:String, param2:CharacterData) : void
+=330
++         var _loc5_:* = undefined;
++         var _loc6_:Array = null;
++         var _loc7_:Object = null;
++         var _loc8_:Class = null;
++         if(Boolean(!param2) || Boolean(param2.ClassAPI) || !param1)
+=366
+=1014
+=369
+=2444
+=366
++            _loc5_ = ResourceManager.getResourceByID(param1);
++            if(!_loc5_ || !_loc5_.getProp)
+=422
+=1631
+=424
++            _loc6_ = _loc5_.getProp("characters") as Array;
++            if(!_loc6_ || _loc6_.length <= 0 || !_loc6_[0] || !_loc6_[0].cData)
+=422
+=1631
+=424
++            _loc7_ = _loc6_[0].cData;
++            _loc8_ = _loc7_.classAPI as Class;
++            if(Boolean(_loc8_))
+=422
++               param2.importData({"classAPI":_loc8_});
++               Stats.writeStats({
++                  "cData":_loc7_,
++                  "aData":_loc6_[0].aData || null,
++                  "pData":_loc6_[0].pData || null,
++                  "iData":_loc6_[0].iData || null
++               });
+=424
+=369
++         catch(err:*)
+=366
+=369
+=731
+=40
++      public function spawnMenuPreviewCharacter(param1:String, param2:int = -1, param3:Number = -1, param4:int = 1, param5:String = null) : Character
+=330
+=1316
++         characterStats = null;
++         var playerSettings:PlayerSetting = null;
++         var CharCls:Class = null;
++         var character:Character = null;
++         var slot:int = 0;
++         var lid:String = null;
++         var ext:* = undefined;
++         var own:Object = null;
++         var apiInst:* = undefined;
++         if(!this.m_isMenuPreview || !param1 || param1 == "random")
+=366
+=1299
+=369
++         slot = Math.max(1,param4);
++         while(this.PLAYERS.length < slot)
+=366
+=666
+=369
++         if(Boolean(this.PLAYERS[slot - 1]))
+=366
++            this.destroyMenuPreviewCharacter(this.PLAYERS[slot - 1]);
+=369
++         if(param1 == "xp")
+=366
++            characterStats = Stats.resolveExpansionCharacterData(param3);
++            if(!characterStats)
+=422
++               characterStats = Stats.getStats("xp",param3);
+=424
+=369
+=375
+=366
++            characterStats = Stats.getStats(param1,param3);
+=369
++         if(!characterStats)
+=366
+=1299
+=369
++         this.resolveMenuPreviewClassAPI(param1,characterStats);
+=2444
+=366
++            if(Boolean(characterStats.ClassAPI) && Boolean(this.menuPreviewSoundsEmpty(characterStats.Sounds)))
+=422
++               ext = new characterStats.ClassAPI(null);
++               if(Boolean(ext) && "getOwnStats" in ext)
+=431
++                  own = ext.getOwnStats();
++                  if(Boolean(own) && Boolean(own.sounds))
+=434
++                     characterStats.importData({"sounds":own.sounds});
+=435
+=436
+=424
+=369
++         catch(sndErr:*)
+=366
+=369
++         lid = param5 || characterStats.LinkageID || param1;
++         if(Boolean(lid) && Boolean(lid != characterStats.LinkageID) && Boolean(ResourceManager.getLibraryClass(lid)))
+=366
++            characterStats.importData({"linkage_id":lid});
+=369
++         else if(!characterStats.LinkageID || !ResourceManager.getLibraryClass(characterStats.LinkageID))
+=366
++            if(Boolean(lid) && Boolean(ResourceManager.getLibraryClass(lid)))
+=422
++               characterStats.importData({"linkage_id":lid});
+=424
++            else if(Boolean(param1) && Boolean(ResourceManager.getLibraryClass(param1)))
+=422
++               characterStats.importData({"linkage_id":param1});
+=424
+=369
+=1326
++            "player_id":slot,
++            "shieldType":"shield" + Utils.convertTeamToColor(slot,-1),
++            "stamina":0
+=1330
++         lid = characterStats.LinkageID;
++         if(!lid || !ResourceManager.getLibraryClass(lid))
+=366
++            if(Boolean(param1) && Boolean(ResourceManager.getLibraryClass(param1)))
+=422
++               characterStats.importData({"linkage_id":param1});
++               lid = param1;
+=424
++            else if(Boolean(characterStats.LinkageID2) && Boolean(ResourceManager.getLibraryClass(characterStats.LinkageID2)))
+=422
++               characterStats.importData({"linkage_id":characterStats.LinkageID2});
++               lid = characterStats.LinkageID2;
+=424
++            else if(Boolean(param1) && param1.length > 1)
+=422
++               lid = param1.charAt(0).toUpperCase() + param1.substr(1);
++               if(Boolean(ResourceManager.getLibraryClass(lid)))
+=431
++                  characterStats.importData({"linkage_id":lid});
+=436
+=1391
+=431
++                  lid = characterStats.LinkageID;
+=436
+=424
+=369
++         if(!lid || !ResourceManager.getLibraryClass(lid))
+=366
+=1299
+=369
++         playerSettings = new PlayerSetting();
++         playerSettings.character = param1;
++         playerSettings.costume = param2;
++         playerSettings.expansion = param3;
++         playerSettings.human = true;
++         playerSettings.exist = true;
++         playerSettings.team = -1;
++         playerSettings.lives = 1;
++         playerSettings.x_start = 0;
++         playerSettings.y_start = 0;
++         playerSettings.facingRight = true;
+=1331
+=2444
+=366
++            CharCls = ModHost.resolveClass(Character);
++            character = new CharCls(characterStats,playerSettings,this);
++            character.setVisibility(true);
++            this.activateCharacters();
++            apiInst = character.APIInstance;
++            if(Boolean(apiInst))
+=422
+=769
+=431
++                  this.bindMenuPreviewExtApi(param1);
++                  apiInst.initialize();
+=436
++               catch(initErr:*)
+=431
+=436
+=424
++            if(Boolean(character.armMenuPreviewIdle))
+=422
++               character.armMenuPreviewIdle();
+=424
++            if(param2 >= 0 && Boolean(character.setCostumeAPI))
+=422
++               character.setCostumeAPI(param2,-1);
+=424
+=369
++         catch(err:*)
+=366
++            character = null;
++            this.activateCharacters();
+=369
+=3706
+=731
+=40
++      public function destroyMenuPreviewCharacter(param1:Character) : void
+=330
++         var _loc2_:* = 0;
++         if(!param1)
+=366
+=1014
+=369
+=2444
+=366
++            this.clearMenuPreviewEffects();
+=369
++         catch(fxErr:*)
+=366
+=369
+=2444
+=366
++            param1.destroy();
+=369
++         catch(err:*)
+=366
+=369
++         _loc2_ = 0;
++         while(_loc2_ < this.PLAYERS.length)
+=366
++            if(this.PLAYERS[_loc2_] == param1)
+=422
++               this.PLAYERS[_loc2_] = null;
+=424
++            _loc2_++;
+=369
+=2444
+=366
++            _loc2_ = int(this.CHARACTERS.length - 1);
++            while(_loc2_ >= 0)
+=422
++               if(this.CHARACTERS[_loc2_] == param1)
+=431
++                  this.CHARACTERS.splice(_loc2_,1);
+=436
++               _loc2_--;
+=424
+=369
++         catch(chErr:*)
+=366
+=369
+=731
+=40
++      public function clearMenuPreviewEffects() : void
+=330
++         var _loc1_:int = 0;
++         var _loc2_:Array = null;
++         var _loc3_:Vector.<MovieClip> = null;
++         var _loc4_:MovieClip = null;
++         var _loc5_:MovieClip = null;
++         if(!this.m_isMenuPreview)
+=366
+=1014
+=369
++         _loc2_ = [this.m_effectList,this.m_effectOverlayList,this.m_effectHUDList,this.m_effectHUDOverlayList,this.m_effectBGList,this.m_effectWeatherList];
++         _loc1_ = 0;
++         while(_loc1_ < _loc2_.length)
+=366
++            _loc3_ = _loc2_[_loc1_] as Vector.<MovieClip>;
++            if(Boolean(_loc3_))
+=422
++               this.clearMenuPreviewEffectList(_loc3_);
+=424
++            _loc1_++;
+=369
+=405
+=406
+=407
++         this.m_effectHUDOverlayIndex = 0;
+=409
+=410
+=2444
+=366
++            _loc5_ = this.STAGEEFFECTS;
++            if(Boolean(_loc5_))
+=422
++               while(_loc5_.numChildren > 0)
+=431
++                  _loc4_ = _loc5_.getChildAt(_loc5_.numChildren - 1) as MovieClip;
++                  _loc5_.removeChildAt(_loc5_.numChildren - 1);
++                  if(Boolean(_loc4_))
+=434
++                     try
+=802
++                        _loc4_.stop();
+=804
++                     catch(stopErr:*)
+=802
+=804
+=435
+=436
+=424
+=369
++         catch(layerErr:*)
+=366
+=369
+=731
+=40
++      private function clearMenuPreviewEffectList(param1:Vector.<MovieClip>) : void
+=330
++         var _loc2_:int = 0;
++         var _loc3_:MovieClip = null;
++         if(!param1)
+=366
+=1014
+=369
++         _loc2_ = 0;
++         while(_loc2_ < param1.length)
+=366
++            _loc3_ = param1[_loc2_];
++            if(Boolean(_loc3_))
+=422
+=769
+=431
++                  _loc3_.stop();
+=436
++               catch(stopErr:*)
+=431
+=436
+=769
+=431
++                  if(Boolean(_loc3_.parent))
+=434
++                     _loc3_.parent.removeChild(_loc3_);
+=435
+=436
++               catch(rmErr:*)
+=431
+=436
++               param1[_loc2_] = null;
+=424
++            _loc2_++;
+=369
+=731
+=40
++      public function disposeMenuPreview() : void
+=330
++         var _loc1_:* = 0;
++         var _loc2_:Character = null;
++         if(!this.m_isMenuPreview)
+=366
+=1014
+=369
++         _loc1_ = int(this.CHARACTERS.length - 1);
++         while(_loc1_ >= 0)
+=366
++            _loc2_ = this.CHARACTERS[_loc1_];
++            this.destroyMenuPreviewCharacter(_loc2_);
++            _loc1_--;
+=369
+=2444
+=366
++            this.clearMenuPreviewEffects();
+=369
++         catch(fxClearErr:*)
+=366
+=369
+=2444
+=366
++            if(SSF2API.isMenuPreviewOwner(this))
+=422
++               SSF2API.deinit();
++               SSF2API.disableMenuPreview();
+=424
+=369
++         catch(apiErr:*)
+=366
+=369
+=2014
+=2015
++         this.CAM = null;
++         this.GAME = null;
++         this.m_isMenuPreview = false;
+## public function brightenCamera() : void
+## why: null-safe HUD (menu preview has no HUD)
+@@ 1311 1 13dff2ecba0fe589 4
++         if(Boolean(this.HUD))
+=366
++            this.HUD.brightenCamera();
+=369
+## private function makePlayer(_:int) : void
+## why: expansion chars: resolve 'xp' slot stats; BEFORE/AFTER_CHARACTER_SPAWN hooks; mod-resolvable Character
+@@ 1321 0 da39a3ee5e6b4b0d 15
+=369
++         else if(playerSettings.character == "xp")
+=366
++            if(Boolean(isNaN(playerSettings.expansion)) || playerSettings.expansion < 0)
+=422
++               playerSettings.expansion = 0;
+=424
++            characterStats = Stats.resolveExpansionCharacterData(playerSettings.expansion);
++            if(!characterStats)
+=422
++               characterStats = Stats.getStats("xp",playerSettings.expansion);
+=424
++            if(Boolean(characterStats))
+=422
+=424
+@@ 1336 1 53d2b2e4fdd6d1b9 14
++         var _loc0_:Object = {
++            "cancel":false,
++            "playerId":num,
++            "playerSettings":playerSettings,
++            "characterStats":characterStats,
++            "stageData":this
+=358
++         if(ModHost.runHook(ModHooks.BEFORE_CHARACTER_SPAWN,_loc0_))
+=366
++            this.activateCharacters();
+=1014
+=369
++         var _loc1_:Class = ModHost.resolveClass(Character);
++         var character:Character = new _loc1_(characterStats,this.GAME.PlayerSettings[num - 1],this);
+@@ 1338 1 8a16da6e91c1c03e 8
++         var hudAlt:String = CharacterAlts.hudName(num,playerSettings.character,characterStats.DisplayName);
++         character.attachHealthBox(Boolean(playerSettings.name) ? playerSettings.name : (hudAlt != null ? hudAlt : characterStats.DisplayName).toUpperCase(),characterStats.Thumbnail,characterStats.SeriesIcon,character.Team,character.CostumeName,character.CostumeID);
++         ModHost.runHook(ModHooks.AFTER_CHARACTER_SPAWN,{
++            "character":character,
++            "playerId":num,
++            "playerSettings":playerSettings,
++            "stageData":this
+=1330
+## private function startGame2(_:Event) : void
+## why: Discord presence per mode; showCountdown=false skips countdown; decompiler loop-var cleanup
+@@ 1358 0 da39a3ee5e6b4b0d 33
++         var CurrentTime:int = 0;
++         var currentMode:String = null;
++         var stageDisplayName:String = null;
++         var timerEnd:uint = 0;
++         var stageDisplayNameCustom:String = null;
++         var timerEndCustom:uint = 0;
++         var roomKey:String = null;
++         var roomCode:String = null;
++         var roomPassword:String = null;
++         var playerCount:int = 0;
++         var maxPlayers:int = 0;
++         var stageDisplayNameWaiting:String = null;
++         var joinSecretWaiting:String = null;
++         var partyIdWaiting:String = null;
++         var stageDisplayNameWaitingOffline:String = null;
++         var roomKeyOnline:String = null;
++         var playerCountOnline:int = 0;
++         var maxPlayersOnline:int = 0;
++         var stageDisplayNameOnline:String = null;
++         var timerEndOnline:uint = 0;
++         var partyIdOnline:String = null;
++         var stageDisplayNameOnlineOffline:String = null;
++         var timerEndOnlineOffline:uint = 0;
++         var stageDisplayNameNull:String = null;
++         var pmChar:String = null;
++         var pmDisplay:String = null;
++         var stageDisplayNameTraining:String = null;
++         var stageDisplayNameVS:String = null;
++         var timerEndVS:uint = 0;
++         var stageDisplayNameUnlock:String = null;
++         var timerEndUnlock:uint = 0;
++         var timeNow:Date = new Date();
++         CurrentTime = int(parseInt(String(timeNow.time).slice(0,-3)));
+@@ 1373 0 da39a3ee5e6b4b0d 123
++         currentMode = "In a match";
+=2245
+=366
++            currentMode = "Watching a replay";
+=369
++         if(this.GAME.GameMode == Mode.ARENA)
+=366
++            stageDisplayName = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++            timerEnd = uint(MenuController.getTimerEndTimestamp(this));
++            MenuController.updateDiscordPresence("Arena",currentMode,CurrentTime,timerEnd,this.GAME.PlayerSettings[0].character,"Player 1","stage",stageDisplayName,null,null,null,null,null);
+=369
++         else if(this.GAME.GameMode == Mode.CUSTOM)
+=366
++            stageDisplayNameCustom = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++            timerEndCustom = uint(MenuController.getTimerEndTimestamp(this));
++            MenuController.updateDiscordPresence("???",currentMode,CurrentTime,timerEndCustom,this.GAME.PlayerSettings[0].character,"Player 1","stage",stageDisplayNameCustom,null,null,null,null,null);
+=369
++         else if(this.GAME.GameMode == Mode.ONLINE_WAITING_ROOM)
+=366
++            Main.m_onlineChar = this.GAME.PlayerSettings[0].character;
++            Main.m_onlineName = this.GAME.PlayerSettings[0].name;
++            if(MultiplayerManager.Connected)
+=422
++               roomKey = MultiplayerManager.RoomKey;
++               roomCode = MultiplayerManager.RoomCode;
++               roomPassword = MultiplayerManager.RoomPassword;
++               playerCount = int(MultiplayerManager.Players.length);
++               maxPlayers = int(MultiplayerManager.ROOM_CAPACITY);
++               stageDisplayNameWaiting = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++               joinSecretWaiting = MenuController.buildDiscordJoinSecret(roomKey,roomCode,roomPassword,maxPlayers);
++               partyIdWaiting = MultiplayerManager.DiscordPartyID;
++               MenuController.updateDiscordPresence("In Waiting Room","Playing Online",CurrentTime,0,Main.m_onlineChar,Main.m_onlineName,"stage",stageDisplayNameWaiting,partyIdWaiting,playerCount,maxPlayers,roomKey,joinSecretWaiting);
+=424
+=425
+=422
++               stageDisplayNameWaitingOffline = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++               MenuController.updateDiscordPresence("In Waiting Room","Playing Online",CurrentTime,0,Main.m_onlineChar,Main.m_onlineName,"stage",stageDisplayNameWaitingOffline,null,null,null,null,null);
+=424
+=369
++         else if(this.GAME.GameMode == Mode.ONLINE)
+=366
++            if(MultiplayerManager.Connected)
+=422
++               roomKeyOnline = MultiplayerManager.RoomKey;
++               playerCountOnline = int(MultiplayerManager.Players.length);
++               maxPlayersOnline = int(MultiplayerManager.ROOM_CAPACITY);
++               stageDisplayNameOnline = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++               timerEndOnline = uint(MenuController.getTimerEndTimestamp(this));
++               partyIdOnline = MultiplayerManager.DiscordPartyID;
++               MenuController.updateDiscordPresence("Online Match",currentMode,CurrentTime,timerEndOnline,Main.m_onlineChar,Main.m_onlineName,"stage",stageDisplayNameOnline,partyIdOnline,playerCountOnline,maxPlayersOnline,null,null);
+=424
+=425
+=422
++               stageDisplayNameOnlineOffline = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++               timerEndOnlineOffline = uint(MenuController.getTimerEndTimestamp(this));
++               MenuController.updateDiscordPresence("Online",currentMode,CurrentTime,timerEndOnlineOffline,Main.m_onlineChar,Main.m_onlineName,"stage",stageDisplayNameOnlineOffline,null,null,null,null,null);
+=424
+=369
++         else if(this.GAME.GameMode == Mode.EVENT)
+=366
+=1725
+=422
++               if(Boolean(MenuController.eventMenu) && Boolean(MenuController.eventMenu.CurrentEvent) && Boolean(MenuController.eventMenu.CurrentEvent.name))
+=431
++                  MenuController.updateDiscordPresence(String(MenuController.eventMenu.CurrentEvent.name),"Event Mode",CurrentTime,0,this.GAME.PlayerSettings[0].character,null,"event",null,null,null,null,null,null);
+=436
+=1391
+=431
++                  MenuController.updateDiscordPresence("Event Match","Event Mode",CurrentTime,0,this.GAME.PlayerSettings[0].character,null,"event",null,null,null,null,null,null);
+=436
+=424
++            catch(eventDiscordErr:*)
+=422
+=769
+=431
++                  MenuController.updateDiscordPresence("Event Match","Event Mode",CurrentTime,0,this.GAME.PlayerSettings[0].character,null,"event",null,null,null,null,null,null);
+=436
++               catch(eventDiscordFallbackErr:*)
+=431
+=436
+=424
+=369
++         else if(this.GAME.GameMode == Mode.NULL)
+=366
++            stageDisplayNameNull = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++            MenuController.updateDiscordPresence("Trapped in Null Space",currentMode,CurrentTime,0,this.GAME.PlayerSettings[0].character,"Player 1","stage",stageDisplayNameNull,null,null,null,null,null);
+=369
++         else if(this.GAME.GameMode == Mode.TRAINING)
+=366
++            if(Boolean(ModHost.door(ModPatches.PALETTE_MENU_CLASS,[],null)) && Boolean(ModHost.door(ModPatches.PALETTE_MENU_IS_SESSION_ACTIVE,[],false)))
+=422
++               pmChar = this.GAME.PlayerSettings[0].character;
++               pmDisplay = Boolean(pmChar) ? pmChar : "character";
+=769
+=431
++                  if(Boolean(pmChar) && Boolean(Stats.getStats(pmChar)))
+=434
++                     pmDisplay = String(Stats.getStats(pmChar).DisplayName);
+=435
+=436
++               catch(pmNameErr:Error)
+=431
+=436
++               MenuController.updateDiscordPresence("Editing " + pmDisplay,"Palette Maker",CurrentTime,0,pmChar,pmDisplay,"vault","Palette Maker",null,null,null,null,null);
+=424
+=425
+=422
++               stageDisplayNameTraining = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++               MenuController.updateDiscordPresence("Training",currentMode,CurrentTime,0,this.GAME.PlayerSettings[0].character,"Player 1","stage",stageDisplayNameTraining,null,null,null,null,null);
+=424
+=369
++         else if(this.GAME.GameMode == Mode.VS)
+=366
++            stageDisplayNameVS = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++            timerEndVS = uint(MenuController.getTimerEndTimestamp(this));
++            MenuController.updateDiscordPresence("VS",currentMode,CurrentTime,timerEndVS,this.GAME.PlayerSettings[0].character,"Player 1","stage",stageDisplayNameVS,null,null,null,null,null);
+=369
++         else if(this.GAME.GameMode == Mode.VS_UNLOCK)
+=366
++            stageDisplayNameUnlock = MenuController.getStageDisplayName(this.GAME.LevelData.stage);
++            timerEndUnlock = uint(MenuController.getTimerEndTimestamp(this));
++            MenuController.updateDiscordPresence("Unlocking something",currentMode,CurrentTime,timerEndUnlock,this.GAME.PlayerSettings[0].character,"Player 1","stage",stageDisplayNameUnlock,null,null,null,null,null);
+=369
+@@ 1412 1 82da0e41f1155653 1
++         else if(this.GAME.LevelData.showCountdown)
+@@ 1416 1 3e0633107860d6ad 12
+=375
+=366
++            this.m_countdownTimer.stop();
++            this.m_countdownTimer.visible = false;
++            this.m_countdownTimer.bypassTicker = true;
++            if(Boolean(this.m_countdownTimer.parent))
+=422
++               this.m_countdownTimer.parent.removeChild(this.m_countdownTimer);
+=424
++            this.m_skipCountdownAfterEntrance = true;
+=369
++         if(Boolean(Main.DEBUG) && !Main.LAZYDEBUG)
+@@ 1494 0 da39a3ee5e6b4b0d 1
++         tmpNum = 0;
+## public function endGame(_:Boolean = false) : void
+## why: MATCH_END/MATCH_SUDDEN_DEATH hooks, ModAPI/ModHost deinit; log to game.log if endMatch throws
+@@ 1856 2 4d335c9868f905df 0
+@@ 1921 0 da39a3ee5e6b4b0d 3
++         ModHost.runHook(ModHooks.MATCH_END,{"stageData":this});
++         ModAPI.deinit();
++         ModHost.matchDeinit();
+@@ 1963 0 da39a3ee5e6b4b0d 1
++               ModHost.runHook(ModHooks.MATCH_SUDDEN_DEATH,{"stageData":this});
+@@ 2016 1 11fc620e6b3541f4 14
+=2444
+=366
++            GameController.endMatch();
+=369
++         catch(endMatchErr:*)
+=366
+=1725
+=422
++               GameLog.write("[StageData.endGame] endMatch failed: " + endMatchErr);
+=424
++            catch(logErr:*)
+=422
+=424
+=369
+@@ 2019 1 30de4f2a4fec1b35 0
+## private function showMatchResults() : void
+## why: ModHost hook so mods can react to the results screen
+@@ 2195 0 da39a3ee5e6b4b0d 1
++         ModHost.runHook(ModHooks.MATCH_RESULTS,{"stageData":this});
+## private function checkSuddenDeath() : Boolean
+## why: mod-resolvable Game for sudden death; carry palette vault colorVaultId into it
+@@ 2243 1 25670cc763194f86 1
++         GameController.currentGame = ModHost.create(Game,[GameController.tmpGame.PlayerSettings.length,GameController.tmpGame.GameMode]) as Game;
+## private function telemetryStart(_:String) : void
+## why: profiler: telemetry timing helpers feeding the mod manager GameProfiler
+@@ 2280 0 da39a3ee5e6b4b0d 18
++      private function telemetryStart(param1:String) : void
+=330
++         var _loc2_:* = telemetryClass();
++         if(_loc2_)
+=366
++            _loc2_.startTiming(param1);
+=369
+=731
+=40
++      private function telemetryEnd(param1:String) : void
+=330
++         var _loc2_:* = telemetryClass();
++         if(_loc2_)
+=366
++            _loc2_.endTiming(param1);
+=369
+=731
+=40
+## private function performAllEvents(_:Event) : void
+## why: profiler: start match.draw timing
+@@ 2282 0 da39a3ee5e6b4b0d 1
++         this.telemetryStart("match.draw");
+## private function renderComplete(_:Event) : void
+## why: profiler: time each match tick; FrameBudget GC when a frame runs long
+@@ 2287 1 b862f7f1af2d8c4f 20
++         var t0:int = 0;
++         var spent:int = 0;
++         this.telemetryEnd("match.draw");
++         this.telemetryStart("match");
++         t0 = int(getTimer());
+=2444
+=366
++            this.PERFORMALL();
+=369
++         finally
+=366
++            spent = getTimer() - t0;
++            this.telemetryEnd("match");
++            if(FrameBudget.shouldCollect(spent))
+=422
++               this.telemetryStart("match.gc");
++               FrameBudget.afterTick(spent);
++               this.telemetryEnd("match.gc");
+=424
+=369
+## public function startOnlineMatch() : Boolean
+## why: room data goes through BEFORE_SEND_ROOM_DATA so mods can add a top-level key
+@@ 2327 1 74d147b46227d3b9 1
++         var roomData:Object = {
+@@ 2331 1 3e702f487124d121 3
+=358
++         ModHost.runHook(ModHooks.BEFORE_SEND_ROOM_DATA,{"roomData":roomData});
++         MultiplayerManager.sendMatchSettings(roomData);
+## private function entranceCheck() : void
+## why: showCountdown=false: leave entrances straight into play without the countdown
+@@ 2592 0 da39a3ee5e6b4b0d 5
++         var _loc0_:Boolean = false;
++         var _loc1_:int = 0;
++         var _loc2_:Character = null;
++         var _loc3_:int = 0;
++         var _loc4_:Character = null;
+@@ 2620 0 da39a3ee5e6b4b0d 53
+=424
+=369
++         if(this.m_skipCountdownAfterEntrance)
+=366
++            _loc0_ = true;
++            _loc1_ = 1;
++            while(_loc1_ <= this.GAME.PlayerSettings.length)
+=422
++               if(this.GAME.PlayerSettings[_loc1_ - 1].character != null)
+=431
++                  _loc2_ = this.getPlayerByID(_loc1_);
++                  if(Boolean(_loc2_) && _loc2_.State == CState.ENTRANCE)
+=434
++                     _loc0_ = false;
+=3997
+=435
+=436
++               _loc1_++;
+=424
++            if(Boolean(this.m_entranceZoomTimer) && !this.m_entranceZoomTimer.IsComplete)
+=422
++               _loc0_ = false;
+=424
++            if(_loc0_)
+=422
++               this.m_skipCountdownAfterEntrance = false;
+=1398
++               if(Boolean(this.m_countdownTimer))
+=431
+=1638
+=1639
++                  this.m_countdownTimer.bypassTicker = true;
++                  if(Boolean(this.m_countdownTimer.parent))
+=434
++                     this.m_countdownTimer.parent.removeChild(this.m_countdownTimer);
+=435
+=436
++               _loc3_ = 1;
++               while(_loc3_ <= this.GAME.PlayerSettings.length)
+=431
++                  if(this.GAME.PlayerSettings[_loc3_ - 1].character != null)
+=434
++                     _loc4_ = this.getPlayerByID(_loc3_);
++                     if(Boolean(_loc4_) && _loc4_.State == CState.ENTRANCE)
+=802
++                        this.deactivateCharacters();
++                        _loc4_.setState(CState.ENTRANCE);
++                        this.activateCharacters();
++                        _loc4_.setState(CState.IDLE);
+=804
+=435
++                  _loc3_++;
+=436
+## private function pauseCheck() : void
+## why: Palette Maker (training, HUD hidden): pause quit combo does not end the session
+@@ 2660 1 09980d0a1346467a 1
++                  if(!(this.GAME.GameMode == Mode.TRAINING && !this.GAME.HudDisplay))
+@@ 2662 2 6e9866fcf5a3654b 6
++                     if(this.GAME.GameMode == Mode.ONLINE_WAITING_ROOM)
+=802
++                        MultiplayerManager.notify("You have disconnected.");
++                        MultiplayerManager.disconnect();
+=804
+=2963
+@@ 2665 1 215cbc087dc4e540 0
+## private function advanceAllStageFrames() : void
+## why: timestop: freeze stage frames during a character time stop
+@@ 2756 1 dc5d6233ceb755fd 1
++         if(Boolean(this.m_fsCutscene) || Boolean(this.m_fsCutins > 0) || Boolean(this.m_timestop))
+## private function PERFORMALL() : void
+## why: timestop gating, profiler timings, null-safe HUD; stage script errors don't kill the match
+@@ 2895 2 626b9022964cb484 0
+@@ 2970 1 6c1976fe92c31dd3 1
++               if(!this.m_event && !this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
+@@ 3046 1 bcd3bdb1d5933825 1
++               if(Boolean(this.GAME.UsingTime) && !this.m_event && !this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
+@@ 3050 2 bae21e2d6c570376 15
+=3062
+=431
++                  this.tickTime();
+=436
++               if(Boolean(this.HUD))
+=431
++                  try
+=434
++                     this.HUD.updateHealthBoxVisibility();
++                     this.HUD.updateCPUDamage();
+=435
++                  catch(hudTickErr:*)
+=434
+=435
+=436
+@@ 3062 1 ad3a88c557fefc1c 2
++               this.telemetryStart("match.stage");
++               if(!this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
+@@ 3066 1 ad3a88c557fefc1c 1
++               if(!this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
+@@ 3070 1 ad3a88c557fefc1c 1
++               if(!this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
+@@ 3074 1 53659c42a5951353 1
++               if(Boolean(this.m_apiInstance && !this.m_fsCutscene) && Boolean(this.m_fsCutins <= 0) && !this.m_timestop)
+@@ 3076 1 c10c4a9594da4377 7
++                  try
+=434
++                     this.m_apiInstance.update();
+=435
++                  catch(stageScriptErr:Error)
+=434
+=435
+@@ 3078 0 da39a3ee5e6b4b0d 2
++               this.telemetryEnd("match.stage");
++               this.telemetryStart("match.chars");
+@@ 3079 0 da39a3ee5e6b4b0d 1
++               this.telemetryEnd("match.chars");
+@@ 3080 0 da39a3ee5e6b4b0d 1
++               this.telemetryStart("match.stage");
+@@ 3081 0 da39a3ee5e6b4b0d 1
++               this.telemetryEnd("match.stage");
+@@ 3086 0 da39a3ee5e6b4b0d 1
++               this.telemetryStart("match.hits");
+@@ 3098 1 ad3a88c557fefc1c 2
++               this.telemetryEnd("match.hits");
++               if(!this.m_fsCutscene && this.m_fsCutins <= 0 && !this.m_timestop)
+## public function getCharacterByMC(_:MovieClip) : Character
+## why: SSF2API.getCharacter: match nested clips/stance and skip null entries
+@@ 3279 1 9f8fb9447b42fbc2 1
++      public function getCharacterByMC(param1:MovieClip) : Character
+@@ 3281 1 dd3d332e728a488b 2
++         var _loc3_:Character = null;
++         if(!param1)
+@@ 3283 1 569a1603ac086e02 7
+=1299
+=369
++         var _loc2_:int = 0;
++         while(_loc2_ < this.CHARACTERS.length)
+=366
++            _loc3_ = this.CHARACTERS[_loc2_];
++            if(!_loc3_)
+@@ 3285 1 da3213a91846a97d 19
++               _loc2_++;
+=424
+=425
+=422
++               if(_loc3_.MC == param1 || _loc3_.Stance != null && _loc3_.Stance == param1)
+=431
++                  return _loc3_;
+=436
+=769
+=431
++                  if(Boolean(_loc3_.MC) && _loc3_.MC.contains(param1))
+=434
++                     return _loc3_;
+=435
+=436
++               catch(err:*)
+=431
+=436
++               _loc2_++;
+## public function spawnAssist(_:Class, _:Number, _:Number, _:int = -1) : AssistTrophy
+## why: mod-resolvable assist class + ASSIST_SPAWN hook
+@@ 3601 1 8facd717019202f6 1
++      public function spawnAssist(param1:Class, param2:Number, param3:Number, param4:int = -1) : AssistTrophy
+@@ 3603 2 c394a12f3608cc9b 9
++         var _loc5_:Object = null;
++         var _loc6_:Class = null;
++         var _loc7_:Enemy = null;
++         _loc6_ = null;
++         _loc7_ = null;
++         _loc5_ = null;
++         _loc6_ = ModHost.resolveClass(param1);
++         _loc7_ = this.spawnEnemy(_loc6_,param2,param3,param4);
++         if(_loc7_ == null)
+@@ 3608 1 fbf63e91581ed5a7 9
++         _loc5_ = {
++            "enemy":_loc7_,
++            "cls":_loc6_,
++            "x":param2,
++            "y":param3,
++            "id":param4
+=358
++         ModHost.runHook(ModHooks.ASSIST_SPAWN,_loc5_);
++         return _loc7_ as AssistTrophy;
+## public function spawnEnemy(_:Class, _:Number, _:Number, _:int = -1) : Enemy
+## why: mod-resolvable enemy class + ENEMY_SPAWN hook
+@@ 3611 1 00ed576dcea70c98 1
++      public function spawnEnemy(param1:Class, param2:Number, param3:Number, param4:int = -1) : Enemy
+@@ 3613 3 be4a4c9aad2ac0a2 18
++         var _loc5_:Object = null;
++         var _loc6_:Class = null;
++         var _loc7_:Enemy = null;
++         _loc6_ = null;
++         _loc7_ = null;
++         _loc5_ = null;
++         _loc6_ = ModHost.resolveClass(param1);
++         _loc7_ = new _loc6_(this,param2,param3,param4);
++         _loc7_.APIInstance.initialize();
++         _loc5_ = {
++            "enemy":_loc7_,
++            "cls":_loc6_,
++            "x":param2,
++            "y":param3,
++            "id":param4
+=358
++         ModHost.runHook(ModHooks.ENEMY_SPAWN,_loc5_);
++         return _loc7_;
+## public function spawnCharacterAPI(_:Class) : Character
+## why: mod-resolvable Character class; API-spawned chars join an active time stop
+@@ 3627 1 7cc21abe72100330 1
++      public function spawnCharacterAPI(param1:Class) : Character
+@@ 3629 3 24d9b353662a89f2 15
++         var _loc2_:Object = null;
++         var _loc3_:CharacterData = null;
++         var _loc4_:PlayerSetting = null;
++         var _loc5_:Character = null;
++         var _loc6_:int = 0;
++         var _loc7_:int = 0;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc5_ = null;
++         _loc6_ = 0;
++         _loc7_ = 0;
++         _loc2_ = null;
++         _loc3_ = new CharacterData();
++         _loc3_.importData({"classAPI":param1});
++         _loc4_ = new PlayerSetting();
+@@ 3633 2 09796e56c4c9cfe2 3
++         var _loc8_:Class = ModHost.resolveClass(Character);
++         _loc5_ = new _loc8_(_loc3_,_loc4_,this);
++         _loc5_.setState(CState.ENTRANCE);
+@@ 3636 3 81d35e9f68aef179 24
++         _loc5_.setState(CState.IDLE);
++         _loc5_.APIInstance.initialize();
++         _loc6_ = this.getHighestTimestopPriority();
++         _loc7_ = int.MAX_VALUE;
++         for each(_loc2_ in this.m_timestopStateTimer)
+=366
++            if(Boolean(_loc2_) && _loc2_.priority <= _loc6_)
+=422
++               if(_loc2_.characterLength <= -1)
+=431
++                  _loc7_ = int(_loc2_.characterLength);
+=588
+=436
++               if(_loc2_.characterLength >= 0)
+=431
++                  _loc7_ = Math.min(_loc7_,_loc2_.characterLength);
+=436
+=424
+=369
++         if(_loc7_ != int.MAX_VALUE)
+=366
++            _loc5_.applyTimeFreeze(_loc7_);
+=369
++         return _loc5_;
+## public function removeCharacter(_:Character) : void
+## why: timestop: release a removed character's time stop
+@@ 3792 0 da39a3ee5e6b4b0d 4
++         if(Boolean(this.m_timestopStateTimer[character.UID]))
+=366
++            this.removeAndUpdateTimeFreeze(character.UID);
+=369
+## public function updateRanks(_:Boolean = false) : void
+## why: ModHost hook MATCH_RESULTS_BUILD so mods can adjust results
+@@ 4055 0 da39a3ee5e6b4b0d 4
++         ModHost.runHook(ModHooks.MATCH_RESULTS_BUILD,{
++            "stageData":this,
++            "force":force
+=1330
+## public function killTicks() : void
+## why: teardown: stop match tick listeners so an ended match can't keep ticking
+@@ 4128 0 da39a3ee5e6b4b0d 35
++      public function killTicks() : void
+=330
+=2444
+=366
++            this.m_gameEnded = true;
+=369
++         catch(e0:*)
+=366
+=369
+=2444
+=366
++            this.HUD = null;
+=369
++         catch(e1:*)
+=366
+=369
+=2444
+=366
++            if(Boolean(this.ROOT))
+=422
++               this.ROOT.removeEventListener(Event.RENDER,this.renderComplete);
++               this.ROOT.removeEventListener(Event.ENTER_FRAME,this.performAllEvents);
+=424
++            if(Boolean(Main.Root) && Boolean(Main.Root.stage))
+=422
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.waitForPlayers);
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.waitForPlayersSuddenDeath);
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.startGame2);
+=424
+=369
++         catch(listenerErr:*)
+=366
+=369
+=731
+=40
+## public function dispose() : void
+## why: teardown: remove tick listeners and drop CustomMatchObj so ended matches don't leak
+@@ 4135 0 da39a3ee5e6b4b0d 17
+=2444
+=366
++            if(Boolean(this.ROOT))
+=422
++               this.ROOT.removeEventListener(Event.RENDER,this.renderComplete);
++               this.ROOT.removeEventListener(Event.ENTER_FRAME,this.performAllEvents);
+=424
++            if(Boolean(Main.Root) && Boolean(Main.Root.stage))
+=422
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.waitForPlayers);
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.waitForPlayersSuddenDeath);
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.startGame2);
+=424
+=369
++         catch(listenerErr:*)
+=366
+=369
+@@ 4150 0 da39a3ee5e6b4b0d 21
+=2444
+=366
++            if(Boolean(this.ROOT))
+=422
++               this.ROOT.removeEventListener(Event.RENDER,this.renderComplete);
++               this.ROOT.removeEventListener(Event.ENTER_FRAME,this.performAllEvents);
+=424
++            if(Boolean(Main.Root) && Boolean(Main.Root.stage))
+=422
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.waitForPlayers);
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.waitForPlayersSuddenDeath);
++               Main.Root.stage.removeEventListener(Event.ENTER_FRAME,this.startGame2);
+=424
+=369
++         catch(listenerErr2:*)
+=366
+=369
++         if(Boolean(this.GAME))
+=366
++            this.GAME.CustomMatchObj = null;
+=369
+## public function get FPSTimer() : Debug_fps
+## why: debug console: create/show the FPS counter on demand
+@@ 4185 0 da39a3ee5e6b4b0d 16
+=731
+=40
++      public function createFPSTimer() : void
+=330
++         if(this.m_fpsTimer == null)
+=366
+=1418
+=369
+=731
+=40
++      public function setFPSTimerVisible(param1:Boolean) : void
+=330
++         if(this.m_fpsTimer != null)
+=366
++            this.m_fpsTimer.setVisible(param1);
+=369
+## public function get AirDodge() : String
+## why: decompile fix: return the real air dodge setting instead of hardcoded 'brawl'
+@@ 4224 1 90f10c440be70e01 1
++         return this.m_airDodge;
+## public function set FSCutscene(_:MovieClip) : void
+## why: null-safe HUD/GAME (menu preview)
+@@ 4433 1 ab9f66d44522935e 1
++         if(Boolean(this.HUD) && Boolean(this.GAME) && Boolean(this.GAME.HudDisplay))
+## public function set Paused(_:Boolean) : void
+## why: Palette Maker: training pause menu only with HUD; MATCH_PAUSE/RESUME hooks; stop rumble on pause
+@@ 4470 0 da39a3ee5e6b4b0d 1
++         var _loc0_:int = 0;
+@@ 4479 1 4bbb9783254cac89 1
++         if(this.GAME.GameMode == Mode.TRAINING && Boolean(this.GAME.HudDisplay))
+@@ 4563 0 da39a3ee5e6b4b0d 1
++               ModHost.runHook(ModHooks.MATCH_RESUME,{"stageData":this});
+@@ 4593 0 da39a3ee5e6b4b0d 9
++               _loc0_ = 1;
++               while(_loc0_ <= 4)
+=431
++                  ModHost.runHook(ModHooks.RUMBLE,{
++                     "kind":"stopPlayer",
++                     "playerId":_loc0_
+=3130
++                  _loc0_++;
+=436
+@@ 4596 0 da39a3ee5e6b4b0d 1
++               ModHost.runHook(ModHooks.MATCH_PAUSE,{"stageData":this});
+## private function applyHostPresentationDoors() : void
+## why: mods can tint stage/BG and overlay another stage's backgrounds
+@@ 4806 0 da39a3ee5e6b4b0d 203
++      private function applyHostPresentationDoors() : void
+=330
++         var tint:Object = null;
++         var bgTint:Object = null;
++         var bgStageId:String = null;
++         tint = null;
++         bgTint = null;
++         bgStageId = null;
++         tint = ModHost.applyPatch(ModPatches.APPLY_STAGE_TINT,[this],function(param1:*):Object
+=366
+=1299
++         }) as Object;
++         bgTint = ModHost.applyPatch(ModPatches.APPLY_STAGE_BG_TINT,[this],function(param1:*):Object
+=366
+=1299
++         }) as Object;
++         bgStageId = ModHost.applyPatch(ModPatches.APPLY_BACKGROUND_STAGE,[this],function(param1:*):String
+=366
++            var _loc2_:* = undefined;
++            _loc2_ = undefined;
++            _loc2_ = ModHost.getSessionFlag("backgroundStage",null);
++            return _loc2_ != null ? String(_loc2_) : null;
++         }) as String;
++         this.applyHostDisplayTint(this.StageRef,tint);
++         this.applyHostDisplayTint(this.StageParentRef,tint);
++         this.applyHostDisplayTint(this.StageBG,bgTint);
++         if(Boolean(bgStageId))
+=366
+=1725
+=422
++               ResourceManager.queueResources([bgStageId]);
+=424
++            catch(err:*)
+=422
+=424
++            this.scheduleBackgroundStageOverlay(bgStageId);
+=369
+=731
+=40
++      private function scheduleBackgroundStageOverlay(param1:String) : void
+=330
++         var self:StageData = null;
++         var tries:int = 0;
++         var onFrame:Function = null;
++         var bgStageId:String = null;
++         bgStageId = null;
++         self = null;
++         tries = 0;
++         onFrame = null;
++         bgStageId = param1;
++         self = null;
++         tries = 0;
++         onFrame = null;
++         if(this.tryApplyBackgroundStageOverlay(bgStageId))
+=366
+=1014
+=369
++         self = this;
++         onFrame = function(param1:Event):void
+=366
++            ++tries;
++            if(Boolean(self.tryApplyBackgroundStageOverlay(bgStageId)) || tries > 180)
+=422
+=769
+=431
++                  if(Main.Root)
+=434
++                     Main.Root.removeEventListener(Event.ENTER_FRAME,onFrame);
+=435
+=436
++               catch(rmErr:*)
+=431
+=436
++               if(tries > 180)
+=431
+=436
+=424
+=358
+=2444
+=366
++            if(Main.Root)
+=422
++               Main.Root.addEventListener(Event.ENTER_FRAME,onFrame,false,0,true);
+=424
+=369
++         catch(addErr:*)
+=366
+=369
+=731
+=40
++      private function tryApplyBackgroundStageOverlay(param1:String) : Boolean
+=330
++         var bgStageRes:Resource = null;
++         var bgStageId:String = null;
++         bgStageId = null;
++         bgStageRes = null;
++         bgStageId = param1;
++         bgStageRes = null;
++         if(!bgStageId || !this.CAM)
+=366
++            return true;
+=369
+=2444
+=366
++            bgStageRes = ResourceManager.getResourceByID(bgStageId);
+=369
++         catch(resErr:*)
+=366
++            bgStageRes = null;
+=369
++         if(!bgStageRes || !bgStageRes.Loaded)
+=366
+=2210
+=369
++         this.applyBackgroundStageOverlay(bgStageId);
+=2277
+=731
+=40
++      private function applyBackgroundStageOverlay(param1:String) : void
+=330
++         var _loc2_:Resource = null;
++         var _loc3_:Object = null;
++         var _loc4_:Array = null;
++         var _loc5_:Vector.<VcamBGSettings> = null;
++         var _loc6_:int = 0;
++         var _loc7_:String = null;
++         _loc7_ = null;
++         _loc2_ = null;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc5_ = null;
++         _loc6_ = 0;
++         _loc7_ = param1;
++         _loc2_ = null;
++         _loc3_ = null;
++         _loc4_ = null;
++         _loc5_ = null;
++         _loc6_ = 0;
++         if(!_loc7_ || !this.CAM)
+=366
+=1014
+=369
+=2444
+=366
++            _loc2_ = ResourceManager.getResourceByID(_loc7_);
++            if(!_loc2_ || !_loc2_.getProp("camera"))
+=422
+=1631
+=424
++            _loc3_ = _loc2_.getProp("camera");
++            if(!_loc3_ || !_loc3_.backgrounds)
+=422
+=1631
+=424
++            _loc4_ = _loc3_.backgrounds as Array;
++            if(!_loc4_ || _loc4_.length < 1)
+=422
+=1631
+=424
++            _loc5_ = new Vector.<VcamBGSettings>();
++            _loc6_ = 0;
++            while(_loc6_ < _loc4_.length)
+=422
++               _loc5_.push(new VcamBGSettings(_loc4_[_loc6_].linkage_id,_loc4_[_loc6_]));
++               _loc6_++;
+=424
++            this.CAM.overlayBG(_loc5_);
+=369
++         catch(err:*)
+=366
+=369
+=731
+=40
++      private function applyHostDisplayTint(param1:MovieClip, param2:Object) : void
+=330
++         var _loc3_:Object = null;
++         var _loc4_:MovieClip = null;
++         var _loc5_:Object = null;
++         _loc4_ = null;
++         _loc5_ = null;
++         _loc3_ = null;
++         _loc4_ = param1;
++         _loc5_ = param2;
++         _loc3_ = null;
++         if(!_loc4_ || !_loc5_)
+=366
+=1014
+=369
++         _loc3_ = {
++            "hue":Number(_loc5_.hue || 0),
++            "saturation":(_loc5_.saturation != null ? Number(_loc5_.saturation) : (_loc5_.sat != null ? (Number(_loc5_.sat) - 1) * 100 : 0)),
++            "brightness":Number(_loc5_.brightness || 0),
++            "contrast":Number(_loc5_.contrast || 0)
+=358
+=2444
+=366
++            Utils.setColorFilter(_loc4_,_loc3_);
+=369
++         catch(err:*)
+=366
+=369
+=731
+=40
+## public function playSpecificSound(_:String, _:Number = 1) : int
+## why: PLAY_SPECIFIC_SOUND patch point for mods; split stock body
+@@ 4926 1 60393f762ae3cf92 6
++         return int(ModHost.applyPatch(ModPatches.PLAY_SPECIFIC_SOUND,[sound,scale],this.playSpecificSoundStock));
+=731
+=40
++      private function playSpecificSoundStock(param1:String, param2:Number = 1) : int
+=330
++         if(!this.m_isMenuPreview && Boolean(this.m_soundMemory.containsKey(param1)))
+## private function playSpecificSoundStock(_:String, _:Number = 1) : int
+## why: menu preview: don't dedupe sounds so previews replay them
+@@ 4930 2 1e71d596d3cbf94c 5
++         if(!this.m_isMenuPreview)
+=366
++            this.m_soundMemory.setKey(param1,true);
+=369
++         return this.SOUNDQUEUE.playSoundEffect(param1,param2);
+## public function playSpecificVoice(_:String, _:Number = 1) : int
+## why: menu preview: don't dedupe voices so previews replay them
+@@ 4936 1 60393f762ae3cf92 1
++         if(!this.m_isMenuPreview && Boolean(this.m_soundMemory.containsKey(sound)))
+@@ 4940 1 0792352d6165be2b 4
++         if(!this.m_isMenuPreview)
+=366
++            this.m_soundMemory.setKey(sound,true);
+=369
+## public function attachEffect(_:*, _:Object = null) : MovieClip
+## why: never return null when the effect is missing (menu preview, mod effects)
+@@ 4982 0 da39a3ee5e6b4b0d 1
++         rotation = 0;
+@@ 5012 1 5858641b912eacd5 1
++         return tmpMC || new MovieClip();
+## public function attachEffectOverlay(_:*, _:Object = null) : MovieClip
+## why: never return null when the effect is missing (menu preview, mod effects)
+@@ 5021 0 da39a3ee5e6b4b0d 1
++         rotation = 0;
+@@ 5051 1 5858641b912eacd5 1
++         return tmpMC || new MovieClip();
+## private function nextFrameAllEffects() : void
+## why: timestop: freeze frozen chars' effects; advanceEffectFrame patch point; null-safe removal
+@@ 5218 1 a2556ab47f09efa6 2
++         var _loc2_:* = undefined;
++         var _loc1_:* = 0;
+@@ 5221 2 acd0ecc7847c8b17 2
++            _loc1_ = 0;
++            while(_loc1_ < this.m_effectList.length)
+@@ 5224 1 ea48f363cb226b4d 1
++               if(Boolean(this.m_effectList[_loc1_]) && (Boolean(!this.m_effectList[_loc1_].uid) || Boolean(this.getCharacterByUID(this.m_effectList[_loc1_].uid) && !this.getCharacterByUID(this.m_effectList[_loc1_].uid).IsFrozenInTime)))
+@@ 5226 3 18ae1e9c10fafbc9 9
++                  if(ModHost.hasPatch("advanceEffectFrame"))
++                   {
++                      ModHost.applyPatch("advanceEffectFrame",[this.m_effectList[_loc1_]],Utils.advanceEffectFrame);
++                   }
++                   else
++                   {
++                      Utils.advanceEffectFrame(this.m_effectList[_loc1_]);
++                   }
++                  if(Boolean(this.m_effectList[_loc1_]) && Boolean(this.m_effectList[_loc1_].parent))
+@@ 5230 1 0a5e97e9218b2abf 6
++                     Utils.recursiveMovieClipPlay(this.m_effectList[_loc1_],true);
+=435
++                  if(!this.m_effectList[_loc1_] || !this.m_effectList[_loc1_].parent)
+=434
++                     _loc2_ = _loc1_--;
++                     this.m_effectList[_loc2_] = null;
+@@ 5233 0 da39a3ee5e6b4b0d 1
++               _loc1_++;
+@@ 5234 1 c42bcfeefdf7752c 2
++            _loc1_ = 0;
++            while(_loc1_ < this.m_effectBGList.length)
+@@ 5236 1 27b0341d75734f29 1
++               if(Boolean(this.m_effectBGList[_loc1_]) && (Boolean(!this.m_effectBGList[_loc1_].uid) || Boolean(this.getCharacterByUID(this.m_effectBGList[_loc1_].uid) && !this.getCharacterByUID(this.m_effectBGList[_loc1_].uid).IsFrozenInTime)))
+@@ 5238 3 0c8eddb9f6c0eb65 9
++                  if(ModHost.hasPatch("advanceEffectFrame"))
++                   {
++                      ModHost.applyPatch("advanceEffectFrame",[this.m_effectBGList[_loc1_]],Utils.advanceEffectFrame);
++                   }
++                   else
++                   {
++                      Utils.advanceEffectFrame(this.m_effectBGList[_loc1_]);
++                   }
++                  if(Boolean(this.m_effectBGList[_loc1_]) && Boolean(this.m_effectBGList[_loc1_].parent))
+@@ 5242 1 9c424dbd4c6f0412 6
++                     Utils.recursiveMovieClipPlay(this.m_effectBGList[_loc1_],true);
+=435
++                  if(!this.m_effectBGList[_loc1_] || !this.m_effectBGList[_loc1_].parent)
+=434
++                     _loc2_ = _loc1_--;
++                     this.m_effectBGList[_loc2_] = null;
+@@ 5245 0 da39a3ee5e6b4b0d 1
++               _loc1_++;
+## public function get InTimeStop() : Boolean
+## why: timestop API: priority/duration tracking for character time-stop moves
+@@ 5253 0 da39a3ee5e6b4b0d 147
+=40
++      public function get InTimeStop() : Boolean
+=330
++         return this.m_timestop;
+=731
+=40
++      public function getHighestTimestopPriority() : int
+=330
++         var _loc1_:int = 0;
++         var _loc2_:Object = null;
++         _loc1_ = 0;
++         _loc2_ = null;
++         _loc1_ = int.MAX_VALUE;
++         for each(_loc2_ in this.m_timestopStateTimer)
+=366
++            if(Boolean(_loc2_))
+=422
++               _loc1_ = Math.min(_loc1_,_loc2_.priority);
+=424
+=369
++         return _loc1_;
+=731
+=40
++      public function addCharacterTimeStopper(param1:int, param2:int, param3:int, param4:int, param5:Object) : void
+=330
++         this.m_timestopStateTimer[param1] = {
++            "buffer":param3,
++            "characterLength":param2,
++            "priority":param4,
++            "bypassOptions":param5
+=358
+=731
+=40
++      public function getCharacterTimeStopperBypassOptions(param1:int) : Object
+=330
++         if(!this.m_timestopStateTimer[param1])
+=366
+=1299
+=369
++         return this.m_timestopStateTimer[param1].bypassOptions;
+=731
+=40
++      public function removeCharacterTimeStopper(param1:int) : void
+=330
++         this.removeAndUpdateTimeFreeze(param1);
+=731
+=40
++      public function tickTime() : void
+=330
++         var _loc1_:Object = null;
++         var _loc2_:int = 0;
++         var _loc3_:String = null;
++         _loc1_ = null;
++         _loc2_ = 0;
++         _loc3_ = null;
++         _loc2_ = this.getHighestTimestopPriority();
++         this.m_timestop = _loc2_ != int.MAX_VALUE;
++         for(_loc3_ in this.m_timestopStateTimer)
+=366
++            _loc1_ = this.m_timestopStateTimer[_loc3_];
++            if(Boolean(_loc1_))
+=422
++               if(_loc1_.buffer >= 0)
+=431
++                  --_loc1_.buffer;
++                  if(_loc1_.buffer < 0)
+=434
++                     if(_loc1_.priority <= _loc2_)
+=802
++                        this.triggerTimeFreezeOnOther(parseInt(_loc3_));
+=804
++                     else if(Boolean(this.getCharacterByUID(parseInt(_loc3_))))
+=802
++                        this.getCharacterByUID(parseInt(_loc3_)).applyTimeFreeze(-1);
+=804
+=435
+=436
++               else if(_loc1_.priority <= _loc2_)
+=431
++                  if(_loc1_.characterLength >= 0)
+=434
++                     --_loc1_.characterLength;
++                     if(_loc1_.characterLength < 0)
+=802
++                        this.removeAndUpdateTimeFreeze(parseInt(_loc3_));
+=804
+=435
+=436
+=424
+=369
+=731
+=40
++      private function removeAndUpdateTimeFreeze(param1:int) : void
+=330
++         var _loc2_:Character = null;
++         var _loc3_:int = 0;
++         var _loc4_:Object = null;
++         var _loc5_:String = null;
++         _loc2_ = null;
++         _loc3_ = 0;
++         _loc4_ = null;
++         _loc5_ = null;
++         this.m_timestopStateTimer[param1] = null;
++         for each(_loc2_ in this.CHARACTERS)
+=366
++            _loc2_.removeTimeFreeze();
+=369
++         _loc3_ = this.getHighestTimestopPriority();
++         this.m_timestop = _loc3_ != int.MAX_VALUE;
++         for(_loc5_ in this.m_timestopStateTimer)
+=366
++            _loc4_ = this.m_timestopStateTimer[_loc5_];
++            if(Boolean(_loc4_))
+=422
++               if(_loc4_.buffer < 0 && _loc4_.priority <= _loc3_)
+=431
++                  this.triggerTimeFreezeOnOther(parseInt(_loc5_));
+=436
+=424
+=369
+=731
+=40
++      private function triggerTimeFreezeOnOther(param1:int) : void
+=330
++         var _loc2_:Boolean = false;
++         var _loc3_:Boolean = false;
++         var _loc4_:Character = null;
++         _loc2_ = false;
++         _loc3_ = false;
++         _loc4_ = null;
++         for each(_loc4_ in this.CHARACTERS)
+=366
++            if(_loc4_.UID != param1)
+=422
++               _loc2_ = !this.m_timestopStateTimer[_loc4_.UID];
++               _loc3_ = Boolean(this.m_timestopStateTimer[_loc4_.UID]) && this.m_timestopStateTimer[_loc4_.UID].priority > this.m_timestopStateTimer[param1].priority;
++               if(_loc2_ || _loc3_)
+=431
++                  _loc4_.applyTimeFreeze(this.m_timestopStateTimer[param1].characterLength);
+=436
+=1391
+=431
++                  _loc4_.removeTimeFreeze();
+=436
+=424
+=369
+=731

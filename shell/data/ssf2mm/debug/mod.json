@@ -1,0 +1,9 @@
+{
+	"id": "debug",
+	"name": "Debug Tools",
+	"description": "Full debug console and the hitbox test menu (debug_hitbox.menu).",
+	"version": "2.0.0",
+	"lifetime": "boot",
+	"entryClass": "DebugMod",
+	"enabledByDefault": true
+}

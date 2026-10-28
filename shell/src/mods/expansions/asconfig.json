@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "source-path": ["src", "../_shared/src"],
+    "load-externs": [
+      "../../engine/resources/engine2-link-report.xml",
+      "../../engine/resources/engine1-link-report.xml"
+    ],
+    "external-library-path": [
+      "../../engine/resources/engine1-code.swc",
+      "../../engine/resources/SSF2.swc"
+    ],
+    "output": "../../../data/ssf2mm/expansions/mod.swf",
+    "target-player": "32.0",
+    "swf-version": 44,
+    "optimize": true,
+    "debug": false,
+    "warnings": false,
+    "strict": false
+  },
+  "mainClass": "ExpansionsMod",
+  "config": "air"
+}

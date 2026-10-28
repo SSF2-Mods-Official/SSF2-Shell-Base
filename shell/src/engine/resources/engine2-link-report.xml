@@ -1,0 +1,3401 @@
+<report>
+  <scripts>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\UnlockController.as" mod="1791954644412" size="4072" optimizedsize="3586">
+      <def id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Unlockable" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\SaveDataMigrations.as" mod="1791954644447" size="7536" optimizedsize="7282">
+      <def id="com.mcleodgaming.ssf2.util:SaveDataMigrations" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <dep id="flash.display:StageQuality" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\OnlineCharacterMenu.as" mod="1791954272375" size="3893" optimizedsize="3615">
+      <def id="com.mcleodgaming.ssf2.menus:OnlineCharacterMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\P2PRTMFP.as" mod="1791954644407" size="3326" optimizedsize="3229">
+      <def id="com.mcleodgaming.mgn.net:P2PRTMFP" />
+      <pre id="flash.events:EventDispatcher" />
+      <pre id="com.mcleodgaming.mgn.net:IP2PSocket" />
+      <dep id="flash.net:NetGroup" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.net:IWebSocket" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="Error" />
+      <dep id="flash.utils:Timer" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="Math" />
+      <dep id="flash.net:NetConnection" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="flash.events:NetStatusEvent" />
+      <dep id="flash.net:GroupSpecifier" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\TitleMenu.as" mod="1791954535210" size="5016" optimizedsize="4687">
+      <def id="com.mcleodgaming.ssf2.menus:TitleMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.modapi:ModAPI" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\HitBoxProcessor.as" mod="1791954272312" size="679" optimizedsize="625">
+      <def id="com.mcleodgaming.ssf2.engine:HitBoxProcessor" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxProcessorNode" />
+      <dep id="__AS3__.vec:Vector" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\OnlineMenu.as" mod="1791954535188" size="18233" optimizedsize="17313">
+      <def id="com.mcleodgaming.ssf2.menus:OnlineMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="fl.controls:ScrollPolicy" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="flash.text:TextFormatAlign" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="JSON" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.util:CountryRegionData" />
+      <dep id="flash.text:TextField" />
+      <dep id="fl.controls:DataGrid" />
+      <dep id="flash.text:TextFieldType" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="fl.controls:ComboBox" />
+      <dep id="flash.utils:Timer" />
+      <dep id="Error" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="flash.events:FocusEvent" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Key" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemSettings" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="flash.text:TextFormat" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\CrystalSmashMode.as" mod="1791954272397" size="1610" optimizedsize="1548">
+      <def id="com.mcleodgaming.ssf2.modes:CrystalSmashMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\Menu.as" mod="1791954272368" size="5661" optimizedsize="5398">
+      <def id="com.mcleodgaming.ssf2.menus:Menu" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\Main.as" mod="1791954535083" size="12668" optimizedsize="12028">
+      <def id="com.mcleodgaming.ssf2:Main" />
+      <pre id="flash.display:MovieClip" />
+      <dep id="flash.net:getClassByAlias" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="com.mcleodgaming.ssf2.menus:OnlinePromptMenu" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.input:GamepadManager" />
+      <dep id="flash.net:LocalConnection" />
+      <dep id="flash.utils:setTimeout" />
+      <dep id="flash.net:navigateToURL" />
+      <dep id="com.mcleodgaming.ssf2.util:MouseTracker" />
+      <dep id="flash.display:InteractiveObject" />
+      <dep id="com.jotard.ane:DiscordEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.mgn.net:MGNClient" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="flash.ui:ContextMenu" />
+      <dep id="flash.display:StageDisplayState" />
+      <dep id="flash.utils:Timer" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="flash.display:StageScaleMode" />
+      <dep id="flash.display:NativeWindowDisplayState" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="flash.net:registerClassAlias" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="JSON" />
+      <dep id="menu_preloader" />
+      <dep id="flash.text:TextField" />
+      <dep id="flash.events:ProgressEvent" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.jotard.ane:DiscordGameSDK" />
+      <dep id="flash.external:ExternalInterface" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="flash.net:URLRequest" />
+      <dep id="Error" />
+      <dep id="mx.utils:StringUtil" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Date" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveDataMigrations" />
+      <dep id="com.mcleodgaming.ssf2.util:Key" />
+      <dep id="flash.events:NativeWindowDisplayStateEvent" />
+      <dep id="flash.system:Security" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.items:ItemsListData" />
+      <dep id="com.mcleodgaming.ssf2.enums:SpecialMode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\TargetTestTarget.as" mod="1791954272329" size="5842" optimizedsize="5667">
+      <def id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.platforms:PlatformMovement" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Target" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.enums:TState" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\IState.as" mod="1791954272332" size="542" optimizedsize="504">
+      <def id="com.mcleodgaming.ssf2.enums:IState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\VaultMenu.as" mod="1791954272393" size="17063" optimizedsize="16237">
+      <def id="com.mcleodgaming.ssf2.menus:VaultMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:Intro2Menu" />
+      <dep id="AS3" />
+      <dep id="flash.geom:ColorTransform" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="flash.ui:Keyboard" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="com.mcleodgaming.ssf2.controllers:EventButton" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.engine:ReplayData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="flash.utils:Timer" />
+      <dep id="Error" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.menus:IntroMenu" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\FastCollisions.as" mod="1791954272414" size="1344" optimizedsize="1230">
+      <def id="com.mcleodgaming.ssf2.util:FastCollisions" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2CustomMenu.as" mod="1791954272264" size="691" optimizedsize="661">
+      <def id="com.mcleodgaming.ssf2.api:SSF2CustomMenu" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.menus:CustomAPIMenu" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\PostUnlockMenu.as" mod="1791954272380" size="1987" optimizedsize="1855">
+      <def id="com.mcleodgaming.ssf2.menus:PostUnlockMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\Game.as" mod="1792042745328" size="4845" optimizedsize="4724">
+      <def id="com.mcleodgaming.ssf2.controllers:Game" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.engine:CustomMatch" />
+      <dep id="com.mcleodgaming.ssf2.engine:ReplayData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameSettings" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemSettings" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\CharacterData.as" mod="1791954644423" size="12665" optimizedsize="12803">
+      <def id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackData" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\ArenaModeMenu.as" mod="1791954272345" size="3309" optimizedsize="3047">
+      <def id="com.mcleodgaming.ssf2.menus:ArenaModeMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\IWebSocket.as" mod="1791954644404" size="425" optimizedsize="407">
+      <def id="com.mcleodgaming.mgn.net:IWebSocket" />
+      <pre id="flash.events:IEventDispatcher" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.utils:ByteArray" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\GameController.as" mod="1791954534119" size="7475" optimizedsize="6932">
+      <def id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.menus:HudMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="flash.system:System" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxManager" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.menus:ConstantDebuggerMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:Resource" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.items:ItemsListData" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamSettings" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\MatchResultsMenu.as" mod="1791954535158" size="13491" optimizedsize="12502">
+      <def id="com.mcleodgaming.ssf2.menus:MatchResultsMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2API" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.modapi:ModAPI" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.media:SoundChannel" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modhost\ModHooks.as" mod="1792078817119" size="4152" optimizedsize="4133">
+      <def id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\Version.as" mod="1791954272433" size="1205" optimizedsize="1130">
+      <def id="com.mcleodgaming.ssf2:Version" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.desktop:NativeApplication" />
+      <dep id="XML" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modhost\HookGate.as" mod="1791941582633" size="353" optimizedsize="330">
+      <def id="com.mcleodgaming.ssf2.modhost:HookGate" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\GroupMenu.as" mod="1791954272360" size="5591" optimizedsize="5195">
+      <def id="com.mcleodgaming.ssf2.menus:GroupMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\DataFrameGroup.as" mod="1791954533891" size="825" optimizedsize="793">
+      <def id="com.mcleodgaming.mgn.net:DataFrameGroup" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.net:DataFrame" />
+      <dep id="__AS3__.vec:Vector" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\HandButton.as" mod="1791954272282" size="1153" optimizedsize="1096">
+      <def id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.events:MouseEvent" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\CreditsMenu.as" mod="1791954272351" size="1729" optimizedsize="1615">
+      <def id="com.mcleodgaming.ssf2.menus:CreditsMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\MultiManMode.as" mod="1791954272400" size="1641" optimizedsize="1559">
+      <def id="com.mcleodgaming.ssf2.modes:MultiManMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.menus:MultiManMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\TargetTestMode.as" mod="1791954272402" size="1580" optimizedsize="1520">
+      <def id="com.mcleodgaming.ssf2.modes:TargetTestMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\CharacterSelectMenu.as" mod="1792101936888" size="29540" optimizedsize="28822">
+      <def id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.text:TextField" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Chip" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.util:DisplayObjectTable" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="flash.utils:Timer" />
+      <dep id="Error" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Key" />
+      <dep id="com.mcleodgaming.ssf2.util:CharacterAlts" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\TState.as" mod="1791954272336" size="513" optimizedsize="478">
+      <def id="com.mcleodgaming.ssf2.enums:TState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\Beacon.as" mod="1791954272304" size="1415" optimizedsize="1366">
+      <def id="com.mcleodgaming.ssf2.engine:Beacon" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Beacon" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="flash.text:TextField" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Base64.as" mod="1791954272407" size="1353" optimizedsize="1322">
+      <def id="com.mcleodgaming.ssf2.util:Base64" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="flash.utils:ByteArray" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\MenuController.as" mod="1791954272287" size="14343" optimizedsize="13885">
+      <def id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.menus:MultiManMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:Intro2Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.menus:ControlsMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:StageSwitchMenu" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.menus:VaultMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:Intro3Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MultiManCharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:OnlinePromptMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:DebugConsole" />
+      <dep id="com.mcleodgaming.ssf2.menus:GamepadMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:PostUnlockMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:VSMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:EventMatchCharacterMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:AllStarModeMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:OnlineCharacterMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:TrainingMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:HomeRunContestMenu" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.menus:MatchResultsMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:ArenaModeMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:GroupMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:TargetTestMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:PleaseWaitMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:CrystalSmashCharacterMenu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.menus:StageSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:NewsMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:OnlineGroupMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:OptionsMenu" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="JSON" />
+      <dep id="com.mcleodgaming.ssf2.menus:BlockedMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:PreUnlockMenu" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.menus:MainMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:ArenaCharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:SoundMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.menus:ItemSwitchMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:RulesMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:StadiumMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:QualityMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:TitleMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:DataMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:LoadingMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:DisclaimerMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:NewsArticleMenu" />
+      <dep id="Error" />
+      <dep id="Date" />
+      <dep id="com.mcleodgaming.ssf2.menus:RaceToTheFinishCharacterMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:EventMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:CreditsMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:IntroMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MuteMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:ClassicModeMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:SoloMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:CustomAPIMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:OnlineMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:SpecialModeMenu" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.menus:DevWarningMenu" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\Mode.as" mod="1791941580370" size="698" optimizedsize="680">
+      <def id="com.mcleodgaming.ssf2.enums:Mode" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\StadiumMenu.as" mod="1791954272386" size="5453" optimizedsize="4911">
+      <def id="com.mcleodgaming.ssf2.menus:StadiumMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\ItemSwitchHand.as" mod="1791954272285" size="1085" optimizedsize="1022">
+      <def id="com.mcleodgaming.ssf2.controllers:ItemSwitchHand" />
+      <pre id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemButton" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\events\GamepadEvent.as" mod="1791954272338" size="528" optimizedsize="500">
+      <def id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <pre id="flash.events:Event" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\AllStarMode.as" mod="1791954272394" size="1240" optimizedsize="1188">
+      <def id="com.mcleodgaming.ssf2.modes:AllStarMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\DataSettings.as" mod="1791954535278" size="441" optimizedsize="417">
+      <def id="com.mcleodgaming.ssf2.util:DataSettings" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\EventMode.as" mod="1791954272398" size="3619" optimizedsize="3424">
+      <def id="com.mcleodgaming.ssf2.modes:EventMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Unlockable" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2GameObject.as" mod="1791954272267" size="9092" optimizedsize="9180">
+      <def id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.platforms:MovingPlatform" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\CPUState.as" mod="1791954272330" size="941" optimizedsize="871">
+      <def id="com.mcleodgaming.ssf2.enums:CPUState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\Unlockable.as" mod="1791954272296" size="2004" optimizedsize="1970">
+      <def id="com.mcleodgaming.ssf2.controllers:Unlockable" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\StageSwitchHand.as" mod="1791954272295" size="889" optimizedsize="836">
+      <def id="com.mcleodgaming.ssf2.controllers:StageSwitchHand" />
+      <pre id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.controllers:StageSwitchButton" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\TrainingMenu.as" mod="1791954272392" size="1932" optimizedsize="1811">
+      <def id="com.mcleodgaming.ssf2.menus:TrainingMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\RaceToTheFinishMode.as" mod="1791954272401" size="1310" optimizedsize="1252">
+      <def id="com.mcleodgaming.ssf2.modes:RaceToTheFinishMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Dictionary.as" mod="1791954535287" size="1227" optimizedsize="1177">
+      <def id="com.mcleodgaming.ssf2.util:Dictionary" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\AttackDamage.as" mod="1791954272300" size="11302" optimizedsize="11456">
+      <def id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackState" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\SaveData.as" mod="1791954535369" size="18084" optimizedsize="17845">
+      <def id="com.mcleodgaming.ssf2.util:SaveData" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="flash.net:SharedObject" />
+      <dep id="com.mcleodgaming.ssf2.util:DataSettings" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="flash.filesystem:File" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="JSON" />
+      <dep id="Math" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="Date" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveDataMigrations" />
+      <dep id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.events:NetStatusEvent" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="flash.filesystem:FileMode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\GameLog.as" mod="1791941583075" size="950" optimizedsize="901">
+      <def id="com.mcleodgaming.ssf2.util:GameLog" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.filesystem:File" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="flash.filesystem:FileMode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\ArenaCharacterSelectMenu.as" mod="1791954272345" size="3416" optimizedsize="3167">
+      <def id="com.mcleodgaming.ssf2.menus:ArenaCharacterSelectMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.modes:ArenaMode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.menus:ArenaModeMenu" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\DevWarningMenu.as" mod="1791954272355" size="1434" optimizedsize="1342">
+      <def id="com.mcleodgaming.ssf2.menus:DevWarningMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\HitBoxSprite.as" mod="1792078796119" size="4815" optimizedsize="4707">
+      <def id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:FastCollisions" />
+      <dep id="flash.geom:Matrix" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <dep id="Math" />
+      <dep id="flash.geom:Rectangle" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\Collision.as" mod="1791941578007" size="515" optimizedsize="494">
+      <def id="com.mcleodgaming.ssf2.engine:Collision" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Beacon.as" mod="1791954272260" size="498" optimizedsize="472">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Beacon" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:Beacon" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\PlayerSetting.as" mod="1792042745328" size="1546" optimizedsize="1481">
+      <def id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\PlayerConnectionInfo.as" mod="1791954272254" size="640" optimizedsize="601">
+      <def id="com.mcleodgaming.mgn.net:PlayerConnectionInfo" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\TargetTestMenu.as" mod="1791954272390" size="6052" optimizedsize="5614">
+      <def id="com.mcleodgaming.ssf2.menus:TargetTestMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.modes:TargetTestMode" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Chip" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\ConstantDebuggerMenu.as" mod="1791954644430" size="4045" optimizedsize="3618">
+      <def id="com.mcleodgaming.ssf2.menus:ConstantDebuggerMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.adobe.utils:StringUtil" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\GamepadMenu.as" mod="1791954272359" size="9218" optimizedsize="8981">
+      <def id="com.mcleodgaming.ssf2.menus:GamepadMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="fl.controls:ComboBox" />
+      <dep id="fl.controls:Slider" />
+      <dep id="fl.events:SliderEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.text:TextField" />
+      <dep id="com.mcleodgaming.ssf2.input:GamepadManager" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\StageSelectMenu.as" mod="1791954272387" size="7701" optimizedsize="7416">
+      <def id="com.mcleodgaming.ssf2.menus:StageSelectMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.util:DisplayObjectTable" />
+      <dep id="com.mcleodgaming.ssf2.controllers:StageButton" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.controllers:StageSelectHand" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="flash.text:TextField" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="flash.text:TextFormat" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\AI.as" mod="1792078796112" size="41379" optimizedsize="41495">
+      <def id="com.mcleodgaming.ssf2.engine:AI" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.enums:CPUState" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.enums:CState" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.util:ControlsObject" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.engine:Beacon" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <dep id="com.mcleodgaming.ssf2.enums:IState" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.engine:Target" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\ControlsButton.as" mod="1791954272275" size="4704" optimizedsize="4393">
+      <def id="com.mcleodgaming.ssf2.controllers:ControlsButton" />
+      <pre id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\CrystalSmashCharacterMenu.as" mod="1791954272352" size="3863" optimizedsize="3579">
+      <def id="com.mcleodgaming.ssf2.menus:CrystalSmashCharacterMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.modes:CrystalSmashMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\QualitySelectHand.as" mod="1791954272291" size="1784" optimizedsize="1666">
+      <def id="com.mcleodgaming.ssf2.controllers:QualitySelectHand" />
+      <pre id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="fl.controls:ComboBox" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\CustomAPIMenu.as" mod="1791954272352" size="2099" optimizedsize="2017">
+      <def id="com.mcleodgaming.ssf2.menus:CustomAPIMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2CustomMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\CFreeState.as" mod="1791941579664" size="671" optimizedsize="646">
+      <def id="com.mcleodgaming.ssf2.enums:CFreeState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Character.as" mod="1791954272261" size="9632" optimizedsize="9680">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Character" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.enums:CState" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2API" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\MultiManMenu.as" mod="1791954272372" size="4538" optimizedsize="4086">
+      <def id="com.mcleodgaming.ssf2.menus:MultiManMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\ArenaMode.as" mod="1791954272395" size="353" optimizedsize="328">
+      <def id="com.mcleodgaming.ssf2.modes:ArenaMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\CountryRegionData.as" mod="1791954272410" size="889" optimizedsize="838">
+      <def id="com.mcleodgaming.ssf2.util:CountryRegionData" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:CountryRegionData_countryRegionDataJSON" />
+      <dep id="AS3" />
+      <dep id="JSON" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2GameTimer.as" mod="1791954272268" size="821" optimizedsize="789">
+      <def id="com.mcleodgaming.ssf2.api:SSF2GameTimer" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="com.mcleodgaming.ssf2.engine:GameTimer" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\ReplayData.as" mod="1791954272320" size="2808" optimizedsize="2702">
+      <def id="com.mcleodgaming.ssf2.engine:ReplayData" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="JSON" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="Date" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\platforms\MovingPlatform.as" mod="1791954272406" size="7062" optimizedsize="6745">
+      <def id="com.mcleodgaming.ssf2.platforms:MovingPlatform" />
+      <pre id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Platform" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.platforms:PlatformMovement" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\NewsMenu.as" mod="1791954272374" size="5020" optimizedsize="4758">
+      <def id="com.mcleodgaming.ssf2.menus:NewsMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:NewsButton" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.controllers:NewsMenuHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\AttackData.as" mod="1791954644414" size="3292" optimizedsize="3212">
+      <def id="com.mcleodgaming.ssf2.engine:AttackData" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <dep id="com.mcleodgaming.ssf2.util:Dictionary" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\TelemetryLookup.as" mod="1791941579660" size="652" optimizedsize="625">
+      <def id="com.mcleodgaming.ssf2.engine:TelemetryLookup" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\ProjectileAttack.as" mod="1791954534825" size="7250" optimizedsize="7387">
+      <def id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\CustomMode.as" mod="1791954272398" size="2551" optimizedsize="2432">
+      <def id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.engine:CustomMatch" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.menus:VaultMenu" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\StageSwitchButton.as" mod="1791954272295" size="1088" optimizedsize="1036">
+      <def id="com.mcleodgaming.ssf2.controllers:StageSwitchButton" />
+      <pre id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:MouseEvent" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\PreUnlockMenu.as" mod="1791954272381" size="2563" optimizedsize="2361">
+      <def id="com.mcleodgaming.ssf2.menus:PreUnlockMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\ResourceManager_manifestJSON.as" mod="1791941875294" size="383" optimizedsize="336">
+      <def id="com.mcleodgaming.ssf2.util:ResourceManager_manifestJSON" />
+      <pre id="mx.core:ByteArrayAsset" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\VcamSettings.as" mod="1791954272431" size="1287" optimizedsize="1223">
+      <def id="com.mcleodgaming.ssf2.util:VcamSettings" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamBGSettings" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\events\EventManager.as" mod="1791954272337" size="1190" optimizedsize="1123">
+      <def id="com.mcleodgaming.ssf2.events:EventManager" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.events:EventDispatcher" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\SwfRelease.as" mod="1791941583715" size="1269" optimizedsize="1218">
+      <def id="com.mcleodgaming.ssf2.util:SwfRelease" />
+      <pre id="Object" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="flash.display:DisplayObjectContainer" />
+      <dep id="AS3" />
+      <dep id="flash.display:Loader" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.system:LoaderContext" />
+      <dep id="flash.system:ApplicationDomain" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\HitBoxCollisionResult.as" mod="1791954272310" size="536" optimizedsize="503">
+      <def id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\input\Keyboard.as" mod="1791954272341" size="1312" optimizedsize="1278">
+      <def id="com.mcleodgaming.ssf2.input:Keyboard" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:Key" />
+      <dep id="Math" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\NewsButton.as" mod="1791954272288" size="675" optimizedsize="636">
+      <def id="com.mcleodgaming.ssf2.controllers:NewsButton" />
+      <pre id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.events:MouseEvent" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\interfaces\IDebugConsole.as" mod="1791941580782" size="544" optimizedsize="544">
+      <def id="com.mcleodgaming.ssf2.interfaces:IDebugConsole" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\GameSettings.as" mod="1791954272282" size="1818" optimizedsize="1744">
+      <def id="com.mcleodgaming.ssf2.controllers:GameSettings" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.enums:Difficulty" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\Stats.as" mod="1791954272326" size="4909" optimizedsize="4578">
+      <def id="com.mcleodgaming.ssf2.engine:Stats" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.util:Resource" />
+      <dep id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\Character.as" mod="1792101305597" size="254841" optimizedsize="233708">
+      <def id="com.mcleodgaming.ssf2.engine:Character" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.enums:CState" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.menus:DebugConsole" />
+      <dep id="com.mcleodgaming.ssf2.platforms:MovingPlatform" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.util:Vcam" />
+      <dep id="com.mcleodgaming.ssf2.enums:TState" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="flash.geom:Matrix" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.util:CharacterAlts" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Character" />
+      <dep id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+      <dep id="flash.display:Bitmap" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MatchResults" />
+      <dep id="com.mcleodgaming.ssf2.enums:CPUState" />
+      <dep id="com.mcleodgaming.ssf2.platforms:BitmapCollisionBoundary" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundObject" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.util:ControlsObject" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.engine:AI" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <dep id="com.mcleodgaming.ssf2.enums:CFreeState" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.enums:PState" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.enums:SpecialMode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\PlayerDataSyncStream.as" mod="1791954272254" size="1250" optimizedsize="1172">
+      <def id="com.mcleodgaming.mgn.net:PlayerDataSyncStream" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.mgn.net:DataFrameGroup" />
+      <dep id="Math" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modhost\ModPatches.as" mod="1791941582868" size="7217" optimizedsize="7192">
+      <def id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\jotard\ane\DiscordEvent.as" mod="1791941575463" size="770" optimizedsize="744">
+      <def id="com.jotard.ane:DiscordEvent" />
+      <pre id="flash.events:Event" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\GameTimer.as" mod="1791954272308" size="2282" optimizedsize="2223">
+      <def id="com.mcleodgaming.ssf2.engine:GameTimer" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2GameTimer" />
+      <dep id="com.mcleodgaming.ssf2.menus:HudMenu" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\SelectHand.as" mod="1791954272292" size="5167" optimizedsize="4938">
+      <def id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modhost\ModHost.as" mod="1792078734122" size="31415" optimizedsize="30737">
+      <def id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <pre id="Object" />
+      <dep id="flash.utils:getDefinitionByName" />
+      <dep id="AS3" />
+      <dep id="flash.display:LoaderInfo" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="JSON" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModInfo" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="flash.events:SecurityErrorEvent" />
+      <dep id="com.mcleodgaming.ssf2.modhost:HookGate" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHostEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="flash.filesystem:File" />
+      <dep id="Error" />
+      <dep id="flash.system:ApplicationDomain" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="flash.display:Loader" />
+      <dep id="flash.events:EventDispatcher" />
+      <dep id="flash.events:IOErrorEvent" />
+      <dep id="com.mcleodgaming.ssf2.modapi:ModAPI" />
+      <dep id="com.mcleodgaming.ssf2.util:Resource" />
+      <dep id="flash.display:Bitmap" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.system:LoaderContext" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="flash.filesystem:FileMode" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\NewsArticleMenu.as" mod="1791954272374" size="2256" optimizedsize="2122">
+      <def id="com.mcleodgaming.ssf2.menus:NewsArticleMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.display:SimpleButton" />
+      <dep id="com.mcleodgaming.ssf2.menus:CustomAPIMenu" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\VSMenu.as" mod="1791954272393" size="2471" optimizedsize="2281">
+      <def id="com.mcleodgaming.ssf2.menus:VSMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Platform.as" mod="1791954272269" size="2836" optimizedsize="2777">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Platform" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2CollisionBoundary" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.platforms:MovingPlatform" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\IP2PSocket.as" mod="1791954644403" size="381" optimizedsize="363">
+      <def id="com.mcleodgaming.mgn.net:IP2PSocket" />
+      <pre id="flash.events:IEventDispatcher" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Stage.as" mod="1791954272271" size="2819" optimizedsize="2759">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Stage" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamBG" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\items\Item.as" mod="1791954535046" size="31147" optimizedsize="29191">
+      <def id="com.mcleodgaming.ssf2.items:Item" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.enums:CState" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackState" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.engine:Collision" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.enums:PState" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Item" />
+      <dep id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.enums:IState" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.engine:Target" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\PleaseWaitMenu.as" mod="1791954272379" size="700" optimizedsize="655">
+      <def id="com.mcleodgaming.ssf2.menus:PleaseWaitMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\StageData.as" mod="1792101289463" size="87861" optimizedsize="84398">
+      <def id="com.mcleodgaming.ssf2.engine:StageData" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.menus:ControlsMenu" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="com.mcleodgaming.ssf2.menus:HudMenu" />
+      <dep id="com.mcleodgaming.ssf2.enums:CState" />
+      <dep id="com.mcleodgaming.ssf2.util:Debug_fps" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.engine:FrameBudget" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.util:Dictionary" />
+      <dep id="flash.utils:getTimer" />
+      <dep id="com.mcleodgaming.ssf2.platforms:MovingPlatform" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Stage" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.util:Vcam" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.assists:AssistTrophy" />
+      <dep id="com.mcleodgaming.ssf2.engine:ReplayData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="flash.filesystem:File" />
+      <dep id="flash.utils:Timer" />
+      <dep id="com.mcleodgaming.ssf2.menus:MatchResultsMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="flash.system:ApplicationDomain" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.events:EventManager" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="com.mcleodgaming.ssf2.modapi:ModAPI" />
+      <dep id="com.mcleodgaming.ssf2.util:CharacterAlts" />
+      <dep id="com.mcleodgaming.ssf2.util:Resource" />
+      <dep id="com.mcleodgaming.ssf2.util:ProfanityFilter" />
+      <dep id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MatchResults" />
+      <dep id="flash.utils:getDefinitionByName" />
+      <dep id="com.mcleodgaming.ssf2.engine:TelemetryLookup" />
+      <dep id="com.mcleodgaming.ssf2.platforms:BitmapCollisionBoundary" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.media:Sound" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemGenerator" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundObject" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="com.mcleodgaming.ssf2.engine:GameTimer" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.util:ControlsObject" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.util:IntervalTimer" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxProcessor" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.engine:Beacon" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2API" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="Date" />
+      <dep id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemSettings" />
+      <dep id="com.mcleodgaming.ssf2.enemies:EnemyStats" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamBGSettings" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="com.mcleodgaming.ssf2.enums:SpecialMode" />
+      <dep id="flash.filesystem:FileMode" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamSettings" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\ItemData.as" mod="1791954534749" size="4955" optimizedsize="4928">
+      <def id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackData" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\LoadingMenu.as" mod="1791954272365" size="687" optimizedsize="645">
+      <def id="com.mcleodgaming.ssf2.menus:LoadingMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Debug_fps.as" mod="1791954644437" size="1585" optimizedsize="1547">
+      <def id="com.mcleodgaming.ssf2.util:Debug_fps" />
+      <pre id="Object" />
+      <dep id="flash.utils:getTimer" />
+      <dep id="com.mcleodgaming.ssf2.util:Debug_fps_fpsSymbol" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="flash.display:Stage" />
+      <dep id="flash.display:Sprite" />
+      <dep id="Math" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\HitBoxManager.as" mod="1791954272311" size="2400" optimizedsize="2288">
+      <def id="com.mcleodgaming.ssf2.engine:HitBoxManager" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.desktop:ClipboardFormats" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.desktop:Clipboard" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\audio\SoundQueue.as" mod="1791954678197" size="6709" optimizedsize="6511">
+      <def id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="flash.media:SoundTransform" />
+      <dep id="flash.utils:Timer" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="Math" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.media:Sound" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundObject" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.media:SoundChannel" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\RulesMenu.as" mod="1791954272383" size="10901" optimizedsize="10064">
+      <def id="com.mcleodgaming.ssf2.menus:RulesMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\ProfanityFilter_wordfilter.as" mod="1791941875293" size="382" optimizedsize="337">
+      <def id="com.mcleodgaming.ssf2.util:ProfanityFilter_wordfilter" />
+      <pre id="mx.core:ByteArrayAsset" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\Chip.as" mod="1792101943804" size="15353" optimizedsize="15210">
+      <def id="com.mcleodgaming.ssf2.controllers:Chip" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.text:TextField" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.menus:ArenaCharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:VSMenu" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.menus:AllStarModeMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:OnlineCharacterMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:HomeRunContestMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="flash.display:DisplayObjectContainer" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.util:CharacterAlts" />
+      <dep id="com.mcleodgaming.ssf2.menus:ClassicModeMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:TargetTestMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:CrystalSmashCharacterMenu" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\ProfanityFilter.as" mod="1791954272419" size="909" optimizedsize="850">
+      <def id="com.mcleodgaming.ssf2.util:ProfanityFilter" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ProfanityFilter_wordfilter" />
+      <dep id="RegExp" />
+      <dep id="JSON" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\EventButton.as" mod="1791954272278" size="678" optimizedsize="638">
+      <def id="com.mcleodgaming.ssf2.controllers:EventButton" />
+      <pre id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.events:MouseEvent" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\CharacterAlts.as" mod="1792103970232" size="8028" optimizedsize="7589">
+      <def id="com.mcleodgaming.ssf2.util:CharacterAlts" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.media:Sound" />
+      <dep id="com.mcleodgaming.ssf2.util:Resource" />
+      <dep id="flash.net:URLRequest" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="flash.filesystem:File" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="JSON" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="flash.filesystem:FileMode" />
+      <dep id="Date" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\ControlsMenu.as" mod="1791954272350" size="17088" optimizedsize="15806">
+      <def id="com.mcleodgaming.ssf2.menus:ControlsMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ControlsSelectHand" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="fl.controls:CheckBox" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2.input:GamepadManager" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.text:TextField" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="fl.controls:ComboBox" />
+      <dep id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ControlsButton" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\CustomMatch.as" mod="1791954272308" size="815" optimizedsize="790">
+      <def id="com.mcleodgaming.ssf2.engine:CustomMatch" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2CustomMatch" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\jotard\ane\DiscordGameSDK.as" mod="1791941575173" size="1808" optimizedsize="1704">
+      <def id="com.jotard.ane:DiscordGameSDK" />
+      <pre id="flash.events:EventDispatcher" />
+      <dep id="AS3" />
+      <dep id="com.jotard.ane:DiscordEvent" />
+      <dep id="Error" />
+      <dep id="JSON" />
+      <dep id="flash.external:ExtensionContext" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Event.as" mod="1791954272266" size="3102" optimizedsize="3079">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <pre id="flash.events:Event" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Item.as" mod="1791954272269" size="1636" optimizedsize="1603">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Item" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\VcamBGSettings.as" mod="1791954272430" size="1053" optimizedsize="1010">
+      <def id="com.mcleodgaming.ssf2.util:VcamBGSettings" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\StageSetting.as" mod="1791954644427" size="1081" optimizedsize="1021">
+      <def id="com.mcleodgaming.ssf2.engine:StageSetting" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\input\Gamepad.as" mod="1791954272339" size="6262" optimizedsize="6049">
+      <def id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <pre id="flash.events:EventDispatcher" />
+      <dep id="flash.utils:getTimer" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+      <dep id="com.masterwex.ane.rumble:Rumble" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\EventMatchCharacterMenu.as" mod="1791954272357" size="2252" optimizedsize="2119">
+      <def id="com.mcleodgaming.ssf2.menus:EventMatchCharacterMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.modes:EventMode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\platforms\BitmapCollisionBoundary.as" mod="1791954272404" size="3742" optimizedsize="3654">
+      <def id="com.mcleodgaming.ssf2.platforms:BitmapCollisionBoundary" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Matrix" />
+      <dep id="Math" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="flash.geom:Point" />
+      <dep id="flash.display:PixelSnapping" />
+      <dep id="flash.display:StageQuality" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.display:Bitmap" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2CollisionBoundary" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Key.as" mod="1791954644441" size="3745" optimizedsize="3579">
+      <def id="com.mcleodgaming.ssf2.util:Key" />
+      <pre id="Object" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\Config.as" mod="1791948826093" size="823" optimizedsize="804">
+      <def id="com.mcleodgaming.ssf2:Config" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\EventMenu.as" mod="1791954272358" size="9439" optimizedsize="9367">
+      <def id="com.mcleodgaming.ssf2.menus:EventMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:EventMenuHand" />
+      <dep id="flash.display:Bitmap" />
+      <dep id="com.mcleodgaming.ssf2.controllers:EventButton" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modes:EventMode" />
+      <dep id="flash.text:TextFormat" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\ResourceManager.as" mod="1792103062045" size="26506" optimizedsize="26085">
+      <def id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="com.mcleodgaming.ssf2.util:SwfRelease" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="JSON" />
+      <dep id="Math" />
+      <dep id="flash.system:System" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.utils:setTimeout" />
+      <dep id="flash.utils:clearInterval" />
+      <dep id="flash.media:Sound" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="RegExp" />
+      <dep id="flash.filesystem:File" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2API" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="flash.display:DisplayObjectContainer" />
+      <dep id="com.mcleodgaming.ssf2.util:CharacterAlts" />
+      <dep id="com.mcleodgaming.ssf2.util:Resource" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager_manifestJSON" />
+      <dep id="flash.utils:setInterval" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\IntervalTimer.as" mod="1791954272416" size="1134" optimizedsize="1093">
+      <def id="com.mcleodgaming.ssf2.util:IntervalTimer" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\ProtocolSetting.as" mod="1791941575781" size="528" optimizedsize="499">
+      <def id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\BlockedMenu.as" mod="1791954644428" size="1180" optimizedsize="1107">
+      <def id="com.mcleodgaming.ssf2.menus:BlockedMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modhost\ModInfo.as" mod="1791941582804" size="2139" optimizedsize="2081">
+      <def id="com.mcleodgaming.ssf2.modhost:ModInfo" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.filesystem:File" />
+      <dep id="Error" />
+      <dep id="JSON" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="flash.filesystem:FileMode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Resource.as" mod="1791954535332" size="9423" optimizedsize="9129">
+      <def id="com.mcleodgaming.ssf2.util:Resource" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="flash.net:URLLoader" />
+      <dep id="flash.net:URLRequest" />
+      <dep id="flash.filesystem:File" />
+      <dep id="com.mcleodgaming.ssf2.util:GameLog" />
+      <dep id="com.mcleodgaming.ssf2.util:SwfRelease" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="JSON" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.utils:CompressionAlgorithm" />
+      <dep id="flash.utils:setTimeout" />
+      <dep id="flash.display:Loader" />
+      <dep id="flash.net:URLLoaderDataFormat" />
+      <dep id="flash.events:IOErrorEvent" />
+      <dep id="flash.events:ProgressEvent" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="flash.system:LoaderContext" />
+      <dep id="flash.filesystem:FileMode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\IntroMenu.as" mod="1791954272364" size="2127" optimizedsize="1974">
+      <def id="com.mcleodgaming.ssf2.menus:IntroMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\CountryRegionData_countryRegionDataJSON.as" mod="1791941875295" size="421" optimizedsize="363">
+      <def id="com.mcleodgaming.ssf2.util:CountryRegionData_countryRegionDataJSON" />
+      <pre id="mx.core:ByteArrayAsset" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\SoloMenu.as" mod="1791954272384" size="5331" optimizedsize="4797">
+      <def id="com.mcleodgaming.ssf2.menus:SoloMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\FrameBudget.as" mod="1791941578024" size="497" optimizedsize="469">
+      <def id="com.mcleodgaming.ssf2.engine:FrameBudget" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.system:System" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\PState.as" mod="1791954272334" size="480" optimizedsize="448">
+      <def id="com.mcleodgaming.ssf2.enums:PState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\platforms\PlatformMovement.as" mod="1791941582964" size="595" optimizedsize="567">
+      <def id="com.mcleodgaming.ssf2.platforms:PlatformMovement" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\InteractiveSpriteStats.as" mod="1791954644425" size="2419" optimizedsize="2377">
+      <def id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\EventMenuHand.as" mod="1791954272279" size="1845" optimizedsize="1713">
+      <def id="com.mcleodgaming.ssf2.controllers:EventMenuHand" />
+      <pre id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.controllers:EventButton" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\AllStarModeMenu.as" mod="1791954272344" size="3711" optimizedsize="3429">
+      <def id="com.mcleodgaming.ssf2.menus:AllStarModeMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.enums:Difficulty" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.modes:AllStarMode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\MGNClient.as" mod="1791954533940" size="16636" optimizedsize="16661">
+      <def id="com.mcleodgaming.mgn.net:MGNClient" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.net:IWebSocket" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.mgn.net:DataFrame" />
+      <dep id="com.mcleodgaming.mgn.net:P2PServerSocket" />
+      <dep id="Error" />
+      <dep id="flash.utils:Timer" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.mgn.net:DataFrameGroup" />
+      <dep id="JSON" />
+      <dep id="com.mcleodgaming.mgn.net:IP2PSocket" />
+      <dep id="com.mcleodgaming.mgn.net:P2PDatagramSocket" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="com.mcleodgaming.mgn.net:PlayerDataSyncStream" />
+      <dep id="com.mcleodgaming.mgn.net:PlayerConnectionInfo" />
+      <dep id="Date" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.mgn.net:P2PRTMFP" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.mgn.net:WebSocketWorlize" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\Intro2Menu.as" mod="1791954272362" size="1842" optimizedsize="1712">
+      <def id="com.mcleodgaming.ssf2.menus:Intro2Menu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\audio\SoundObject.as" mod="1791954272274" size="2104" optimizedsize="2028">
+      <def id="com.mcleodgaming.ssf2.audio:SoundObject" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.media:Sound" />
+      <dep id="flash.media:SoundTransform" />
+      <dep id="flash.media:SoundChannel" />
+      <dep id="Math" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\MultiManCharacterSelectMenu.as" mod="1791954272371" size="3945" optimizedsize="3688">
+      <def id="com.mcleodgaming.ssf2.menus:MultiManCharacterSelectMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MultiManMenu" />
+      <dep id="com.mcleodgaming.ssf2.modes:MultiManMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\masterwex\ane\rumble\Rumble.as" mod="1791941575139" size="933" optimizedsize="869">
+      <def id="com.masterwex.ane.rumble:Rumble" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="flash.external:ExtensionContext" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\items\ItemsListData.as" mod="1791954272343" size="1007" optimizedsize="941">
+      <def id="com.mcleodgaming.ssf2.items:ItemsListData" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\DataFrame.as" mod="1791954272250" size="449" optimizedsize="427">
+      <def id="com.mcleodgaming.mgn.net:DataFrame" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\HomeRunContestMode.as" mod="1791954272399" size="1237" optimizedsize="1180">
+      <def id="com.mcleodgaming.ssf2.modes:HomeRunContestMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\events\MGNEvent.as" mod="1791954533873" size="2084" optimizedsize="2061">
+      <def id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <pre id="flash.events:Event" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\ItemGenerator.as" mod="1791954272317" size="9204" optimizedsize="9104">
+      <def id="com.mcleodgaming.ssf2.engine:ItemGenerator" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemSettings" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.items:ItemsListData" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\MuteMenu.as" mod="1791954272373" size="1219" optimizedsize="1146">
+      <def id="com.mcleodgaming.ssf2.menus:MuteMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\P2PServerSocket.as" mod="1791954644409" size="3605" optimizedsize="3396">
+      <def id="com.mcleodgaming.mgn.net:P2PServerSocket" />
+      <pre id="flash.events:EventDispatcher" />
+      <pre id="com.mcleodgaming.mgn.net:IP2PSocket" />
+      <dep id="com.mcleodgaming.mgn.net:MGNClient" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.net:IWebSocket" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="Error" />
+      <dep id="JSON" />
+      <dep id="flash.net:Socket" />
+      <dep id="Math" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="flash.net:ServerSocket" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <dep id="flash.events:IOErrorEvent" />
+      <dep id="flash.events:ProgressEvent" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.events:ServerSocketConnectEvent" />
+      <dep id="flash.events:SecurityErrorEvent" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enemies\Enemy.as" mod="1792078814629" size="18504" optimizedsize="17318">
+      <def id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.enums:CState" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Enemy" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackData" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.enums:EState" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.enums:PState" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <dep id="com.mcleodgaming.ssf2.enemies:EnemyStats" />
+      <dep id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\MenuMapperNode.as" mod="1791954272370" size="1886" optimizedsize="1843">
+      <def id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\QualityMenu.as" mod="1791954272382" size="10992" optimizedsize="10505">
+      <def id="com.mcleodgaming.ssf2.menus:QualityMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="fl.controls:ComboBox" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.controllers:QualitySelectHand" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveDataMigrations" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:StageQuality" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\StageSwitchMenu.as" mod="1791954272389" size="5367" optimizedsize="5019">
+      <def id="com.mcleodgaming.ssf2.menus:StageSwitchMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:DisplayObjectTable" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.controllers:StageSwitchHand" />
+      <dep id="com.mcleodgaming.ssf2.controllers:StageSwitchButton" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\EState.as" mod="1791954272332" size="480" optimizedsize="448">
+      <def id="com.mcleodgaming.ssf2.enums:EState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enemies\EnemyStats.as" mod="1791954272298" size="560" optimizedsize="533">
+      <def id="com.mcleodgaming.ssf2.enemies:EnemyStats" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\events\MGNEventManager.as" mod="1791954272249" size="1212" optimizedsize="1144">
+      <def id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="flash.events:EventDispatcher" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\Difficulty.as" mod="1791941580349" size="410" optimizedsize="386">
+      <def id="com.mcleodgaming.ssf2.enums:Difficulty" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\SpecialModeMenu.as" mod="1791954272386" size="13393" optimizedsize="12182">
+      <def id="com.mcleodgaming.ssf2.menus:SpecialModeMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.enums:SpecialMode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2CustomMode.as" mod="1791954272265" size="1044" optimizedsize="999">
+      <def id="com.mcleodgaming.ssf2.api:SSF2CustomMode" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:CustomMatch" />
+      <dep id="JSON" />
+      <dep id="com.mcleodgaming.ssf2.modes:CustomMode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\AttackState.as" mod="1791954534283" size="10109" optimizedsize="10356">
+      <def id="com.mcleodgaming.ssf2.engine:AttackState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\AttackObject.as" mod="1791954644419" size="10308" optimizedsize="10513">
+      <def id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.util:Dictionary" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\net\MultiplayerManager.as" mod="1792078816340" size="13734" optimizedsize="13067">
+      <def id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="JSON" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.mgn.net:PlayerDataSyncStream" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.text:TextField" />
+      <dep id="flash.utils:setTimeout" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.mgn.net:MGNClient" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.controllers:PlayerSetting" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.menus:ArenaModeMenu" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.mgn.net:PlayerConnectionInfo" />
+      <dep id="Date" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="com.mcleodgaming.ssf2.modes:ArenaMode" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\InteractiveSprite.as" mod="1791954534718" size="58656" optimizedsize="57522">
+      <def id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="flash.geom:ColorTransform" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxManager" />
+      <dep id="com.mcleodgaming.ssf2.platforms:MovingPlatform" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.util:Vcam" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxProcessorNode" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSpriteStats" />
+      <dep id="com.mcleodgaming.ssf2.engine:Collision" />
+      <dep id="flash.geom:Matrix" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <dep id="com.mcleodgaming.ssf2.events:EventManager" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="flash.display:Bitmap" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.engine:Target" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.text:TextField" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackState" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackData" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.util:IntervalTimer" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxProcessor" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2API" />
+      <dep id="com.mcleodgaming.ssf2.engine:Beacon" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.enums:SpecialMode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\HitBoxAnimation.as" mod="1791954272309" size="8116" optimizedsize="7547">
+      <def id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <pre id="Object" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2API.as" mod="1791954534059" size="21343" optimizedsize="21289">
+      <def id="com.mcleodgaming.ssf2.api:SSF2API" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.platforms:BitmapCollisionBoundary" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Unlockable" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.engine:CustomMatch" />
+      <dep id="com.mcleodgaming.ssf2.engine:CharacterData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.menus:DebugConsole" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageSetting" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundObject" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.engine:ItemData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="Date" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemSettings" />
+      <dep id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.items:ItemsListData" />
+      <dep id="com.mcleodgaming.ssf2.menus:CustomAPIMenu" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\DataMenu.as" mod="1791954644433" size="7063" optimizedsize="6641">
+      <def id="com.mcleodgaming.ssf2.menus:DataMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:DataSettings" />
+      <dep id="com.mcleodgaming.ssf2.controllers:DataButton" />
+      <dep id="fl.controls:ComboBox" />
+      <dep id="fl.controls:CheckBox" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="JSON" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\ItemSettings.as" mod="1791954534124" size="963" optimizedsize="927">
+      <def id="com.mcleodgaming.ssf2.controllers:ItemSettings" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="JSON" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modes\ClassicMode.as" mod="1791954272396" size="2020" optimizedsize="1907">
+      <def id="com.mcleodgaming.ssf2.modes:ClassicMode" />
+      <pre id="com.mcleodgaming.ssf2.modes:CustomMode" />
+      <dep id="com.mcleodgaming.ssf2.enums:Difficulty" />
+      <dep id="com.mcleodgaming.ssf2.modes:CrystalSmashMode" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Unlockable" />
+      <dep id="com.mcleodgaming.ssf2.modes:TargetTestMode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\NewsMenuHand.as" mod="1791954272289" size="1218" optimizedsize="1130">
+      <def id="com.mcleodgaming.ssf2.controllers:NewsMenuHand" />
+      <pre id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.controllers:NewsButton" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\OnlinePromptMenu.as" mod="1791954272377" size="1831" optimizedsize="1715">
+      <def id="com.mcleodgaming.ssf2.menus:OnlinePromptMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Enemy.as" mod="1791954272266" size="1137" optimizedsize="1106">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Enemy" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\ModeFeatures.as" mod="1791954272333" size="4138" optimizedsize="3505">
+      <def id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\P2PDatagramSocket.as" mod="1791954644406" size="2871" optimizedsize="2707">
+      <def id="com.mcleodgaming.mgn.net:P2PDatagramSocket" />
+      <pre id="flash.events:EventDispatcher" />
+      <pre id="com.mcleodgaming.mgn.net:IP2PSocket" />
+      <dep id="flash.net:DatagramSocket" />
+      <dep id="com.mcleodgaming.mgn.net:MGNClient" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.net:IWebSocket" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="com.mcleodgaming.mgn.net:ProtocolSetting" />
+      <dep id="Error" />
+      <dep id="JSON" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="Math" />
+      <dep id="flash.events:DatagramSocketDataEvent" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\RaceToTheFinishCharacterMenu.as" mod="1791954272382" size="3372" optimizedsize="3140">
+      <def id="com.mcleodgaming.ssf2.menus:RaceToTheFinishCharacterMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.modes:RaceToTheFinishMode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\assists\AssistTrophy.as" mod="1791954272273" size="1337" optimizedsize="1252">
+      <def id="com.mcleodgaming.ssf2.assists:AssistTrophy" />
+      <pre id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.enemies:EnemyStats" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Controller.as" mod="1791954535250" size="2616" optimizedsize="2577">
+      <def id="com.mcleodgaming.ssf2.util:Controller" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ControlsObject" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.input:Keyboard" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\DataButton.as" mod="1791954272278" size="675" optimizedsize="636">
+      <def id="com.mcleodgaming.ssf2.controllers:DataButton" />
+      <pre id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.events:MouseEvent" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\ItemButton.as" mod="1791954272283" size="1317" optimizedsize="1256">
+      <def id="com.mcleodgaming.ssf2.controllers:ItemButton" />
+      <pre id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\DisclaimerMenu.as" mod="1791954272355" size="4522" optimizedsize="4244">
+      <def id="com.mcleodgaming.ssf2.menus:DisclaimerMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Unlockable" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.controllers:UnlockController" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.display:SimpleButton" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:CustomAPIMenu" />
+      <dep id="flash.display:Shape" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Vcam.as" mod="1792078796107" size="17047" optimizedsize="18001">
+      <def id="com.mcleodgaming.ssf2.util:Vcam" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Camera" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamBG" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="Math" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.display:DisplayObjectContainer" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamBGSettings" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamSettings" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\DebugConsole.as" mod="1791954272354" size="868" optimizedsize="840">
+      <def id="com.mcleodgaming.ssf2.menus:DebugConsole" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <pre id="com.mcleodgaming.ssf2.interfaces:IDebugConsole" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\mgn\net\WebSocketWorlize.as" mod="1791954272255" size="1910" optimizedsize="1823">
+      <def id="com.mcleodgaming.mgn.net:WebSocketWorlize" />
+      <pre id="com.mcleodgaming.mgn.net:IWebSocket" />
+      <pre id="flash.events:EventDispatcher" />
+      <dep id="com.worlize.websocket:WebSocket" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.worlize.websocket:WebSocketErrorEvent" />
+      <dep id="com.worlize.websocket:WebSocketEvent" />
+      <dep id="Error" />
+      <dep id="JSON" />
+      <dep id="flash.utils:ByteArray" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Target.as" mod="1791954272272" size="788" optimizedsize="756">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Target" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\SoundMenu.as" mod="1791954272385" size="5613" optimizedsize="5079">
+      <def id="com.mcleodgaming.ssf2.menus:SoundMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2BaseAPIObject.as" mod="1791954272259" size="774" optimizedsize="739">
+      <def id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\MainMenu.as" mod="1791954272367" size="6563" optimizedsize="6095">
+      <def id="com.mcleodgaming.ssf2.menus:MainMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="com.mcleodgaming.ssf2.menus:NewsMenu" />
+      <dep id="flash.utils:Timer" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.net:LocalConnection" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="flash.events:TimerEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\MenuMapper.as" mod="1791954272369" size="2068" optimizedsize="1940">
+      <def id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modhost\ModHostEvent.as" mod="1791941582791" size="476" optimizedsize="444">
+      <def id="com.mcleodgaming.ssf2.modhost:ModHostEvent" />
+      <pre id="flash.events:Event" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\HudMenu.as" mod="1791954272361" size="20267" optimizedsize="19699">
+      <def id="com.mcleodgaming.ssf2.menus:HudMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.text:TextFieldAutoSize" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.text:TextField" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:Vcam" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+      <dep id="flash.text:TextFormat" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\Projectile.as" mod="1791954534800" size="39900" optimizedsize="37911">
+      <def id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <pre id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.engine:ProjectileAttack" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.enums:CState" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.enemies:Enemy" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundObject" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <dep id="com.mcleodgaming.ssf2.enums:TState" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackState" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Projectile" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxAnimation" />
+      <dep id="com.mcleodgaming.ssf2.engine:Collision" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.enums:PState" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackObject" />
+      <dep id="com.mcleodgaming.ssf2.enums:ModeFeatures" />
+      <dep id="com.mcleodgaming.ssf2.engine:TargetTestTarget" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Event" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxSprite" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\ControlsObject.as" mod="1791954535274" size="3194" optimizedsize="3079">
+      <def id="com.mcleodgaming.ssf2.util:ControlsObject" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\HomeRunContestMenu.as" mod="1791954272360" size="3698" optimizedsize="3465">
+      <def id="com.mcleodgaming.ssf2.menus:HomeRunContestMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="com.mcleodgaming.ssf2.modes:HomeRunContestMode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.util:Key" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\ClassicModeMenu.as" mod="1791954272349" size="3710" optimizedsize="3428">
+      <def id="com.mcleodgaming.ssf2.menus:ClassicModeMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:CharacterSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.enums:Difficulty" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modes:ClassicMode" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\OptionsMenu.as" mod="1791954272378" size="3189" optimizedsize="2922">
+      <def id="com.mcleodgaming.ssf2.menus:OptionsMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\platforms\Platform.as" mod="1792078809161" size="3206" optimizedsize="3056">
+      <def id="com.mcleodgaming.ssf2.platforms:Platform" />
+      <pre id="com.mcleodgaming.ssf2.platforms:BitmapCollisionBoundary" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.enums:SpecialMode" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\StageSelectHand.as" mod="1791954272294" size="5852" optimizedsize="5471">
+      <def id="com.mcleodgaming.ssf2.controllers:StageSelectHand" />
+      <pre id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.controllers:StageButton" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2.util:Controller" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="flash.geom:Point" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Rndm.as" mod="1791954272423" size="577" optimizedsize="559">
+      <def id="com.mcleodgaming.ssf2.util:Rndm" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="Math" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\HitBoxProcessorNode.as" mod="1791954272313" size="613" optimizedsize="578">
+      <def id="com.mcleodgaming.ssf2.engine:HitBoxProcessorNode" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="com.mcleodgaming.ssf2.engine:HitBoxCollisionResult" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\ItemSwitchMenu.as" mod="1791954272364" size="5554" optimizedsize="5231">
+      <def id="com.mcleodgaming.ssf2.menus:ItemSwitchMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:DisplayObjectTable" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemButton" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ItemSwitchHand" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.items:ItemsListData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2CollisionBoundary.as" mod="1791954272262" size="1161" optimizedsize="1114">
+      <def id="com.mcleodgaming.ssf2.api:SSF2CollisionBoundary" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="com.mcleodgaming.ssf2.platforms:BitmapCollisionBoundary" />
+      <dep id="AS3" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.geom:Rectangle" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\MatchResults.as" mod="1791954272285" size="2462" optimizedsize="2418">
+      <def id="com.mcleodgaming.ssf2.controllers:MatchResults" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\ControlsSelectHand.as" mod="1791954644411" size="1847" optimizedsize="1685">
+      <def id="com.mcleodgaming.ssf2.controllers:ControlsSelectHand" />
+      <pre id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="com.mcleodgaming.ssf2.events:GamepadEvent" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.events:KeyboardEvent" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="com.mcleodgaming.ssf2.controllers:ControlsButton" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\FrameTimer.as" mod="1791954272415" size="700" optimizedsize="678">
+      <def id="com.mcleodgaming.ssf2.util:FrameTimer" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Projectile.as" mod="1791954272270" size="1218" optimizedsize="1181">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Projectile" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2GameObject" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2API" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\modapi\ModAPI.as" mod="1791941593154" size="4844" optimizedsize="4591">
+      <def id="com.mcleodgaming.ssf2.modapi:ModAPI" />
+      <pre id="Object" />
+      <dep id="flash.utils:getDefinitionByName" />
+      <dep id="com.mcleodgaming.ssf2.util:SaveData" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="Error" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2API" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.api:SSF2Character" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\DisplayObjectTable.as" mod="1791954644439" size="1713" optimizedsize="1602">
+      <def id="com.mcleodgaming.ssf2.util:DisplayObjectTable" />
+      <pre id="Object" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="Math" />
+      <dep id="flash.geom:Rectangle" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2CustomMatch.as" mod="1791954272263" size="713" optimizedsize="681">
+      <def id="com.mcleodgaming.ssf2.api:SSF2CustomMatch" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:CustomMatch" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\Intro3Menu.as" mod="1791954272363" size="2195" optimizedsize="2031">
+      <def id="com.mcleodgaming.ssf2.menus:Intro3Menu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\input\GamepadManager.as" mod="1791954535005" size="4291" optimizedsize="3979">
+      <def id="com.mcleodgaming.ssf2.input:GamepadManager" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.input:Gamepad" />
+      <dep id="com.iam2bam.ane.nativejoystick.event:NativeJoystickEvent" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.iam2bam.ane.nativejoystick:NativeJoystick" />
+      <dep id="Error" />
+      <dep id="flash.events:GameInputEvent" />
+      <dep id="flash.events:Event" />
+      <dep id="com.iam2bam.ane.nativejoystick.intern:NativeJoystickMgr" />
+      <dep id="flash.system:Capabilities" />
+      <dep id="flash.ui:GameInputDevice" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="RangeError" />
+      <dep id="com.mcleodgaming.ssf2:Version" />
+      <dep id="flash.ui:GameInput" />
+      <dep id="flash.ui:GameInputControl" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\api\SSF2Camera.as" mod="1791954272260" size="1886" optimizedsize="1834">
+      <def id="com.mcleodgaming.ssf2.api:SSF2Camera" />
+      <pre id="com.mcleodgaming.ssf2.api:SSF2BaseAPIObject" />
+      <dep id="AS3" />
+      <dep id="flash.geom:Point" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:Vcam" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\MouseTracker.as" mod="1791954644443" size="2318" optimizedsize="2087">
+      <def id="com.mcleodgaming.ssf2.util:MouseTracker" />
+      <pre id="Object" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="AS3" />
+      <dep id="flash.ui:Mouse" />
+      <dep id="Math" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="flash.events:Event" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\controllers\StageButton.as" mod="1791954272293" size="4139" optimizedsize="3891">
+      <def id="com.mcleodgaming.ssf2.controllers:StageButton" />
+      <pre id="com.mcleodgaming.ssf2.controllers:HandButton" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="com.mcleodgaming.ssf2.menus:StageSelectMenu" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHost" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModHooks" />
+      <dep id="com.mcleodgaming.ssf2.controllers:GameController" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="com.mcleodgaming.ssf2.controllers:SelectHand" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageSetting" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.controllers:Game" />
+      <dep id="com.mcleodgaming.ssf2.modhost:ModPatches" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\engine\Target.as" mod="1791954272327" size="1215" optimizedsize="1169">
+      <def id="com.mcleodgaming.ssf2.engine:Target" />
+      <pre id="Object" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="flash.geom:Point" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="com.mcleodgaming.ssf2.engine:Character" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:Beacon" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\menus\OnlineGroupMenu.as" mod="1791954644435" size="4666" optimizedsize="4284">
+      <def id="com.mcleodgaming.ssf2.menus:OnlineGroupMenu" />
+      <pre id="com.mcleodgaming.ssf2.menus:Menu" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Utils" />
+      <dep id="com.mcleodgaming.ssf2:Config" />
+      <dep id="com.mcleodgaming.ssf2.controllers:MenuController" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapperNode" />
+      <dep id="flash.events:MouseEvent" />
+      <dep id="com.mcleodgaming.ssf2.audio:SoundQueue" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2.menus:MenuMapper" />
+      <dep id="com.mcleodgaming.mgn.events:MGNEventManager" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="com.mcleodgaming.ssf2.net:MultiplayerManager" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\Utils.as" mod="1791954644453" size="23713" optimizedsize="23455">
+      <def id="com.mcleodgaming.ssf2.util:Utils" />
+      <pre id="Object" />
+      <dep id="flash.utils:getDefinitionByName" />
+      <dep id="AS3" />
+      <dep id="com.mcleodgaming.ssf2.engine:InteractiveSprite" />
+      <dep id="flash.filters:ColorMatrixFilter" />
+      <dep id="flash.utils:Dictionary" />
+      <dep id="flash.net:URLLoader" />
+      <dep id="flash.geom:ColorTransform" />
+      <dep id="com.mcleodgaming.ssf2.items:Item" />
+      <dep id="JSON" />
+      <dep id="Math" />
+      <dep id="com.mcleodgaming.ssf2.engine:Stats" />
+      <dep id="flash.display:FrameLabel" />
+      <dep id="flash.events:Event" />
+      <dep id="com.mcleodgaming.ssf2:Main" />
+      <dep id="flash.text:TextField" />
+      <dep id="com.mcleodgaming.ssf2.engine:Projectile" />
+      <dep id="flash.geom:Point" />
+      <dep id="flash.net:URLLoaderDataFormat" />
+      <dep id="flash.events:ProgressEvent" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="flash.net:FileReference" />
+      <dep id="flash.events:SecurityErrorEvent" />
+      <dep id="com.mcleodgaming.ssf2.util:Base64" />
+      <dep id="com.adobe.images:PNGEncoder" />
+      <dep id="com.mcleodgaming.ssf2.enums:Mode" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="flash.net:URLRequest" />
+      <dep id="com.mcleodgaming.ssf2.engine:AttackDamage" />
+      <dep id="com.mcleodgaming.ssf2.engine:Beacon" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="flash.geom:Rectangle" />
+      <dep id="Date" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="flash.events:IOErrorEvent" />
+      <dep id="fl.motion:AdjustColor" />
+      <dep id="com.mcleodgaming.ssf2.util:Rndm" />
+      <dep id="flash.net:FileFilter" />
+      <dep id="com.mcleodgaming.ssf2.util:ResourceManager" />
+      <dep id="flash.display:Bitmap" />
+      <dep id="com.mcleodgaming.ssf2.engine:StageData" />
+      <dep id="flash.text:TextFormat" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\util\VcamBG.as" mod="1791954272429" size="868" optimizedsize="837">
+      <def id="com.mcleodgaming.ssf2.util:VcamBG" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="flash.display:MovieClip" />
+      <dep id="com.mcleodgaming.ssf2.util:VcamBGSettings" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\SpecialMode.as" mod="1791954534987" size="836" optimizedsize="812">
+      <def id="com.mcleodgaming.ssf2.enums:SpecialMode" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="C:\Users\user\Documents\GitHub\SSF2 Shell\expansions\decompiled\engine2\changed\com\mcleodgaming\ssf2\enums\CState.as" mod="1791954272331" size="3443" optimizedsize="3240">
+      <def id="com.mcleodgaming.ssf2.enums:CState" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+  </scripts>
+  <external-defs>
+    <ext id="flash.events:TimerEvent" />
+    <ext id="flash.net:Socket" />
+    <ext id="flash.utils:CompressionAlgorithm" />
+    <ext id="mx.utils:StringUtil" />
+    <ext id="flash.net:ServerSocket" />
+    <ext id="flash.events:Event" />
+    <ext id="flash.net:GroupSpecifier" />
+    <ext id="com.worlize.websocket:WebSocketEvent" />
+    <ext id="flash.utils:setInterval" />
+    <ext id="flash.net:SharedObject" />
+    <ext id="flash.ui:Mouse" />
+    <ext id="flash.events:ProgressEvent" />
+    <ext id="flash.events:FocusEvent" />
+    <ext id="flash.events:GameInputEvent" />
+    <ext id="flash.system:Capabilities" />
+    <ext id="flash.net:URLLoader" />
+    <ext id="flash.net:NetConnection" />
+    <ext id="flash.ui:ContextMenu" />
+    <ext id="flash.utils:Timer" />
+    <ext id="flash.geom:Matrix" />
+    <ext id="flash.display:NativeWindowDisplayState" />
+    <ext id="flash.display:BitmapData" />
+    <ext id="com.worlize.websocket:WebSocket" />
+    <ext id="flash.display:StageQuality" />
+    <ext id="flash.net:navigateToURL" />
+    <ext id="flash.display:InteractiveObject" />
+    <ext id="mx.core:ByteArrayAsset" />
+    <ext id="flash.media:SoundTransform" />
+    <ext id="flash.display:StageScaleMode" />
+    <ext id="flash.display:PixelSnapping" />
+    <ext id="fl.controls:ScrollPolicy" />
+    <ext id="fl.events:SliderEvent" />
+    <ext id="flash.system:Security" />
+    <ext id="flash.geom:ColorTransform" />
+    <ext id="flash.ui:Keyboard" />
+    <ext id="flash.ui:GameInputDevice" />
+    <ext id="flash.display:Bitmap" />
+    <ext id="flash.display:Sprite" />
+    <ext id="flash.text:TextFieldType" />
+    <ext id="flash.events:SecurityErrorEvent" />
+    <ext id="flash.utils:Dictionary" />
+    <ext id="flash.filesystem:File" />
+    <ext id="flash.media:SoundChannel" />
+    <ext id="com.iam2bam.ane.nativejoystick:NativeJoystick" />
+    <ext id="fl.controls:CheckBox" />
+    <ext id="__AS3__.vec:Vector" />
+    <ext id="flash.display:MovieClip" />
+    <ext id="flash.net:DatagramSocket" />
+    <ext id="Math" />
+    <ext id="com.adobe.utils:StringUtil" />
+    <ext id="flash.events:KeyboardEvent" />
+    <ext id="flash.system:ApplicationDomain" />
+    <ext id="Object" />
+    <ext id="flash.net:NetGroup" />
+    <ext id="fl.controls:Slider" />
+    <ext id="flash.events:EventDispatcher" />
+    <ext id="flash.display:Shape" />
+    <ext id="flash.ui:GameInputControl" />
+    <ext id="flash.events:NetStatusEvent" />
+    <ext id="RangeError" />
+    <ext id="Date" />
+    <ext id="flash.display:Loader" />
+    <ext id="XML" />
+    <ext id="flash.text:TextFormatAlign" />
+    <ext id="flash.external:ExtensionContext" />
+    <ext id="flash.display:FrameLabel" />
+    <ext id="flash.display:DisplayObject" />
+    <ext id="flash.utils:ByteArray" />
+    <ext id="flash.net:LocalConnection" />
+    <ext id="flash.net:FileReference" />
+    <ext id="RegExp" />
+    <ext id="JSON" />
+    <ext id="flash.net:URLLoaderDataFormat" />
+    <ext id="flash.geom:Point" />
+    <ext id="flash.desktop:ClipboardFormats" />
+    <ext id="flash.net:getClassByAlias" />
+    <ext id="com.mcleodgaming.ssf2.util:Debug_fps_fpsSymbol" />
+    <ext id="com.adobe.images:PNGEncoder" />
+    <ext id="menu_preloader" />
+    <ext id="flash.events:ServerSocketConnectEvent" />
+    <ext id="flash.utils:getTimer" />
+    <ext id="flash.text:TextFieldAutoSize" />
+    <ext id="flash.system:System" />
+    <ext id="Error" />
+    <ext id="flash.display:DisplayObjectContainer" />
+    <ext id="flash.events:NativeWindowDisplayStateEvent" />
+    <ext id="com.iam2bam.ane.nativejoystick.intern:NativeJoystickMgr" />
+    <ext id="flash.utils:setTimeout" />
+    <ext id="flash.events:IEventDispatcher" />
+    <ext id="flash.net:registerClassAlias" />
+    <ext id="AS3" />
+    <ext id="flash.filters:ColorMatrixFilter" />
+    <ext id="flash.events:MouseEvent" />
+    <ext id="flash.display:Stage" />
+    <ext id="flash.media:Sound" />
+    <ext id="fl.controls:DataGrid" />
+    <ext id="flash.utils:getQualifiedClassName" />
+    <ext id="flash.net:URLRequest" />
+    <ext id="flash.desktop:Clipboard" />
+    <ext id="flash.display:StageDisplayState" />
+    <ext id="flash.geom:Rectangle" />
+    <ext id="flash.net:FileFilter" />
+    <ext id="flash.events:IOErrorEvent" />
+    <ext id="flash.display:LoaderInfo" />
+    <ext id="flash.display:SimpleButton" />
+    <ext id="flash.system:LoaderContext" />
+    <ext id="flash.desktop:NativeApplication" />
+    <ext id="flash.external:ExternalInterface" />
+    <ext id="fl.controls:ComboBox" />
+    <ext id="flash.filesystem:FileStream" />
+    <ext id="flash.ui:GameInput" />
+    <ext id="flash.events:DatagramSocketDataEvent" />
+    <ext id="flash.utils:getDefinitionByName" />
+    <ext id="flash.text:TextField" />
+    <ext id="flash.utils:clearInterval" />
+    <ext id="com.iam2bam.ane.nativejoystick.event:NativeJoystickEvent" />
+    <ext id="fl.motion:AdjustColor" />
+    <ext id="com.worlize.websocket:WebSocketErrorEvent" />
+    <ext id="flash.filesystem:FileMode" />
+    <ext id="flash.text:TextFormat" />
+  </external-defs>
+</report>

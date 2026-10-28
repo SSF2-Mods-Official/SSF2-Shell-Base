@@ -1,0 +1,176 @@
+# com/mcleodgaming/ssf2/menus/TitleMenu.as
+## class header
+## why: modhost: import ModAPI/ModHost
+@@ 9 0 da39a3ee5e6b4b0d 4
++   import com.mcleodgaming.ssf2.*;
++   import com.mcleodgaming.ssf2.modapi.*;
++   import com.mcleodgaming.ssf2.modhost.*;
++   import flash.events.*;
+## public function TitleMenu()
+## why: title: show the ModAPI version in the build text
+@@ 29 1 71c3bf2ad3bc1482 1
++         m_subMenu.build_txt.text = revision !== "0" ? version + "." + revision + " + ModAPI " + ModAPI.getAPIVersion() : version + " + ModAPI " + ModAPI.getAPIVersion();
+## override public function initMenuMappings() : void
+## why: controller: title-specific pad loop that records the last controller and keeps the focus highlight
+@@ 41 0 da39a3ee5e6b4b0d 154
+=33
+=12
++      override public function manageMenuMappings(param1:Event) : void
+=18
++         var _loc2_:int = 0;
++         var _loc3_:Boolean = false;
++         if(this.m_menuMapper)
+=53
++            this.m_letGoTimer.tick();
++            _loc2_ = 1;
++            while(_loc2_ <= SaveData.Controllers.length && this.m_hasEvents)
+=163
++               if(Boolean(SaveData.Controllers[_loc2_ - 1].IsDown(SaveData.Controllers[_loc2_ - 1]._BUTTON1)) && this.m_hasEvents)
++               {
++                  if(this.m_bLetGo)
++                  {
++                     this.m_bLetGo = false;
++                     this.m_menuMapper.back();
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.setButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                  }
++                  _loc3_ = true;
++               }
++               if(Boolean(SaveData.Controllers[_loc2_ - 1].IsDown(SaveData.Controllers[_loc2_ - 1]._BUTTON2)) && this.m_hasEvents)
++               {
++                  if(this.m_aLetGo)
++                  {
++                     this.m_aLetGo = false;
++                     this.m_lastControllerIndex = _loc2_ - 1;
++                     this.m_menuMapper.press();
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.setButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                  }
++                  _loc3_ = true;
++               }
++               else if(Boolean(SaveData.Controllers[_loc2_ - 1].IsDown(SaveData.Controllers[_loc2_ - 1]._START)) && !this.m_disablePauseMapping && this.m_hasEvents)
++               {
++                  if(this.m_startLetGo)
++                  {
++                     this.m_startLetGo = false;
++                     this.m_lastControllerIndex = _loc2_ - 1;
++                     this.m_menuMapper.press();
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.setButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                  }
++                  _loc3_ = true;
++               }
++               if(Boolean(SaveData.Controllers[_loc2_ - 1].IsDown(SaveData.Controllers[_loc2_ - 1]._UP)) && this.m_hasEvents)
++               {
++                  if(this.m_upLetGo)
++                  {
++                     this.m_upLetGo = false;
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.resetButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                     this.m_menuMapper.up();
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.setButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                  }
++                  _loc3_ = true;
++               }
++               if(Boolean(SaveData.Controllers[_loc2_ - 1].IsDown(SaveData.Controllers[_loc2_ - 1]._DOWN)) && this.m_hasEvents)
++               {
++                  if(this.m_downLetGo)
++                  {
++                     this.m_downLetGo = false;
++                     if(this.m_menuMapper.currentNode)
++                     {
++                        this.resetButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                     this.m_menuMapper.down();
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.setButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                  }
++                  _loc3_ = true;
++               }
++               if(Boolean(SaveData.Controllers[_loc2_ - 1].IsDown(SaveData.Controllers[_loc2_ - 1]._LEFT)) && this.m_hasEvents)
++               {
++                  if(this.m_leftLetGo)
++                  {
++                     this.m_leftLetGo = false;
++                     if(this.m_menuMapper.currentNode)
++                     {
++                        this.resetButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                     this.m_menuMapper.left();
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.setButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                  }
++                  _loc3_ = true;
++               }
++               if(Boolean(SaveData.Controllers[_loc2_ - 1].IsDown(SaveData.Controllers[_loc2_ - 1]._RIGHT)) && this.m_hasEvents)
++               {
++                  if(this.m_rightLetGo)
++                  {
++                     this.m_rightLetGo = false;
++                     if(this.m_menuMapper.currentNode)
++                     {
++                        this.resetButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                     this.m_menuMapper.right();
++                     if(Boolean(this.m_menuMapper) && Boolean(this.m_menuMapper.currentNode))
++                     {
++                        this.setButtonFocus(this.m_menuMapper.currentNode.clip);
++                     }
++                  }
++                  _loc3_ = true;
++               }
++               _loc2_++;
+=165
++            if(!_loc3_)
+=163
++               this.m_upLetGo = true;
++               this.m_downLetGo = true;
++               this.m_leftLetGo = true;
++               this.m_rightLetGo = true;
++               this.m_aLetGo = true;
++               this.m_bLetGo = true;
++               this.m_startLetGo = true;
++               this.m_letGoTimer.reset();
++               this.m_releaseTimer.reset();
++               this.m_releaseDoubleTimer.reset();
+=165
+=166
+=163
++               this.m_letGoTimer.tick();
++               if(this.m_letGoTimer.IsComplete)
++               {
++                  this.m_releaseTimer.tick();
++                  this.m_releaseDoubleTimer.tick();
++                  if(this.m_releaseTimer.IsComplete || this.m_releaseDoubleTimer.IsComplete && this.m_releaseTimer.CurrentTime <= this.m_releaseTimer.MaxTime / 2)
++                  {
++                     this.m_upLetGo = true;
++                     this.m_downLetGo = true;
++                     this.m_leftLetGo = true;
++                     this.m_rightLetGo = true;
++                     this.m_releaseTimer.reset();
++                  }
++               }
+=165
+=55
+## private function play_btn_CLICK(_:MouseEvent) : void
+## why: rumble: title-screen vibration on Play for the controller that pressed it
+@@ 151 0 da39a3ee5e6b4b0d 4
++            ModHost.runHook(ModHooks.RUMBLE,{
++               "kind":"title",
++               "controllerIndex":(e is MouseEvent ? -1 : this.m_lastControllerIndex)
++            });
