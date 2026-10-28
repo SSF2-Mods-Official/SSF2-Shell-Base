@@ -495,6 +495,10 @@ class VanillaHashTests(unittest.TestCase):
             path.write_bytes(data)
             self.assertEqual(sb.pe_machine(path), 0x8664)
 
+    def test_player_target_follows_the_air_machine(self):
+        self.assertEqual(sb.player_target(0x8664), ("32.0", None))
+        self.assertEqual(sb.player_target(0x14C), ("32.0", 40))
+
     def test_names_swf_and_mappings_dat(self):
         import tempfile
         with tempfile.TemporaryDirectory() as folder:

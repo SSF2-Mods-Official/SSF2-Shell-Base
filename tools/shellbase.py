@@ -402,13 +402,13 @@ class N2f:
         self.run("decompile", swf, "--all", "-d", out)
         return out
 
-    def compile(self, src, classes, out_swf, project):
+    def compile(self, src, classes, out_swf, project, target="32.0", swf_version=None):
         externs = ENGINE2 / "externs"
         opts = {
             "source-path": [src.as_posix()],
             "includes": list(classes),
             "external-library-path": [(externs / "engine1.swc").as_posix(), self.airglobal().as_posix()],
-            "target-player": "32.0",
+            "target-player": target,
             "optimize": True,
             "debug": False,
             "strict": False,
@@ -417,6 +417,8 @@ class N2f:
             "load-externs": [(externs / "link-report.xml").as_posix()],
             "output": out_swf.as_posix(),
         }
+        if swf_version:
+            opts["swf-version"] = swf_version
         project.write_text(json.dumps({"mainClass": MAIN_CLASS, "compilerOptions": opts}, indent=2))
         if out_swf.exists():
             out_swf.unlink()
@@ -1084,6 +1086,18 @@ def pe_machine(path):
     return int.from_bytes(data[pe + 4:pe + 6], "little")
 
 
+def player_target(machine):
+    """32-bit SSF2 ships AIR 29, which loads SWF 40. Compile against the AIR 32 library and stamp 40."""
+    if machine == 0x14C:
+        return "32.0", 40
+    return "32.0", None
+
+
+def air_machine(vanilla):
+    dlls = list((vanilla / "Adobe AIR").rglob("Adobe AIR.dll")) if (vanilla / "Adobe AIR").is_dir() else []
+    return pe_machine(dlls[0]) if dlls else 0x8664
+
+
 def copy_air(vanilla_root, out):
     """The captive runtime from the vanilla install; SSF2.exe and its ANEs are built against it."""
     src = vanilla_root / "Adobe AIR"
@@ -1102,6 +1116,74 @@ def copy_air(vanilla_root, out):
     log("AIR runtime files=%d" % n)
     if dll is not None:
         log("AIR machine=0x%X" % pe_machine(dll))
+
+
+WIN32_APP = """<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<application xmlns="http://ns.adobe.com/air/application/29.0">
+  <id>com.mcleodgaming.ssf2</id>
+  <versionNumber>001.400.001</versionNumber>
+  <filename>Super Smash Flash 2 Beta</filename>
+  <description>Duke it out as your favorite Nintendo characters in this fan-made tribute to the Super Smash Bros. franchise.</description>
+  <name>Super Smash Flash 2 Beta</name>
+  <copyright>2025</copyright>
+  <initialWindow>
+    <content>SSF2.swf</content>
+    <systemChrome>standard</systemChrome>
+    <transparent>false</transparent>
+    <visible>true</visible>
+    <fullScreen>false</fullScreen>
+    <aspectRatio>landscape</aspectRatio>
+    <renderMode>auto</renderMode>
+    <maximizable>true</maximizable>
+    <minimizable>true</minimizable>
+    <resizable>true</resizable>
+  </initialWindow>
+  <icon>
+    <image128x128>icons/SSF2128.png</image128x128></icon>
+  <architecture>32</architecture>
+  <customUpdateUI>false</customUpdateUI>
+  <allowBrowserInvocation>false</allowBrowserInvocation>
+  <supportedProfiles>extendedDesktop</supportedProfiles>
+%s</application>
+"""
+
+
+def prepare_win32(out, vanilla):
+    """A 32-bit captive runtime rejects architecture 64 and a second platform folder for the same extension."""
+    ext_root = out / "META-INF" / "AIR" / "extensions"
+    vanilla_ext = vanilla / "META-INF" / "AIR" / "extensions"
+    kept = []
+    if ext_root.is_dir():
+        for ext in sorted(p for p in ext_root.iterdir() if p.is_dir()):
+            x64 = ext / "META-INF" / "ANE" / "Windows-x86-64"
+            if x64.is_dir():
+                shutil.rmtree(x64)
+            x86 = ext / "META-INF" / "ANE" / "Windows-x86"
+            src = vanilla_ext / ext.name / "META-INF" / "ANE" / "Windows-x86"
+            if src.is_dir():
+                if x86.exists():
+                    shutil.rmtree(x86)
+                shutil.copytree(src, x86)
+            if not x86.is_dir() or not any(x86.glob("*.dll")):
+                shutil.rmtree(ext)
+                log("win32 dropped extension %s" % ext.name)
+                continue
+            kept.append(ext.name)
+            log("win32 extension %s" % ext.name)
+    block = ""
+    if kept:
+        ids = "\n".join("    <extensionID>%s</extensionID>" % name for name in kept)
+        block = "  <extensions>\n%s\n  </extensions>\n" % ids
+    xml = WIN32_APP % block
+    (out / "META-INF" / "AIR" / "application.xml").write_bytes(xml.encode("utf-8"))
+    capped = 0
+    for swf in out.rglob("*.swf"):
+        data = bytearray(swf.read_bytes())
+        if len(data) >= 4 and data[3] > 40:
+            data[3] = 40
+            swf.write_bytes(data)
+            capped += 1
+    log("win32 descriptor extensions=%d swf capped=%d" % (len(kept), capped))
 
 
 def copy_overlay(out, src=SHELL, label="shell", skip=("src",)):
@@ -1416,7 +1498,9 @@ def cmd_build(a):
     mjson = merge_apply(vjson, json.loads((MAPPINGS / "patch.json").read_text(encoding="utf-8")))
 
     built = work / "engine2.swf"
-    n2f.compile(src, meta["includes"], built, work / "engine2.asconfig.json")
+    target, swf_version = player_target(air_machine(vanilla))
+    log("player target=%s swf=%s" % (target, swf_version or "default"))
+    n2f.compile(src, meta["includes"], built, work / "engine2.asconfig.json", target, swf_version)
     log("engine2.swf %d bytes" % built.stat().st_size)
 
     reset_out(out)
@@ -1433,6 +1517,8 @@ def cmd_build(a):
     engine_dir = out / "data" / "engine"
     engine_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(built, engine_dir / "engine2.swf")
+    if air_machine(vanilla) == 0x14C:
+        prepare_win32(out, vanilla)
 
     misc = out / "data" / "misc"
     misc.mkdir(parents=True, exist_ok=True)
