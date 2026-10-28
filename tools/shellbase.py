@@ -1148,6 +1148,25 @@ WIN32_APP = """<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 """
 
 
+def win32_extension_xml(text):
+    """AIR 29 treats a descriptor that still names Windows-x86-64 as a second copy of the same extension."""
+    ident = re.search(r"<id>([^<]+)</id>", text)
+    ver = re.search(r"<versionNumber>([^<]+)</versionNumber>", text)
+    plat = re.search(r'<platform name="Windows-x86">.*?</platform>', text, re.S)
+    if not ident or not plat:
+        raise SystemExit("extension descriptor has no Windows-x86 platform")
+    version = ver.group(1) if ver else "1.0.0"
+    return (
+        '<extension xmlns="http://ns.adobe.com/air/extension/4.0">\n'
+        "  <id>%s</id>\n"
+        "  <versionNumber>%s</versionNumber>\n"
+        "  <platforms>\n"
+        "    %s\n"
+        "  </platforms>\n"
+        "</extension>\n" % (ident.group(1), version, plat.group(0).strip())
+    )
+
+
 def prepare_win32(out, vanilla):
     """A 32-bit captive runtime rejects architecture 64 and a second platform folder for the same extension."""
     ext_root = out / "META-INF" / "AIR" / "extensions"
@@ -1168,6 +1187,8 @@ def prepare_win32(out, vanilla):
                 shutil.rmtree(ext)
                 log("win32 dropped extension %s" % ext.name)
                 continue
+            desc = ext / "META-INF" / "ANE" / "extension.xml"
+            desc.write_bytes(win32_extension_xml(read_utf8(desc)).encode("utf-8"))
             kept.append(ext.name)
             log("win32 extension %s" % ext.name)
     block = ""

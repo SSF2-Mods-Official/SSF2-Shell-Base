@@ -499,6 +499,24 @@ class VanillaHashTests(unittest.TestCase):
         self.assertEqual(sb.player_target(0x8664), ("32.0", None))
         self.assertEqual(sb.player_target(0x14C), ("32.0", 40))
 
+    def test_win32_extension_xml_drops_the_64_bit_platform(self):
+        text = (
+            '<extension xmlns="http://ns.adobe.com/air/extension/32.0">\n'
+            "  <id>com.example</id>\n"
+            "  <versionNumber>1.0.0</versionNumber>\n"
+            "  <platforms>\n"
+            '    <platform name="Windows-x86"><applicationDeployment>'
+            "<nativeLibrary>A.dll</nativeLibrary></applicationDeployment></platform>\n"
+            '    <platform name="Windows-x86-64"><applicationDeployment>'
+            "<nativeLibrary>A64.dll</nativeLibrary></applicationDeployment></platform>\n"
+            "  </platforms>\n</extension>\n"
+        )
+        got = sb.win32_extension_xml(text)
+        self.assertIn("air/extension/4.0", got)
+        self.assertIn("A.dll", got)
+        self.assertNotIn("A64.dll", got)
+        self.assertNotIn("x86-64", got)
+
     def test_names_swf_and_mappings_dat(self):
         import tempfile
         with tempfile.TemporaryDirectory() as folder:
