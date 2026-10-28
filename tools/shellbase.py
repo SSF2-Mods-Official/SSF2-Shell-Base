@@ -1216,6 +1216,18 @@ def prepare_win32(out, vanilla):
         log("win32 discord sdk machine=0x%X" % pe_machine(sdk))
 
 
+def drop_win32_extensions(out):
+    """A 64-bit build keeps the 64-bit extension DLLs. The 32-bit folders are for AIR 29 only."""
+    ext_root = out / "META-INF" / "AIR" / "extensions"
+    if not ext_root.is_dir():
+        return
+    for ext in sorted(p for p in ext_root.iterdir() if p.is_dir()):
+        x86 = ext / "META-INF" / "ANE" / "Windows-x86"
+        if x86.is_dir():
+            shutil.rmtree(x86)
+            log("win64 removed 32-bit extension %s" % ext.name)
+
+
 def copy_overlay(out, src=SHELL, label="shell", skip=("src",)):
     """Top-level folders in skip stay out of the build: shell/src is mod source, the game loads data/ssf2mm."""
     n = 0
@@ -1549,6 +1561,8 @@ def cmd_build(a):
     shutil.copyfile(built, engine_dir / "engine2.swf")
     if air_machine(vanilla) == 0x14C:
         prepare_win32(out, vanilla)
+    elif air_machine(vanilla) == 0x8664:
+        drop_win32_extensions(out)
 
     misc = out / "data" / "misc"
     misc.mkdir(parents=True, exist_ok=True)

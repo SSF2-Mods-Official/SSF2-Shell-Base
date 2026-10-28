@@ -517,6 +517,21 @@ class VanillaHashTests(unittest.TestCase):
         self.assertNotIn("A64.dll", got)
         self.assertNotIn("x86-64", got)
 
+    def test_drop_win32_extensions_removes_the_32_bit_folder(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            ane = root / "META-INF" / "AIR" / "extensions" / "com.jotard.ane.DiscordANE" / "META-INF" / "ANE"
+            x86 = ane / "Windows-x86"
+            x64 = ane / "Windows-x86-64"
+            x86.mkdir(parents=True)
+            x64.mkdir()
+            (x86 / "DiscordSDK.dll").write_bytes(b"x86")
+            (x64 / "DiscordSDK64.dll").write_bytes(b"x64")
+            sb.drop_win32_extensions(root)
+            self.assertFalse(x86.exists())
+            self.assertTrue((x64 / "DiscordSDK64.dll").is_file())
+
     def test_names_swf_and_mappings_dat(self):
         import tempfile
         with tempfile.TemporaryDirectory() as folder:
