@@ -34,7 +34,7 @@ package
 			"desk": {"icon": "chibi_icon", "label": "Chibi-Robo", "stageLogo": true},
 			"tinystage": {"icon": "smash_icon", "label": "Super Smash Bros."},
 			"nintendo3ds": {"icon": "smash_icon", "label": "Super Smash Bros."},
-			"urbanchampion": {"icon": "", "label": "Urban Champion", "stageLogo": true},
+			"urbanchampion": {"icon": "UrbanChampionSymbolSSS", "label": "Urban Champion"},
 			"steeldiver": {"icon": "", "label": "Steel Diver", "stageLogo": true},
 			"kingdom1": {"icon": "MarioSymbol", "label": "Super Mario"},
 			"kingdom2": {"icon": "MarioSymbol", "label": "Super Mario"},
@@ -49,7 +49,7 @@ package
 			"warioware": {"icon": "warioseries", "label": "Wario"},
 			"junglehijinx": {"icon": "dkicon", "label": "Donkey Kong"},
 			"gangplankgalleon": {"icon": "dkicon", "label": "Donkey Kong"},
-			"jungleisland": {"icon": "", "label": "Super Monkey Ball", "stageLogo": true},
+			"jungleisland": {"icon": "SuperMonkeyBallSymbolSSS", "label": "Super Monkey Ball"},
 			"hyrulecastle64": {"icon": "zeldaicon", "label": "The Legend of Zelda"},
 			"hyruletemple": {"icon": "zeldaicon", "label": "The Legend of Zelda"},
 			"hylianskies": {"icon": "zeldaicon", "label": "The Legend of Zelda"},
@@ -75,7 +75,7 @@ package
 			"devilsmachine": {"icon": "mother_symbol1", "label": "EarthBound"},
 			"castlesiege": {"icon": "marth_seriesIcon", "label": "Fire Emblem"},
 			"palutenasshrine": {"icon": "piticon", "label": "Kid Icarus"},
-			"venuslighthouse": {"icon": "questionicon", "label": "Golden Sun"},
+			"venuslighthouse": {"icon": "GoldenSunSymbolSSS", "label": "Golden Sun"},
 			"flatzoneplus": {"icon": "gameandwatch_icon", "label": "Game & Watch"},
 			"greenhillzone": {"icon": "sonic_symbol1", "label": "Sonic"},
 			"casinonightzone": {"icon": "sonic_symbol1", "label": "Sonic"},
@@ -107,8 +107,8 @@ package
 			{"re": "yoshi", "icon": "Yoshi_Symbol", "label": "Yoshi"},
 			{"re": "wario|emerald.?cave|palm.?tree", "icon": "warioseries", "label": "Wario"},
 			{"re": "jungle.?hijinx|gangplank|donkey.?kong|\\bdk\\b", "icon": "dkicon", "label": "Donkey Kong"},
-			{"re": "jungle.?island|monkey.?ball", "icon": "", "label": "Super Monkey Ball", "stageLogo": true},
-			{"re": "\\bdesk\\b|chibi.?robo", "icon": "chibi_icon", "label": "Chibi-Robo", "stageLogo": true},
+			{"re": "jungle.?island|monkey.?ball", "icon": "SuperMonkeyBallSymbolSSS", "label": "Super Monkey Ball"},
+			{"re": "\\bdesk\\b|chibi.?robo", "icon": "chibi_icon", "label": "Chibi-Robo"},
 			{"re": "hyrule|hylian|clock.?town|palace.?of.?twilight|zelda|ganon|gerudo", "icon": "zeldaicon", "label": "The Legend of Zelda"},
 			{"re": "pokemon|pokémon|saffron|sky.?pillar|snowpoint|lake.?of.?rage|unova|pokemon.?master|atbapm|team.?rocket|pok.?mon", "icon": "PokemonSymbol", "label": "Pokémon"},
 			{"re": "dream.?land|rainbow.?route|butter.?building|dedede", "icon": "Kirby_Symbol", "label": "Kirby"},
@@ -129,7 +129,7 @@ package
 			{"re": "chaos.?shrine|lunar.?core|black.?mage|final.?fantasy", "icon": "bmseries", "label": "Final Fantasy"},
 			{"re": "binding.?of.?isaac", "icon": "isaac_icon", "label": "The Binding of Isaac"},
 			{"re": "twilight.?town|world.?that.?never|kingdom.?hearts|sora", "icon": "khicon", "label": "Kingdom Hearts"},
-			{"re": "venus.?lighthouse|golden.?sun", "icon": "questionicon", "label": "Golden Sun"},
+			{"re": "venus.?lighthouse|golden.?sun", "icon": "GoldenSunSymbolSSS", "label": "Golden Sun"},
 			{"re": "fairy.?glade|rayman", "icon": "rayman_icon", "label": "Rayman"},
 			{"re": "namek|world.?tournament|dragon.?ball|goku", "icon": "DragonBallsign", "label": "Dragon Ball"},
 			{"re": "thousand.?sunny|one.?piece|luffy", "icon": "luffy_icon", "label": "One Piece"},
@@ -137,7 +137,7 @@ package
 			{"re": "hueco|bleach|ichigo", "icon": "bleach_symbol1", "label": "Bleach"},
 			{"re": "smashville|animal.?crossing", "icon": "", "label": "Animal Crossing", "stageLogo": true},
 			{"re": "steel.?diver", "icon": "", "label": "Steel Diver", "stageLogo": true},
-			{"re": "urban.?champion", "icon": "", "label": "Urban Champion", "stageLogo": true},
+			{"re": "urban.?champion", "icon": "UrbanChampionSymbolSSS", "label": "Urban Champion"},
 			{"re": "battlefield|final.?destination|multi.?man|polygon|waiting.?room|metal.?cavern", "icon": "smash_icon", "label": "Super Smash Bros."}
 		];
 
@@ -380,7 +380,12 @@ package
 			parent.addChild(holder);
 			if (seriesKey && seriesKey.indexOf("stage:") == 0)
 			{
-				logo = MusicStageVisuals.extractLiveLogo(seriesKey.substr(6));
+				sid = seriesKey.substr(6);
+				logo = MusicStageVisuals.extractLiveLogo(sid);
+				if (!logo)
+				{
+					logo = MusicStageVisuals.extractSelectLogo(sid);
+				};
 			};
 			link = iconLinkage(seriesKey);
 			if (!logo && link)
@@ -394,19 +399,15 @@ package
 				if (sid)
 				{
 					logo = MusicStageVisuals.extractLiveLogo(sid);
+					if (!logo)
+					{
+						logo = MusicStageVisuals.extractSelectLogo(sid);
+					};
 				};
 			};
-			if (!logo)
-			{
-				if (seriesKey && seriesKey.indexOf("stage:") == 0)
-				{
-					logo = MusicStageVisuals.albumMark(seriesKey.substr(6));
-				}
-				else if (sid)
-				{
-					logo = MusicStageVisuals.albumMark(sid);
-				};
-			};
+			// Never tint full _stage_select / albumMark — that paints a white rectangle.
+			// Smash ball is the default when no franchise SymbolSSS / logo peel exists
+			// (e.g. Smashville and Steel Diver have no library series export).
 			if (!logo)
 			{
 				logo = tryLibraryIcon("smash_icon") || tryLibraryIcon("smash_symbol");
@@ -491,7 +492,12 @@ package
 			};
 			if (seriesKey == KEY_OTHER || seriesKey == KEY_UNKNOWN)
 			{
-				fillId = MusicStageVisuals.OTHER_STAGE_ID;
+				// attachTileArt rejects OTHER_STAGE_ID — use Training Grid art.
+				if (!fillId || fillId == KEY_OTHER || fillId == KEY_UNKNOWN
+					|| fillId == MusicStageVisuals.OTHER_STAGE_ID)
+				{
+					fillId = MusicStageVisuals.TRAINING_GRID_ID;
+				};
 			};
 			preview = MusicStageVisuals.attachTileArt(artHost, fillId, cellW, cellH);
 			if (preview)
@@ -773,14 +779,15 @@ package
 			{
 				return ("icon:smash_icon");
 			};
-			if (Boolean(entry.stageLogo))
-			{
-				return ("stage:" + stageId);
-			};
 			icon = entry.icon != null ? String(entry.icon) : "";
+			// Non-empty franchise icon wins over stageLogo (e.g. Desk → chibi_icon).
 			if (icon.length > 0)
 			{
 				return ("icon:" + icon);
+			};
+			if (Boolean(entry.stageLogo))
+			{
+				return ("stage:" + stageId);
 			};
 			return ("stage:" + stageId);
 		}

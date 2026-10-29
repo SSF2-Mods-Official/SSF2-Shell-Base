@@ -249,11 +249,102 @@ package
 			frame = previewerFrame(id);
 			if (!frame)
 			{
+				trace("[music_player] extractLiveLogo id=" + id + " step=frame");
 				return (null);
 			};
 			host = deepestContentHost(frame);
+			if (!host)
+			{
+				trace("[music_player] extractLiveLogo id=" + id + " step=host");
+				return (null);
+			};
 			logo = findLogoChild(host);
 			if (!logo || !logo.parent)
+			{
+				trace("[music_player] extractLiveLogo id=" + id + " step=child n=" + host.numChildren);
+				return (null);
+			};
+			if (!logoLooksLikeMark(logo, host) && !isLogoName(logo.name || ""))
+			{
+				trace("[music_player] extractLiveLogo id=" + id + " step=reject");
+				return (null);
+			};
+			try
+			{
+				logo.parent.removeChild(logo);
+			}
+			catch (err:*)
+			{
+				trace("[music_player] extractLiveLogo id=" + id + " step=child");
+				return (null);
+			};
+			stripFiltersDeep(logo);
+			return (logo);
+		}
+
+		/** Reject full-frame plates that tint into a white rectangle on album tiles. */
+		private static function logoLooksLikeMark(logo:DisplayObject, host:DisplayObjectContainer):Boolean
+		{
+			var hb:Rectangle;
+			var lb:Rectangle;
+			var hostArea:Number;
+			var logoArea:Number;
+			if (!logo || !host)
+			{
+				return (false);
+			};
+			hb = host.getBounds(host);
+			lb = logo.getBounds(host);
+			hostArea = Math.max(1, hb.width * hb.height);
+			logoArea = Math.max(0, lb.width * lb.height);
+			if (logoArea < 64)
+			{
+				return (false);
+			};
+			// Preview plates fill most of the frame; real logos stay clearly smaller.
+			if (logoArea > hostArea * 0.5)
+			{
+				return (false);
+			};
+			return (true);
+		}
+
+		/**
+		 * Peel a logo child from `{stageId}_stage_select` when the previewer peel misses.
+		 * Used for stages with no franchise SymbolSSS (Smashville, Steel Diver).
+		 */
+		public static function extractSelectLogo(stageId:String):DisplayObject
+		{
+			var icon:MovieClip;
+			var host:DisplayObjectContainer;
+			var logo:DisplayObject;
+			if (!stageId || stageId == OTHER_STAGE_ID)
+			{
+				return (null);
+			};
+			icon = getLibraryMC(stageId + "_stage_select");
+			if (!icon)
+			{
+				return (null);
+			};
+			try
+			{
+				icon = icon.clone() as MovieClip;
+			}
+			catch (cloneErr:*)
+			{
+			};
+			if (!icon)
+			{
+				return (null);
+			};
+			host = deepestContentHost(icon);
+			logo = findLogoChild(host);
+			if (!logo || !logo.parent)
+			{
+				return (null);
+			};
+			if (!logoLooksLikeMark(logo, host) && !isLogoName(logo.name || ""))
 			{
 				return (null);
 			};
@@ -806,48 +897,75 @@ package
 			return (mc);
 		}
 
-		/** If the frame is a thin wrapper, walk into the single content MC. */
+		/** Unwrap single-child shells until the host that holds preview + logo. */
 		private static function deepestContentHost(frame:MovieClip):DisplayObjectContainer
 		{
+			var host:DisplayObjectContainer;
 			var child:DisplayObject;
-			var mc:MovieClip;
+			var next:DisplayObjectContainer;
+			var guard:int;
 			if (!frame)
 			{
 				return (null);
 			};
-			if (frame.numChildren == 1)
+			host = frame;
+			guard = 0;
+			while (host && host.numChildren == 1 && guard < 8)
 			{
-				child = frame.getChildAt(0);
-				if (child is MovieClip && MovieClip(child).numChildren > 0)
+				child = host.getChildAt(0);
+				guard++;
+				if (!(child is DisplayObjectContainer))
 				{
-					mc = MovieClip(child);
-					if (mc.numChildren == 1 && mc.getChildAt(0) is MovieClip
-						&& MovieClip(mc.getChildAt(0)).numChildren > 1)
-					{
-						return (MovieClip(mc.getChildAt(0)));
-					};
-					if (mc.numChildren > 1)
-					{
-						return (mc);
-					};
+					break;
 				};
+				next = DisplayObjectContainer(child);
+				if (next.numChildren < 1)
+				{
+					break;
+				};
+				if (next.numChildren > 1)
+				{
+					return (next);
+				};
+				host = next;
 			};
-			return (frame);
+			return (host);
 		}
 
+		private static function isLogoName(n:String):Boolean
+		{
+			if (!n)
+			{
+				return (false);
+			};
+			n = n.toLowerCase();
+			return (n.indexOf("logo") >= 0 || n.indexOf("title") >= 0 || n.indexOf("emblem") >= 0
+				|| n.indexOf("mark") >= 0 || n == "name" || n.indexOf("wordmark") >= 0
+				|| n.indexOf("stagename") >= 0 || n.indexOf("stage_name") >= 0
+				|| n.indexOf("label") >= 0);
+		}
+
+		/**
+		 * Logo on a previewer frame: named child first (incl. nested),
+		 * else the smallest sibling that is clearly not the preview plate.
+		 * A single wrapper with several kids is searched inside.
+		 */
 		private static function findLogoChild(host:DisplayObjectContainer):DisplayObject
 		{
 			var i:int;
 			var child:DisplayObject;
 			var named:DisplayObject;
+			var nested:DisplayObject;
 			var small:DisplayObject;
-			var largeCount:int;
+			var largest:DisplayObject;
+			var only:DisplayObjectContainer;
 			var area:Number;
+			var smallArea:Number;
+			var largeArea:Number;
 			var hostArea:Number;
 			var b:Rectangle;
 			var hb:Rectangle;
-			var n:String;
-			var smallArea:Number;
+			var visible:int;
 			if (!host || host.numChildren < 1)
 			{
 				return (null);
@@ -856,8 +974,11 @@ package
 			hostArea = Math.max(1, hb.width * hb.height);
 			named = null;
 			small = null;
-			smallArea = 0;
-			largeCount = 0;
+			largest = null;
+			only = null;
+			smallArea = Number.MAX_VALUE;
+			largeArea = 0;
+			visible = 0;
 			i = 0;
 			while (i < host.numChildren)
 			{
@@ -867,36 +988,87 @@ package
 				{
 					continue;
 				};
-				n = (child.name || "").toLowerCase();
-				if (n.indexOf("logo") >= 0 || n.indexOf("title") >= 0 || n.indexOf("emblem") >= 0
-					|| n.indexOf("mark") >= 0 || n == "name" || n.indexOf("wordmark") >= 0)
+				visible++;
+				if (isLogoName(child.name || ""))
 				{
 					named = child;
 					break;
 				};
+				if (child is DisplayObjectContainer && DisplayObjectContainer(child).numChildren > 0)
+				{
+					nested = findNamedLogoDeep(DisplayObjectContainer(child), 3);
+					if (nested)
+					{
+						named = nested;
+						break;
+					};
+					only = DisplayObjectContainer(child);
+				};
 				b = child.getBounds(host);
 				area = b.width * b.height;
-				if (area >= hostArea * 0.4)
+				if (area <= 64)
 				{
-					largeCount++;
-				}
-				else if (area > 64 && area < hostArea * 0.28)
+					continue;
+				};
+				if (area > largeArea)
 				{
-					if (!small || area < smallArea)
-					{
-						small = child;
-						smallArea = area;
-					};
+					largeArea = area;
+					largest = child;
+				};
+				if (area < smallArea)
+				{
+					smallArea = area;
+					small = child;
 				};
 			};
 			if (named)
 			{
 				return (named);
 			};
-			// Only peel a small child when a clear large sibling exists (preview vs logo).
-			if (small && largeCount > 0 && host.numChildren >= 2)
+			// One visible wrapper holding preview + logo — peel inside it.
+			if (visible == 1 && only && only.numChildren >= 2)
+			{
+				return (findLogoChild(only));
+			};
+			// Must be clearly smaller than the preview plate (avoids white-rectangle tints).
+			if (visible >= 2 && small && largest && small != largest
+				&& smallArea < largeArea * 0.55 && smallArea < hostArea * 0.5)
 			{
 				return (small);
+			};
+			return (null);
+		}
+
+		private static function findNamedLogoDeep(host:DisplayObjectContainer, depth:int):DisplayObject
+		{
+			var i:int;
+			var child:DisplayObject;
+			var hit:DisplayObject;
+			if (!host || depth < 0)
+			{
+				return (null);
+			};
+			i = 0;
+			while (i < host.numChildren)
+			{
+				child = host.getChildAt(i);
+				i++;
+				if (!child || !child.visible)
+				{
+					continue;
+				};
+				if (isLogoName(child.name || ""))
+				{
+					return (child);
+				};
+				if (depth > 0 && child is DisplayObjectContainer)
+				{
+					hit = findNamedLogoDeep(DisplayObjectContainer(child), depth - 1);
+					if (hit)
+					{
+						return (hit);
+					};
+				};
 			};
 			return (null);
 		}

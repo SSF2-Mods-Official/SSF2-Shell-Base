@@ -574,7 +574,7 @@ package
 			{
 				iconKey = MusicSeriesResolver.KEY_ALL;
 			};
-			if (cell.kind == "other" || cell.kind == "new")
+			if (cell.kind == "other" || cell.kind == "new" || cell.kind == "other_stages_hub")
 			{
 				iconKey = MusicSeriesResolver.KEY_OTHER;
 			};
@@ -586,6 +586,10 @@ package
 			else if (cell.kind == "series")
 			{
 				stageFill = ui.m_songs.previewStageForCell(cell);
+			}
+			else if (cell.kind == "other_stages_hub")
+			{
+				stageFill = MusicStageVisuals.TRAINING_GRID_ID;
 			};
 			MusicSeriesResolver.attachSeriesTile(art, iconKey, stageFill, MusicPlayerUi.CELL, MusicPlayerUi.CELL, true);
 			addSongCountBadge(art, cell);

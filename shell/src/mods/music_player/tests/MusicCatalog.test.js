@@ -134,6 +134,45 @@ function run() {
   assert(cat2.stageIds.indexOf("castle") >= 0, "new stage appears after rebuild");
   assert(cat2.stageIds.length === cat.stageIds.length + 1, "exactly one new stage");
 
+  // seriesKeyFromEntry: non-empty icon beats stageLogo; empty icon + stageLogo → stage:id.
+  function seriesKeyFromEntry(entry, stageId) {
+    if (!entry) return "icon:smash_icon";
+    const icon = entry.icon != null ? String(entry.icon) : "";
+    if (icon.length > 0) return "icon:" + icon;
+    if (entry.stageLogo) return "stage:" + stageId;
+    return "stage:" + stageId;
+  }
+  assert(
+    seriesKeyFromEntry({ icon: "chibi_icon", label: "Chibi-Robo", stageLogo: true }, "desk")
+      === "icon:chibi_icon",
+    "Desk icon beats stageLogo"
+  );
+  assert(
+    seriesKeyFromEntry({ icon: "GoldenSunSymbolSSS", label: "Golden Sun" }, "venuslighthouse")
+      === "icon:GoldenSunSymbolSSS",
+    "Venus uses GoldenSunSymbolSSS"
+  );
+  assert(
+    seriesKeyFromEntry({ icon: "SuperMonkeyBallSymbolSSS", label: "Super Monkey Ball" }, "jungleisland")
+      === "icon:SuperMonkeyBallSymbolSSS",
+    "Jungle Island uses SuperMonkeyBallSymbolSSS"
+  );
+  assert(
+    seriesKeyFromEntry({ icon: "UrbanChampionSymbolSSS", label: "Urban Champion" }, "urbanchampion")
+      === "icon:UrbanChampionSymbolSSS",
+    "Urban Champion uses UrbanChampionSymbolSSS"
+  );
+  assert(
+    seriesKeyFromEntry({ icon: "", label: "Animal Crossing", stageLogo: true }, "smashville")
+      === "stage:smashville",
+    "Smashville stays stage: (no SymbolSSS in the game library)"
+  );
+  assert(
+    seriesKeyFromEntry({ icon: "", label: "Steel Diver", stageLogo: true }, "steeldiver")
+      === "stage:steeldiver",
+    "Steel Diver stays stage: (no SymbolSSS in the game library)"
+  );
+
   console.log("MusicCatalog.test.js: OK (" + cat2.stageIds.length + " stages)");
 }
 
