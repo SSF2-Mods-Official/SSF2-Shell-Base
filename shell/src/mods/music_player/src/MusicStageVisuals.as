@@ -946,9 +946,11 @@ package
 		}
 
 		/**
-		 * Logo on a previewer frame: named child first (incl. nested),
-		 * else the smallest sibling that is clearly not the preview plate.
-		 * A single wrapper with several kids is searched inside.
+		 * Logo on a stagePreviewer frame.
+		 * Every stage frame places preview art at SWF depth 1 and the series mark
+		 * at depth 11 (PlaceObject3). Timeline children are ordered by ascending
+		 * depth, so the mark is the topmost child. That structure ships in
+		 * everyone's misc2.swf via ResourceManager — no local paths or chid map.
 		 */
 		private static function findLogoChild(host:DisplayObjectContainer):DisplayObject
 		{
@@ -956,6 +958,7 @@ package
 			var child:DisplayObject;
 			var named:DisplayObject;
 			var nested:DisplayObject;
+			var top:DisplayObject;
 			var small:DisplayObject;
 			var largest:DisplayObject;
 			var only:DisplayObjectContainer;
@@ -972,6 +975,15 @@ package
 			};
 			hb = host.getBounds(host);
 			hostArea = Math.max(1, hb.width * hb.height);
+			// Depth-11 mark: topmost timeline child (see stagePreviewer PlaceObject3).
+			if (host.numChildren >= 2)
+			{
+				top = host.getChildAt(host.numChildren - 1);
+				if (top && top.visible && logoLooksLikeMark(top, host))
+				{
+					return (top);
+				};
+			};
 			named = null;
 			small = null;
 			largest = null;
