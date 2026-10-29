@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/30.0">
+  <id>StudioCostumeSwitchFixture</id>
+  <filename>StudioCostumeSwitchFixture</filename>
+  <versionNumber>1.0.0</versionNumber>
+  <initialWindow>
+    <content>StudioCostumeSwitchFixture.swf</content>
+    <visible>true</visible>
+  </initialWindow>
+</application>

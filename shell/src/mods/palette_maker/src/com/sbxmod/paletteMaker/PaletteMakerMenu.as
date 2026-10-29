@@ -1917,9 +1917,10 @@ package com.sbxmod.paletteMaker
 				setAuthorNameText("");
 				checkCostumeName(null);
 				clearSelectionEntryReplacements();
-				ColorSquare.deselectAll();
+				deselectActiveGroupsOnCostumeSwitch();
 				resortColorSwatchLayout();
-				applyColorGroupsForLoadedCostume();
+				// Keep live color groups — do not clear/reload on recolor switch.
+				layoutGroupRow();
 				syncMcNameFromCostume(null);
 				Ssf2.SoundQueue.instance.playSoundEffect("menu_select");
 				Ssf2.MenuController.costumeSelectorDisplay.closeAfterPick();
@@ -1928,7 +1929,6 @@ package com.sbxmod.paletteMaker
 			// Prefer the selector's costume object (covers team / metal slots appended in browse mode).
 			loadedCostume = Ssf2.MenuController.costumeSelectorDisplay.getSelectedCostumeData();
 			getSelectedCostume = Ssf2.MenuController.costumeSelectorDisplay.getSelectedCostume();
-			rememberStudioCostumeIndex(getSelectedCostume);
 			if (!loadedCostume)
 			{
 				loadedCostume = Ssf2.ResourceManager.getCostume(statsName, null, getSelectedCostume);
@@ -1947,9 +1947,10 @@ package com.sbxmod.paletteMaker
 			mixedPairs = mixColorPairs(ps.colors.concat(psPA.colors), ps.replacements.concat(psPA.replacements));
 			matches = [];
 			pushUndoSnapshot();
-			// Reset to identity first so leftover replacements from the previous
-			// costume don't stack, and cached sprite art restores to no-recolor.
-			applyIdentityPaletteFromCurrentBases(false);
+			// No-recolor first (paint now), then the new costume — otherwise the
+			// previous recolor sticks on cached sprite art until a later frame.
+			resetStudioVisualToNoRecolor();
+			rememberStudioCostumeIndex(getSelectedCostume);
 			if (currentPaletteData)
 			{
 				ensurePaletteBlocks(currentPaletteData);
@@ -1976,7 +1977,8 @@ package com.sbxmod.paletteMaker
 			trace("[palette_maker] costume pairs=" + mixedPairs.length);
 			for each(var match:Object in matches)
 			{
-				updatePaletteColor(match.color, match.replacement);
+				// recordLayer false — locker paint is the costume, not group layer.
+				updatePaletteColor(match.color, match.replacement, false);
 				for(var i:int = 0; i < m_subMenu.colorBoxBG.numChildren; i++)
 				{
 					var child:DisplayObject = m_subMenu.colorBoxBG.getChildAt(i);
@@ -1990,19 +1992,69 @@ package com.sbxmod.paletteMaker
 					};
 				};
 			}
+			clearGroupSessionPaintAfterCostumeLoad();
 			sessionBaselineData = clonePaletteSnapshot(currentPaletteData);
 			m_subMenu.slotName.text = costumeName;
 			setAuthorNameText(PaletteMakerUtils.extractAuthorFromCostume(loadedCostume));
 			checkCostumeName(null);
 			clearSelectionEntryReplacements();
-			ColorSquare.deselectAll();
+			deselectActiveGroupsOnCostumeSwitch();
 			resortColorSwatchLayout();
-			applyColorGroupsForLoadedCostume();
+			// Keep live color groups — do not clear/reload on recolor switch.
+			layoutGroupRow();
 			characterPaletteDirty = true;
 			applyActivePalettes(true);
 			syncMcNameFromCostume(loadedCostume);
 			Ssf2.SoundQueue.instance.playSoundEffect("menu_select");
 			Ssf2.MenuController.costumeSelectorDisplay.closeAfterPick();
+		}
+
+		/** Locker / costume switch: clear to no-recolor on the fighter before the next costume paints. */
+		private function resetStudioVisualToNoRecolor():void
+		{
+			rememberStudioCostumeIndex(-1);
+			try
+			{
+				if (player)
+				{
+					player.setCostumeAPI(-2);
+					player.CostumeID = -1;
+				};
+			}
+			catch (resetErr:Error)
+			{
+			};
+			applyIdentityPaletteFromCurrentBases(true);
+		}
+
+		/** Drop group swatch/layer paint so enable cannot re-bake the prior costume. */
+		private function clearGroupSessionPaintAfterCostumeLoad():void
+		{
+			var group:PaletteGroupSquare;
+			if (!groupSquares)
+			{
+				return;
+			};
+			for each (group in groupSquares)
+			{
+				ColorGroupPersist.clearSessionPaint(group);
+			};
+		}
+
+		/**
+		 * Locker pick: stop editing any color group. Chips stay; membership stays.
+		 * deselectAll must be suppressed or sync empties the group.
+		 */
+		private function deselectActiveGroupsOnCostumeSwitch():void
+		{
+			activeGroup = null;
+			clearGroupSelections();
+			suppressSelectionSideEffects = true;
+			ColorSquare.deselectAll();
+			suppressSelectionSideEffects = false;
+			refreshPrimaryBadges();
+			refreshPriorityMarkers();
+			updateDefaultToolHint();
 		}
 
 		private function applyIdentityPaletteFromCurrentBases(paintNow:Boolean = true):void
@@ -5259,6 +5311,113 @@ package com.sbxmod.paletteMaker
 			saveColorGroups();
 		}
 
+		override protected function onClearAllGroupsClick(e:MouseEvent):void
+		{
+			var count:int;
+			if (!groupSquares || groupSquares.length == 0)
+			{
+				return;
+			};
+			count = groupSquares.length;
+			try
+			{
+				Ssf2.MenuController.onlinePromptMenu.message = "Delete all " + count + " color group(s)?\nThis cannot be undone.";
+				Ssf2.MenuController.onlinePromptMenu.onAccept = executeClearAllGroups;
+				Ssf2.MenuController.onlinePromptMenu.onDismiss = cancelClearAllGroupsPrompt;
+				Ssf2.MenuController.onlinePromptMenu.show();
+			}
+			catch (promptErr:Error)
+			{
+				Ssf2.MultiplayerManager.notify("Could not open confirm");
+				Ssf2.SoundQueue.instance.playSoundEffect("menu_error");
+			};
+		}
+
+		private function cancelClearAllGroupsPrompt():void
+		{
+			try
+			{
+				Ssf2.MenuController.onlinePromptMenu.removeSelf();
+			}
+			catch (err:Error)
+			{
+			};
+		}
+
+		private function executeClearAllGroups():void
+		{
+			var i:int;
+			var group:PaletteGroupSquare;
+			var members:Array;
+			var member:*;
+			var seen:Object;
+			var allMembers:Array;
+			try
+			{
+				Ssf2.MenuController.onlinePromptMenu.removeSelf();
+			}
+			catch (err:Error)
+			{
+			};
+			if (!groupSquares || groupSquares.length == 0)
+			{
+				return;
+			};
+			pushUndoSnapshot();
+			seen = {};
+			allMembers = [];
+			i = 0;
+			while (i < groupSquares.length)
+			{
+				group = groupSquares[i] as PaletteGroupSquare;
+				if (group && group.memberColors)
+				{
+					for each (member in group.memberColors)
+					{
+						if (!seen[String(uint(member))])
+						{
+							seen[String(uint(member))] = true;
+							allMembers.push(uint(member));
+						};
+					};
+				};
+				i++;
+			};
+			resetGroupMembersToBase(allMembers);
+			activeGroup = null;
+			closeColorSettings();
+			i = groupSquares.length - 1;
+			while (i >= 0)
+			{
+				group = groupSquares[i] as PaletteGroupSquare;
+				if (group)
+				{
+					group.killEvents();
+					if (m_subMenu.colorBoxBG.contains(group))
+					{
+						m_subMenu.colorBoxBG.removeChild(group);
+					};
+				};
+				i--;
+			};
+			groupSquares = [];
+			layoutGroupRow();
+			layoutToolRow();
+			refreshColorBoxScroll();
+			saveColorGroups();
+			reapplyOwnerLayerPalette();
+			skipSliderApplyOnce = true;
+			suppressSelectionSideEffects = true;
+			ColorSquare.deselectAll();
+			suppressSelectionSideEffects = false;
+			clearSelectionEntryReplacements();
+			refreshPrimaryBadges();
+			refreshSelectionVisualsOnly();
+			Ssf2.MultiplayerManager.notify("All color groups deleted");
+			Ssf2.SoundQueue.instance.playSoundEffect("menu_select");
+			PaletteMakerAchievements.track("group_deleted");
+		}
+
 		private function onGroupDragEnd(group:PaletteGroupSquare):void
 		{
 			reapplyOwnerLayerPalette();
@@ -5272,7 +5431,7 @@ package com.sbxmod.paletteMaker
 			};
 		}
 
-		/** Load costume / open editor: restore saved groups. Saved auto-generated groups are skipped. */
+		/** Load costume / open editor: restore saved group membership only. */
 		private function applyColorGroupsForLoadedCostume():void
 		{
 			pendingAutoGroups = false;
@@ -5280,16 +5439,11 @@ package com.sbxmod.paletteMaker
 			clearAutoGroupSquares();
 			if (restorePersistedColorGroups())
 			{
-				// Membership / swatch / match-all config is restored, but groups start
-				// disabled so match-all does not immediately overwrite the loaded costume
-				// (hard to edit; also baked wrong colors into studio/in-game preview).
-				disableAllColorGroupsForCostumeLoad();
 				layoutGroupRow();
 				layoutToolRow();
 				refreshColorBoxScroll();
-				// No enabled owners → restores session baseline (the costume just loaded).
-				reapplyOwnerLayerPalette();
-				Ssf2.MultiplayerManager.notify("Color groups loaded disabled — enable a group to apply its layer");
+				// Do not reapplyOwnerLayerPalette — replacements are session-only.
+				Ssf2.MultiplayerManager.notify("Color groups loaded");
 				return;
 			};
 			layoutGroupRow();
@@ -5390,37 +5544,29 @@ package com.sbxmod.paletteMaker
 					resolveMemberAgainstMixedBase(color, filtered);
 					i++;
 				};
+				filtered = ColorGroupPersist.membersForRestore(members, filtered);
 				if (filtered.length == 0)
 				{
 					continue;
 				};
 				group = new PaletteGroupSquare(filtered, BOX_SIZE, onGroupActivate, entry.groupName ? String(entry.groupName) : nextGroupName(), onGroupDragReorder, onGroupDragEnd);
-				group.primaryColor = entry.hasOwnProperty("primaryColor") ? uint(entry.primaryColor) : uint(filtered[0]);
-				if (!group.hasMember(group.primaryColor))
-				{
-					group.primaryColor = uint(filtered[0]);
-				};
-				group.useSwatch = entry.useSwatch == true;
-				group.matchAllMode = entry.matchAllMode == true;
-				group.swatchColor = uint(entry.swatchColor);
-				group.hasSwatchColor = entry.hasSwatchColor == true;
-				group.swatchRelativePrimary = uint(entry.swatchRelativePrimary);
-				group.locked = entry.locked == true;
-				group.autoGenerated = false;
-				group.userModified = entry.userModified == true;
-				group.setGroupEnabled(entry.hasOwnProperty("enabled") ? entry.enabled != false : true);
-				group.layerReplacements = entry.hasOwnProperty("layerReplacements")
-					? restoreLayerReplacements(entry.layerReplacements)
-					: null;
+				ColorGroupPersist.applyMembershipOnly(group, {
+					"groupName": entry.groupName,
+					"memberColors": filtered,
+					"primaryColor": entry.primaryColor,
+					"locked": entry.locked,
+					"enabled": entry.enabled,
+					"autoGenerated": false,
+					"userModified": entry.userModified,
+					"formName": entry.formName,
+					"matchAllMode": entry.matchAllMode
+				});
 				groupSquares.push(group);
 				refreshGroupFace(group);
 				restoredCount++;
 			};
 			if (restoredCount > 0)
 			{
-				// Saved groups load verbatim — shared membership preserved.
-				// Enabled state is forced off in applyColorGroupsForLoadedCostume.
-				
 				return true;
 			};
 			// Intentional empty save (user deleted all groups) must stick.
@@ -6418,7 +6564,7 @@ package com.sbxmod.paletteMaker
 				m_subMenu.addChild(toolSettingsPopup);
 			};
 			px = m_subMenu.colors ? m_subMenu.colors.x - 8 : 420;
-			py = m_subMenu.colors ? m_subMenu.colors.y + 4 : 40;
+			py = 18;
 			toolSettingsPopup.showAt(px, py, settingAlwaysIsolate, settingHighlightUnchanged,
 				settingSortByOriginalColor, settingUnchangedVsOriginal,
 				settingDiscordCostumePreview, PaletteMakerAchievements.getCookies(),

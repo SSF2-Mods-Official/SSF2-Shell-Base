@@ -114,7 +114,11 @@ package com.sbxmod.paletteMaker
 		{
 		}
 
-		protected function pollPad(onUp:Function, onDown:Function, onLeft:Function, onRight:Function, onA:Function, onB:Function):void
+		/**
+		 * @param keyboardOnly When true, skip any controller with a GamepadInstance so
+		 * the pad can drive the fighter while keyboard still moves menu focus.
+		 */
+		protected function pollPad(onUp:Function, onDown:Function, onLeft:Function, onRight:Function, onA:Function, onB:Function, keyboardOnly:Boolean = false):void
 		{
 			var SaveData:* = Ssf2.SaveData;
 			var i:int = 1;
@@ -135,6 +139,11 @@ package com.sbxmod.paletteMaker
 			while (i <= SaveData.Controllers.length && m_hasEvents)
 			{
 				pad = SaveData.Controllers[i - 1];
+				if (keyboardOnly && pad && pad.GamepadInstance)
+				{
+					i++;
+					continue;
+				};
 				if (pad.IsDown(pad._BUTTON1))
 				{
 					if (m_bLetGo)

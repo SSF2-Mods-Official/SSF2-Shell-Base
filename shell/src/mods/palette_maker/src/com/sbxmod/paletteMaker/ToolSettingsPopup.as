@@ -70,8 +70,8 @@ package com.sbxmod.paletteMaker
 
 		public function ToolSettingsPopup()
 		{
-			buttonTextSize = 11;
-			buttonPadX = 8;
+			buttonTextSize = 10;
+			buttonPadX = 6;
 			mouseEnabled = false;
 			mouseChildren = false;
 			buildPanel();
@@ -83,48 +83,49 @@ package com.sbxmod.paletteMaker
 			var title:TextField;
 			var btn:Sprite;
 			var rowY:Number;
-			var wide:Number = 252;
-			makePanel(280, 304, 0.98, 0xC6A15A);
+			var wide:Number = 208;
+			var half:Number = 100;
+			makePanel(232, 248, 0.98, 0xC6A15A);
 
-			title = makeLabel("Settings", 14, true, 0xF4E4B0);
-			title.x = 14;
-			title.y = 6;
+			title = makeLabel("Settings", 12, true, 0xF4E4B0);
+			title.x = 12;
+			title.y = 4;
 			panel.addChild(title);
 
-			rowY = 36;
-			alwaysIsolateBtn = makeRow("Always isolate", 14, rowY, wide);
+			rowY = 24;
+			alwaysIsolateBtn = makeRow("Always isolate", 12, rowY, wide);
 			alwaysIsolateLabel = alwaysIsolateBtn.getChildAt(0) as TextField;
 			alwaysIsolateBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onToggleAlwaysIsolate != null) onToggleAlwaysIsolate();
 			});
 			panel.addChild(alwaysIsolateBtn);
 
-			rowY = 62;
-			highlightBtn = makeRow("Highlight unchanged", 14, rowY, wide);
+			rowY = 44;
+			highlightBtn = makeRow("Highlight unchanged", 12, rowY, wide);
 			highlightLabel = highlightBtn.getChildAt(0) as TextField;
 			highlightBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onToggleHighlightUnchanged != null) onToggleHighlightUnchanged();
 			});
 			panel.addChild(highlightBtn);
 
-			rowY = 88;
-			sortByOriginalBtn = makeRow("Sort by original", 14, rowY, wide);
+			rowY = 64;
+			sortByOriginalBtn = makeRow("Sort by original", 12, rowY, wide);
 			sortByOriginalLabel = sortByOriginalBtn.getChildAt(0) as TextField;
 			sortByOriginalBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onToggleSortByOriginal != null) onToggleSortByOriginal();
 			});
 			panel.addChild(sortByOriginalBtn);
 
-			rowY = 114;
-			discordPreviewBtn = makeRow("Discord preview", 14, rowY, wide);
+			rowY = 84;
+			discordPreviewBtn = makeRow("Discord preview", 12, rowY, wide);
 			discordPreviewLabel = discordPreviewBtn.getChildAt(0) as TextField;
 			discordPreviewBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onToggleDiscordCostumePreview != null) onToggleDiscordCostumePreview();
 			});
 			panel.addChild(discordPreviewBtn);
 
-			rowY = 140;
-			selectHighlightBtn = makeRow("Select highlight", 14, rowY, 176);
+			rowY = 104;
+			selectHighlightBtn = makeRow("Select highlight", 12, rowY, 148);
 			selectHighlightLabel = selectHighlightBtn.getChildAt(0) as TextField;
 			selectHighlightBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onToggleSelectHighlight != null) onToggleSelectHighlight();
@@ -132,7 +133,7 @@ package com.sbxmod.paletteMaker
 			panel.addChild(selectHighlightBtn);
 
 			primarySwatchBtn = makeSwatchButton();
-			primarySwatchBtn.x = 200;
+			primarySwatchBtn.x = 168;
 			primarySwatchBtn.y = rowY;
 			primarySwatchFill = primarySwatchBtn.getChildAt(0) as Sprite;
 			primarySwatchBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
@@ -141,7 +142,7 @@ package com.sbxmod.paletteMaker
 			panel.addChild(primarySwatchBtn);
 
 			altSwatchBtn = makeSwatchButton();
-			altSwatchBtn.x = 230;
+			altSwatchBtn.x = 194;
 			altSwatchBtn.y = rowY;
 			altSwatchFill = altSwatchBtn.getChildAt(0) as Sprite;
 			altSwatchBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
@@ -149,43 +150,43 @@ package com.sbxmod.paletteMaker
 			});
 			panel.addChild(altSwatchBtn);
 
-			rowY = 166;
-			btn = makeRow("Hide palette maker UI", 14, rowY, wide);
+			rowY = 124;
+			btn = makeRow("Hide palette maker UI", 12, rowY, wide);
 			btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onHideUi != null) onHideUi();
 			});
 			panel.addChild(btn);
 
-			rowY = 192;
-			btn = makeRow("Export color groups", 14, rowY, 122);
+			rowY = 144;
+			btn = makeRow("Export color groups", 12, rowY, half);
 			btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onExportColorGroups != null) onExportColorGroups();
 			});
 			panel.addChild(btn);
 
-			btn = makeRow("Import color groups", 144, rowY, 122);
+			btn = makeRow("Import color groups", 120, rowY, half);
 			btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onImportColorGroups != null) onImportColorGroups();
 			});
 			panel.addChild(btn);
 
-			rowY = 218;
-			btn = makeRow("Keyboard Shortcuts", 14, rowY, wide);
+			rowY = 164;
+			btn = makeRow("Keyboard Shortcuts", 12, rowY, wide);
 			btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onOpenShortcuts != null) onOpenShortcuts();
 			});
 			panel.addChild(btn);
 
-			rowY = 244;
-			achievementsBtn = makeRow("Achievements (0 cookies)", 14, rowY, wide);
+			rowY = 184;
+			achievementsBtn = makeRow("Achievements (0 cookies)", 12, rowY, wide);
 			achievementsLabel = achievementsBtn.getChildAt(0) as TextField;
 			achievementsBtn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				if (onOpenAchievements != null) onOpenAchievements();
 			});
 			panel.addChild(achievementsBtn);
 
-			rowY = 270;
-			btn = makeRow("Close", 14, rowY, wide);
+			rowY = 204;
+			btn = makeRow("Close", 12, rowY, wide);
 			btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				hide();
 				if (onClose != null) onClose();
@@ -201,10 +202,10 @@ package com.sbxmod.paletteMaker
 			var fill:Sprite = new Sprite();
 			btn.graphics.lineStyle(1, 0xFFFFFF, 0.85);
 			btn.graphics.beginFill(0x333333, 1);
-			btn.graphics.drawRoundRect(0, 0, 22, 18, 3, 3);
+			btn.graphics.drawRoundRect(0, 0, 18, 16, 3, 3);
 			btn.graphics.endFill();
 			fill.graphics.beginFill(0xFF0000, 1);
-			fill.graphics.drawRoundRect(2, 2, 18, 14, 2, 2);
+			fill.graphics.drawRoundRect(2, 2, 14, 12, 2, 2);
 			fill.graphics.endFill();
 			btn.addChild(fill);
 			btn.buttonMode = true;
@@ -214,7 +215,7 @@ package com.sbxmod.paletteMaker
 
 		private function makeRow(label:String, xPos:Number, yPos:Number, w:Number):Sprite
 		{
-			var row:Sprite = makeTextButton(label, w, 22);
+			var row:Sprite = makeTextButton(label, w, 18);
 			row.x = xPos;
 			row.y = yPos;
 			return row;

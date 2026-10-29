@@ -13,6 +13,7 @@ package
 	import com.sbxmod.paletteMaker.PaletteMakerShortcuts;
 	import com.sbxmod.paletteMaker.CostumeFxPaletteRuntime;
 	import com.sbxmod.paletteMaker.ColorVaultSync;
+	import com.sbxmod.paletteMaker.Ssf2;
 	import com.mcleodgaming.ssf2.util.PaletteDeep;
 
 	/**

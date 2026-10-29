@@ -1,11 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!-- This is a generated file.  Do not edit. -->
 <application xmlns="http://ns.adobe.com/air/application/32.0">
-  <id>PaletteMakerMod</id>
-  <filename>PaletteMakerMod</filename>
-  <name>compile</name>
-  <versionNumber>1.0.0</versionNumber>
-  <initialWindow>
-    <content>mod.swf</content>
-    <visible>true</visible>
-  </initialWindow>
+	<id>PaletteMakerMod</id>
+	<versionNumber>APPLICATIONVERSION</versionNumber>
+	<filename>PaletteMakerMod</filename>
+	<description/>
+	<name>APPLICATIONTITLE</name>
+	<copyright/>
+	<initialWindow>
+		<title>APPLICATIONTITLE</title>
+		<content>mod.swf</content>
+		<systemChrome>standard</systemChrome>
+		<transparent>false</transparent>
+		<visible>true</visible>
+		<minimizable>true</minimizable>
+		<maximizable>true</maximizable>
+		<resizable>true</resizable>
+	</initialWindow>
+	<icon/>
+	<customUpdateUI>false</customUpdateUI>
+	<allowBrowserInvocation>false</allowBrowserInvocation>
 </application>

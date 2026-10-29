@@ -118,23 +118,8 @@ package com.sbxmod.paletteMaker
 
 		override public function manageMenuMappings(e:Event):void
 		{
-			var selector:* = Ssf2.MenuController.costumeSelectorDisplay;
-			if (!m_hasEvents)
-			{
-				return;
-			};
-			if (selector && selector.isOnscreen())
-			{
-				return;
-			};
-			pollPad(
-				function():void { movePadFocus(-1); },
-				function():void { movePadFocus(1); },
-				function():void { movePadFocus(-1); },
-				function():void { movePadFocus(1); },
-				function():void { activatePadFocus(); },
-				function():void { padBack(); }
-			);
+			// Studio: do not steal stick/keys for UI focus. Controls drive the fighter;
+			// menu is mouse/click. Costume locker keeps its own pollPad.
 		}
 
 		private function padBack():void
@@ -2206,26 +2191,6 @@ package com.sbxmod.paletteMaker
 				recordGroupLayerReplacement(activeGroup, baseColor, display);
 			};
 			return display;
-		}
-
-		/**
-		 * Costume load: keep group definitions but force disabled so layers/match-all
-		 * do not paint until the user explicitly enables a group.
-		 */
-		protected function disableAllColorGroupsForCostumeLoad():void
-		{
-			var group:PaletteGroupSquare;
-			var n:int;
-			n = 0;
-			for each (group in groupSquares)
-			{
-				if (group)
-				{
-					group.setGroupEnabled(false);
-					n++;
-				};
-			};
-			
 		}
 
 		/** Debug: detect if a later group's write mutated an earlier group's replacements. */

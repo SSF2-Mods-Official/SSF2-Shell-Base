@@ -56,6 +56,9 @@ package com.sbxmod.paletteMaker
 
 		protected var groupSquares:Array = [];
 
+		/** X after the layer row; confirms then deletes every group. */
+		protected var clearAllGroupsBtn:Sprite = null;
+
 		protected var activeGroup:PaletteGroupSquare = null;
 
 		protected var colorRowCount:int = 0;
@@ -1045,6 +1048,55 @@ package com.sbxmod.paletteMaker
 				};
 				i++;
 			};
+			ensureClearAllGroupsBtn();
+			if (clearAllGroupsBtn)
+			{
+				if (groupSquares.length > 0)
+				{
+					clearAllGroupsBtn.x = BOX_POS_X + groupSquares.length * (BOX_SIZE + BOX_OFFSET);
+					clearAllGroupsBtn.y = rowY;
+					clearAllGroupsBtn.visible = true;
+					if (!m_subMenu.colorBoxBG.contains(clearAllGroupsBtn))
+					{
+						m_subMenu.colorBoxBG.addChild(clearAllGroupsBtn);
+					};
+				}
+				else
+				{
+					clearAllGroupsBtn.visible = false;
+				};
+			};
+		}
+
+		protected function ensureClearAllGroupsBtn():void
+		{
+			var label:TextField;
+			if (clearAllGroupsBtn)
+			{
+				return;
+			};
+			clearAllGroupsBtn = new Sprite();
+			clearAllGroupsBtn.graphics.lineStyle(1, 0x6A5A38, 1);
+			clearAllGroupsBtn.graphics.beginFill(0x23232E, 1);
+			clearAllGroupsBtn.graphics.drawRoundRect(0, 0, BOX_SIZE, BOX_SIZE, 3, 3);
+			clearAllGroupsBtn.graphics.endFill();
+			label = new TextField();
+			label.defaultTextFormat = new TextFormat("_sans", 9, 0xF4E4B0, true, null, null, null, null, "center");
+			label.autoSize = TextFieldAutoSize.CENTER;
+			label.mouseEnabled = false;
+			label.selectable = false;
+			label.text = "X";
+			label.x = (BOX_SIZE - label.width) * 0.5;
+			label.y = (BOX_SIZE - label.height) * 0.5;
+			clearAllGroupsBtn.addChild(label);
+			clearAllGroupsBtn.buttonMode = true;
+			clearAllGroupsBtn.useHandCursor = true;
+			clearAllGroupsBtn.addEventListener(MouseEvent.CLICK, onClearAllGroupsClick);
+		}
+
+		/** Overridden on PaletteMakerMenu: confirm then delete every color group. */
+		protected function onClearAllGroupsClick(e:MouseEvent):void
+		{
 		}
 
 		protected function onToolHover(toolId:String):void

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!-- This is a generated file.  Do not edit. -->
+<application xmlns="http://ns.adobe.com/air/application/32.0">
+	<id>ColorGroupPersistFixture</id>
+	<versionNumber>APPLICATIONVERSION</versionNumber>
+	<filename>ColorGroupPersistFixture</filename>
+	<description/>
+	<name>APPLICATIONTITLE</name>
+	<copyright/>
+	<initialWindow>
+		<title>APPLICATIONTITLE</title>
+		<content>ColorGroupPersistFixture.swf</content>
+		<systemChrome>standard</systemChrome>
+		<transparent>false</transparent>
+		<visible>true</visible>
+		<minimizable>true</minimizable>
+		<maximizable>true</maximizable>
+		<resizable>true</resizable>
+	</initialWindow>
+	<icon/>
+	<customUpdateUI>false</customUpdateUI>
+	<allowBrowserInvocation>false</allowBrowserInvocation>
+</application>
