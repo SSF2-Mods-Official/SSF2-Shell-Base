@@ -258,13 +258,14 @@ package
 				trace("[music_player] extractLiveLogo id=" + id + " step=host");
 				return (null);
 			};
-			logo = findLogoChild(host);
+			logo = findLogoChild(host, id);
 			if (!logo || !logo.parent)
 			{
 				trace("[music_player] extractLiveLogo id=" + id + " step=child n=" + host.numChildren);
 				return (null);
 			};
-			if (!logoLooksLikeMark(logo, host) && !isLogoName(logo.name || ""))
+			// Smashville / Steel Diver marks can fill most of a tight host; skip size reject.
+			if (!forceDepth11Logo(id) && !logoLooksLikeMark(logo, host) && !isLogoName(logo.name || ""))
 			{
 				trace("[music_player] extractLiveLogo id=" + id + " step=reject");
 				return (null);
@@ -945,6 +946,12 @@ package
 				|| n.indexOf("label") >= 0);
 		}
 
+		/** No SymbolSSS for these; always peel depth-11 PlaceObject3. */
+		private static function forceDepth11Logo(stageId:String):Boolean
+		{
+			return (stageId == "smashville" || stageId == "steeldiver");
+		}
+
 		/**
 		 * Logo on a stagePreviewer frame.
 		 * Every stage frame places preview art at SWF depth 1 and the series mark
@@ -952,7 +959,7 @@ package
 		 * depth, so the mark is the topmost child. That structure ships in
 		 * everyone's misc2.swf via ResourceManager — no local paths or chid map.
 		 */
-		private static function findLogoChild(host:DisplayObjectContainer):DisplayObject
+		private static function findLogoChild(host:DisplayObjectContainer, stageId:String = null):DisplayObject
 		{
 			var i:int;
 			var child:DisplayObject;
@@ -979,7 +986,7 @@ package
 			if (host.numChildren >= 2)
 			{
 				top = host.getChildAt(host.numChildren - 1);
-				if (top && top.visible && logoLooksLikeMark(top, host))
+				if (top && top.visible && (forceDepth11Logo(stageId) || logoLooksLikeMark(top, host)))
 				{
 					return (top);
 				};

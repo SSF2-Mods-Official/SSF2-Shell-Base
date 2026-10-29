@@ -1497,8 +1497,8 @@ def cmd_build(a):
     log("vanilla sha=%s engine=%s" % (vsha[:12], eng_root.relative_to(ROOT).as_posix()))
 
     base, vbins = vanilla_base(n2f, vanilla, work)
-    hint = "Next2Flash %s decompiles differently from %s, the one the patches were captured with" % (
-        n2f.commit() or "release", meta["next2flash_commit"])
+    n2f_label = n2f.commit() or "release zip (no git)"
+    pin = meta["next2flash_commit"]
 
     eng = work / "engine2"
     src = reset_dir(eng / "src")
@@ -1511,7 +1511,10 @@ def cmd_build(a):
         try:
             tree[rel] = apply_patch(text, read_utf8(p), rel) if p.exists() else text
         except SystemExit as e:
-            raise SystemExit("%s; %s" % (e, hint))
+            raise SystemExit(
+                "%s; patch base drifted (Next2Flash %s, pin %s). "
+                "Often stale base.json targets after an edit — not a second patch of the Shell"
+                % (e, n2f_label, pin))
     added_dir = eng_root / "added"
     if added_dir.is_dir():
         for f in sorted(added_dir.rglob("*.as")):
@@ -1522,7 +1525,12 @@ def cmd_build(a):
     if bad or extra:
         for r in (bad + extra)[:20]:
             log("source mismatch %s" % r)
-        raise SystemExit("patched engine2 source does not match the shell (%s)" % hint)
+        sample = ", ".join((bad + extra)[:3])
+        raise SystemExit(
+            "patched engine2 source does not match base.json targets (%s). "
+            "Next2Flash %s, pin %s. Usually the patch/added files changed without updating "
+            "target hashes — rebuild always starts from vanilla, not the old Shell"
+            % (sample, n2f_label, pin))
     crlf = set(meta["crlf"])
     for rel, text in tree.items():
         # Line endings inside multi-line literals reach the bytecode.
