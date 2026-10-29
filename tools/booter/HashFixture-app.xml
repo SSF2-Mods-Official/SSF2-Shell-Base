@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<application xmlns="http://ns.adobe.com/air/application/32.0">
+  <id>HashFixture</id>
+  <versionNumber>1.0.0</versionNumber>
+  <filename>HashFixture</filename>
+  <initialWindow>
+    <content>HashFixture.swf</content>
+    <visible>false</visible>
+  </initialWindow>
+</application>
