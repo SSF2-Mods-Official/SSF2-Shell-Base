@@ -278,6 +278,7 @@ package com.sbxmod.paletteMaker
 		protected function buildBrowseCostumeList():Array
 		{
 			var raw:Array;
+			PaletteMakerUtils.mirrorLinkedFavorites(PaletteMakerUtils.getLinkedFormPartner(m_statsName), m_statsName);
 			var stock:Array = [];
 			var teamMetal:Array = [];
 			var custom:Array = [];

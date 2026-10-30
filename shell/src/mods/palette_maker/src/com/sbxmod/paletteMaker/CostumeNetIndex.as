@@ -142,6 +142,50 @@ package com.sbxmod.paletteMaker
 			return fileIndex >= 0 && onlineCount > 0 && fileIndex < onlineCount;
 		}
 
+		/** Sheik's menu entry from Zelda's pairedPalette, or the reverse. */
+		public static function partnerMenuEntry(opened:Object, partnerName:String):Object
+		{
+			var paired:Object;
+			var name:String;
+			if (!opened || !partnerName || !opened.pairedPalette)
+			{
+				return null;
+			};
+			paired = opened.pairedPalette;
+			name = "";
+			if (paired.profile)
+			{
+				name = String(paired.profile);
+			}
+			else if (paired.info)
+			{
+				name = String(paired.info);
+			}
+			else if (opened.info)
+			{
+				name = String(opened.info);
+			};
+			if (!name)
+			{
+				return null;
+			};
+			return {
+				"info": name,
+				"profile": name,
+				"character": partnerName,
+				"author": opened.author ? String(opened.author) : "",
+				"paletteSwap": paired.paletteSwap,
+				"paletteSwapPA": paired.paletteSwapPA ? paired.paletteSwapPA : paired.paletteSwap,
+				"ssf2Version": opened.ssf2Version ? String(opened.ssf2Version) : ""
+			};
+		}
+
+		/** A missing slot or a pairBase slot can take the other form's paired palette. */
+		public static function partnerSlotNeedsPair(existing:Object):Boolean
+		{
+			return !existing || existing.pairBase == true;
+		}
+
 		public static function shouldKeepVaultEntry(entry:Object, key:String, seenKeys:Object):Boolean
 		{
 			if (entry && entry.pairBase == true)

@@ -85,6 +85,14 @@ package
 			expect("vault index is not a pair target", CostumeNetIndex.isVaultPairIndex(11, 28) == true, "");
 			expect("local index can pair", CostumeNetIndex.isVaultPairIndex(28, 28) == false, "");
 			expect("no online catalog", CostumeNetIndex.isVaultPairIndex(0, 0) == false, "");
+			var paired:Object = CostumeNetIndex.partnerMenuEntry({
+				info: "Silver Green slaying princess by justwex",
+				author: "justwex",
+				pairedPalette: { profile: "Silver Green slaying queen", paletteSwap: { colors: [1], replacements: [2] } }
+			}, "sheik");
+			expect("partner menu uses the paired name", paired != null && paired.character == "sheik" && paired.profile == "Silver Green slaying queen", paired ? String(paired.profile) : "null");
+			expect("base slot takes the pair", CostumeNetIndex.partnerSlotNeedsPair(null) == true && CostumeNetIndex.partnerSlotNeedsPair({ pairBase: true }) == true, "");
+			expect("real slot stays", CostumeNetIndex.partnerSlotNeedsPair({ info: "Midna" }) == false, "");
 		}
 
 		private function expect(name:String, ok:Boolean, why:String):void

@@ -377,9 +377,110 @@ package com.sbxmod.paletteMaker
 			};
 			favs.push(catalogIndex);
 			setFavoriteIndexes(statsName, favs);
+			if (!favSync && isLinkedFormPair(statsName))
+			{
+				mirrorLinkedFavorites(statsName, getLinkedFormPartner(statsName));
+			};
+		}
+
+		/** Palette-menu picks on Zelda or Sheik show on the other form at the same file index. */
+		public static function mirrorLinkedFavorites(sourceName:String, destName:String):void
+		{
+			var sourceFavs:Array;
+			var destFavs:Array;
+			var sourceList:Array;
+			var destList:Array;
+			var online:int;
+			var i:int;
+			var index:int;
+			var added:Boolean;
+			if (favSync || unfavSync || !sourceName || !destName || !isLinkedFormPair(sourceName))
+			{
+				return;
+			};
+			favSync = true;
+			ensureCostumeFileLoaded(sourceName);
+			ensureCostumeFileLoaded(destName);
+			sourceFavs = getFavoriteIndexes(sourceName);
+			destFavs = getFavoriteIndexes(destName).concat();
+			sourceList = getCostume(sourceName);
+			destList = getCostume(destName);
+			online = getOnlineCostumeCount(destName);
+			if (getOnlineCostumeCount(sourceName) > online)
+			{
+				online = getOnlineCostumeCount(sourceName);
+			};
+			added = false;
+			i = 0;
+			while (sourceFavs && i < sourceFavs.length)
+			{
+				index = int(sourceFavs[i]);
+				if (index >= 0 && destFavs.indexOf(index) < 0 && linkedFavoriteCanShow(sourceList, destList, destName, index, online))
+				{
+					destFavs.push(index);
+					added = true;
+					trace("[Palette Maker] pair fav " + sourceName + " " + destName + " index=" + index);
+				};
+				i++;
+			};
+			if (added)
+			{
+				setFavoriteIndexes(destName, destFavs);
+			};
+			favSync = false;
+		}
+
+		private static function linkedFavoriteCanShow(sourceList:Array, destList:Array, destName:String, index:int, online:int):Boolean
+		{
+			var sourceCostume:Object;
+			var destCostume:Object;
+			sourceCostume = (sourceList && index >= 0 && index < sourceList.length) ? sourceList[index] : null;
+			destCostume = (destList && index >= 0 && index < destList.length) ? destList[index] : null;
+			if (!CostumeNetIndex.partnerSlotNeedsPair(destCostume))
+			{
+				if (sourceCostume && sourceCostume.pairedPalette)
+				{
+					return true;
+				};
+				return index < online;
+			};
+			return placePartnerMenuCostume(sourceCostume, destList, destName, index);
+		}
+
+		private static function placePartnerMenuCostume(sourceCostume:Object, destList:Array, destName:String, index:int):Boolean
+		{
+			var built:Object;
+			var entry:Object;
+			built = CostumeNetIndex.partnerMenuEntry(sourceCostume, destName);
+			if (!built || !destList || index < 0 || index > destList.length)
+			{
+				return false;
+			};
+			entry = repairCostumeData(Ssf2.Utils.cloneObject(built));
+			if (entry.paletteSwap)
+			{
+				entry.paletteSwap = Ssf2.Utils.cloneObject(entry.paletteSwap);
+			};
+			if (entry.paletteSwapPA)
+			{
+				entry.paletteSwapPA = Ssf2.Utils.cloneObject(entry.paletteSwapPA);
+			};
+			delete entry["pairedPalette"];
+			if (index == destList.length)
+			{
+				destList.push(entry);
+			}
+			else
+			{
+				destList[index] = entry;
+			};
+			CostumePackIO.replaceCostumeList(destName, destList);
+			return true;
 		}
 
 		private static var unfavSync:Boolean = false;
+
+		private static var favSync:Boolean = false;
 
 		public static function removeFavoriteIndex(statsName:String, catalogIndex:int):void
 		{
