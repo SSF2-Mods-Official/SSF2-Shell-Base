@@ -127,6 +127,9 @@ package com.sbxmod.paletteMaker
 			onCloseMenu = null;
 			onClickContainer = null;
 			m_cssPick = false;
+			pairOnlyFileIndexes = null;
+			// Leftover statsName makes a later MENU_SHOW reopen the palette (match-load flash).
+			m_statsName = null;
 		}
 
 		public function setCharacter(statsName:String, pid:int, allowDelete:Boolean=false, showNoRecolorSlot:Boolean=false, cssPick:Boolean=false):void
@@ -170,7 +173,8 @@ package com.sbxmod.paletteMaker
 			m_allowDelete = false;
 			importPendingCostumes = null;
 			packPendingEntries = null;
-			allCostumes = costumes || [];
+			allCostumes = CostumeNetIndex.visibleVaultCostumes(costumes);
+			trace("[Palette Maker] vault hide base shown=" + allCostumes.length + " fetched=" + (costumes ? costumes.length : 0));
 			try
 			{
 				rebuildOwnedVaultIdCache();
@@ -214,6 +218,10 @@ package com.sbxmod.paletteMaker
 				else if (importPendingCostumes)
 				{
 					allCostumes = importPendingCostumes.concat();
+				}
+				else if (pairOnlyFileIndexes && pairOnlyFileIndexes.length > 0)
+				{
+					allCostumes = buildOpenPairList();
 				}
 				else if (shouldFilterProtectedCostumes())
 				{
@@ -1010,7 +1018,7 @@ package com.sbxmod.paletteMaker
 				i++;
 			};
 			added = 0;
-			for each (costume in (vaultList || []))
+			for each (costume in CostumeNetIndex.visibleVaultCostumes(vaultList))
 			{
 				if (!costume)
 				{

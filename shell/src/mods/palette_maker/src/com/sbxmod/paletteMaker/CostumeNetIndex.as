@@ -108,6 +108,25 @@ package com.sbxmod.paletteMaker
 			return true;
 		}
 
+		/** Color Vault grid tiles. pairBase slots stay in the file and drop out of this list. */
+		public static function visibleVaultCostumes(entries:Array):Array
+		{
+			var out:Array = [];
+			var i:int;
+			var entry:Object;
+			i = 0;
+			while (entries && i < entries.length)
+			{
+				entry = entries[i];
+				if (entry && entry.pairBase != true)
+				{
+					out.push(entry);
+				};
+				i++;
+			};
+			return out;
+		}
+
 		public static function shouldKeepVaultEntry(entry:Object, key:String, seenKeys:Object):Boolean
 		{
 			if (entry && entry.pairBase == true)

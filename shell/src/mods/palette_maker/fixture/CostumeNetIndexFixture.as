@@ -80,6 +80,8 @@ package
 			expect("base recolor assigned", CostumeNetIndex.assignPairBaseRecolor(baseSlot, stockBase) == true, "");
 			expect("base recolor colors", baseSlot.paletteSwap.colors.length == 2 && baseSlot.paletteSwap.colors[0] == 1 && baseSlot.paletteSwapPA.colors[0] == 5, "");
 			expect("filled base stays", CostumeNetIndex.pairBaseNeedsRecolor(baseSlot) == false, "");
+			var vaultShown:Array = CostumeNetIndex.visibleVaultCostumes([{info: "Kumi"}, {info: "Base", pairBase: true}, {info: "Noelle"}]);
+			expect("vault hides base", vaultShown.length == 2 && vaultShown[0].info == "Kumi" && vaultShown[1].info == "Noelle", String(vaultShown.length));
 		}
 
 		private function expect(name:String, ok:Boolean, why:String):void
