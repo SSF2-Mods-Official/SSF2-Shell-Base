@@ -74,6 +74,12 @@ package
 			expect("second base kept", CostumeNetIndex.shouldKeepVaultEntry({info: "Base", pairBase: true}, "base", seen) == true, "");
 			expect("named costume kept", CostumeNetIndex.shouldKeepVaultEntry({info: "Elsa"}, "elsa", seen) == true, "");
 			expect("repeat name dropped", CostumeNetIndex.shouldKeepVaultEntry({info: "Elsa"}, "elsa", seen) == false, "");
+			var baseSlot:Object = {info: "Base", pairBase: true, paletteSwap: {colors: [], replacements: []}};
+			var stockBase:Object = {paletteSwap: {colors: [1, 2], replacements: [3, 4]}, paletteSwapPA: {colors: [5], replacements: [6]}};
+			expect("empty base needs recolor", CostumeNetIndex.pairBaseNeedsRecolor(baseSlot) == true, "");
+			expect("base recolor assigned", CostumeNetIndex.assignPairBaseRecolor(baseSlot, stockBase) == true, "");
+			expect("base recolor colors", baseSlot.paletteSwap.colors.length == 2 && baseSlot.paletteSwap.colors[0] == 1 && baseSlot.paletteSwapPA.colors[0] == 5, "");
+			expect("filled base stays", CostumeNetIndex.pairBaseNeedsRecolor(baseSlot) == false, "");
 		}
 
 		private function expect(name:String, ok:Boolean, why:String):void

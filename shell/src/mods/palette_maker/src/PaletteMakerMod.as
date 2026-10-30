@@ -164,6 +164,10 @@ package
 					m_formHudKey = key;
 					Ssf2.gameLog("[Palette Maker] costume apply stats=" + toName + " slot=" + index + " swap=" + swapCount + " stance=" + stance);
 				};
+				if (costume && PaletteMakerUtils.isPairBase(costume))
+				{
+					PaletteMakerUtils.fillPairBaseRecolors(toName, [costume]);
+				};
 				if (!costume || (!costume.paletteSwap && !costume.paletteSwapPA))
 				{
 					return;
@@ -206,6 +210,10 @@ package
 			{
 				m_formHudKey = key;
 				Ssf2.gameLog("[Palette Maker] form hud stats=" + toName + " costumeName=" + costumeName + " slot=" + index + " file=" + (list ? list.length : 0) + " pa=" + paCount + " linked=1 carry=0");
+			};
+			if (costume && PaletteMakerUtils.isPairBase(costume))
+			{
+				PaletteMakerUtils.fillPairBaseRecolors(toName, [costume]);
 			};
 			if (!costume || (!costume.paletteSwap && !costume.paletteSwapPA))
 			{

@@ -145,12 +145,20 @@ package com.sbxmod.paletteMaker
 			};
 			if (costumesDictionary[statsName])
 			{
+				if (isFormLinked(statsName))
+				{
+					ensureLinkedFormParity(statsName);
+				};
 				return true;
 			};
 			file = COSTUME_FOLDER.resolvePath(statsName + COSTUME_FILE_EXTENSION);
 			if (((!(file)) || (!(file.exists))))
 			{
 				costumesDictionary[statsName] = [];
+				if (isFormLinked(statsName))
+				{
+					ensureLinkedFormParity(statsName);
+				};
 				return false;
 			};
 			try
@@ -172,6 +180,10 @@ package com.sbxmod.paletteMaker
 				};
 				costumesDictionary[statsName] = costumeData;
 				trace("[PaletteMakerUtils] Sync-loaded", file.nativePath, "(" + costumeData.length + ")");
+				if (isFormLinked(statsName))
+				{
+					ensureLinkedFormParity(statsName);
+				};
 				return (costumeData.length > 0);
 			}
 			catch (err:Error)
@@ -184,11 +196,70 @@ package com.sbxmod.paletteMaker
 	
 		public static function getCostume(statsName:String):Array
 		{
+			var list:Array;
 			if(!costumesDictionary[statsName])
 			{
 				return [];
 			};
-			return costumesDictionary[statsName];
+			list = costumesDictionary[statsName] as Array;
+			fillPairBaseRecolors(statsName, list);
+			return list;
+		}
+
+		private static var m_fillingPairBase:Boolean = false;
+		private static var m_stockBase:Object = {};
+
+		/** Empty pairBase slots take the stock base recolor, not a no-recolor. */
+		public static function fillPairBaseRecolors(statsName:String, list:Array):void
+		{
+			var baseCostume:Object;
+			var i:int;
+			var filled:int;
+			if (!statsName || !list || m_fillingPairBase)
+			{
+				return;
+			};
+			m_fillingPairBase = true;
+			filled = 0;
+			baseCostume = null;
+			i = 0;
+			while (i < list.length)
+			{
+				if (CostumeNetIndex.pairBaseNeedsRecolor(list[i]))
+				{
+					if (!baseCostume)
+					{
+						baseCostume = stockBaseCostume(statsName);
+					};
+					if (CostumeNetIndex.assignPairBaseRecolor(list[i], baseCostume))
+					{
+						filled++;
+					};
+				};
+				i++;
+			};
+			m_fillingPairBase = false;
+			if (filled > 0)
+			{
+				trace("[Palette Maker] pair base recolor " + statsName + " n=" + filled);
+			};
+		}
+
+		private static function stockBaseCostume(statsName:String):Object
+		{
+			if (m_stockBase.hasOwnProperty(statsName))
+			{
+				return m_stockBase[statsName];
+			};
+			try
+			{
+				m_stockBase[statsName] = Ssf2.ResourceManager.getCostume(statsName, null, -1);
+			}
+			catch (err:Error)
+			{
+				m_stockBase[statsName] = null;
+			};
+			return m_stockBase[statsName];
 		}
 
 		private static function favoritesFile(statsName:String):File
@@ -308,10 +379,13 @@ package com.sbxmod.paletteMaker
 			setFavoriteIndexes(statsName, favs);
 		}
 
+		private static var unfavSync:Boolean = false;
+
 		public static function removeFavoriteIndex(statsName:String, catalogIndex:int):void
 		{
 			var favs:Array;
 			var i:int;
+			var partner:String;
 			if (!statsName || catalogIndex < 0)
 			{
 				return;
@@ -324,6 +398,19 @@ package com.sbxmod.paletteMaker
 			};
 			favs.splice(i, 1);
 			setFavoriteIndexes(statsName, favs);
+			if (unfavSync)
+			{
+				return;
+			};
+			partner = getLinkedFormPartner(statsName);
+			if (!partner || partner == statsName)
+			{
+				return;
+			};
+			unfavSync = true;
+			removeFavoriteIndex(partner, catalogIndex);
+			trace("[Palette Maker] pair unfav " + statsName + " " + partner + " index=" + catalogIndex);
+			unfavSync = false;
 		}
 
 		public static function isFavoriteIndex(statsName:String, catalogIndex:int):Boolean
@@ -495,7 +582,7 @@ package com.sbxmod.paletteMaker
 			while (favs && i < favs.length)
 			{
 				shared = origin + int(favs[i]);
-				if (catalog && int(favs[i]) < catalog.length && shared >= origin && !seen[shared])
+				if (catalog && int(favs[i]) < catalog.length && shared >= origin && !seen[shared] && !isPairBase(catalog[int(favs[i])]))
 				{
 					seen[shared] = true;
 					slots.push(shared);
@@ -520,6 +607,138 @@ package com.sbxmod.paletteMaker
 		public static function partnerSaveFileIndex(openedStats:String, openedFileIndex:int, partnerStats:String):int
 		{
 			return CostumeNetIndex.partnerFileIndex(openedFileIndex, catalogSlotOrigin(openedStats), catalogSlotOrigin(partnerStats));
+		}
+
+		/**
+		 * Linked forms keep the costumes and favorite picks saved for that form.
+		 * Do not insert pair-base slots or copy the partner's favorites.
+		 */
+		public static function ensureLinkedFormParity(statsName:String):void
+		{
+		}
+
+		public static function isPairBase(costume:Object):Boolean
+		{
+			return costume != null && costume.pairBase == true;
+		}
+
+		/**
+		 * Indexes where the partner has a real costume and this form is still a base slot.
+		 * Saving fills one of these. An empty list means append both sides.
+		 */
+		public static function openPairFileIndexes(statsName:String):Array
+		{
+			var partner:String;
+			var mine:Array;
+			var theirs:Array;
+			var n:int;
+			var i:int;
+			var out:Array;
+			partner = getLinkedFormPartner(statsName);
+			out = [];
+			if (!partner || !isLinkedFormPair(statsName))
+			{
+				return out;
+			};
+			ensureCostumeFileLoaded(statsName);
+			ensureCostumeFileLoaded(partner);
+			mine = getCostume(statsName);
+			theirs = getCostume(partner);
+			if (!mine)
+			{
+				mine = [];
+			};
+			if (!theirs)
+			{
+				theirs = [];
+			};
+			n = mine.length > theirs.length ? mine.length : theirs.length;
+			i = 0;
+			while (i < n)
+			{
+				if ((i >= mine.length || isPairBase(mine[i])) && i < theirs.length && theirs[i] && !isPairBase(theirs[i]))
+				{
+					out.push(i);
+				};
+				i++;
+			};
+			trace("[Palette Maker] pair open=" + statsName + " n=" + out.length);
+			return out;
+		}
+
+		/** Empty partner slot at this file index. Not added to favorites. */
+		public static function writePairBaseSlot(statsName:String, fileIndex:int):void
+		{
+			var list:Array;
+			var slot:Object;
+			if (!statsName || fileIndex < 0)
+			{
+				return;
+			};
+			ensureCostumeFileLoaded(statsName);
+			list = costumesDictionary[statsName] as Array;
+			if (!list)
+			{
+				list = [];
+				costumesDictionary[statsName] = list;
+			};
+			slot = {
+				"profile": "Base",
+				"character": statsName,
+				"info": "Base",
+				"paletteSwap": { "colors": [], "replacements": [] },
+				"paletteSwapPA": { "colors": [], "replacements": [] },
+				"pairBase": true
+			};
+			while (list.length < fileIndex)
+			{
+				list.push(slot);
+				slot = {
+					"profile": "Base",
+					"character": statsName,
+					"info": "Base",
+					"paletteSwap": { "colors": [], "replacements": [] },
+					"paletteSwapPA": { "colors": [], "replacements": [] },
+					"pairBase": true
+				};
+			};
+			if (fileIndex == list.length)
+			{
+				list.push(slot);
+			}
+			else if (!list[fileIndex] || isPairBase(list[fileIndex]))
+			{
+				list[fileIndex] = slot;
+			}
+			else
+			{
+				return;
+			};
+			persistCostumeList(statsName, list);
+			delete costumeCycleCache[statsName];
+			trace("[Palette Maker] pair base " + statsName + " index=" + fileIndex);
+		}
+
+		private static function persistCostumeList(statsName:String, list:Array):void
+		{
+			var folder:File;
+			var file:File;
+			var stream:FileStream;
+			if (!statsName || !list)
+			{
+				return;
+			};
+			folder = COSTUME_FOLDER;
+			if (!folder.exists)
+			{
+				folder.createDirectory();
+			};
+			file = folder.resolvePath(statsName + COSTUME_FILE_EXTENSION);
+			stream = new FileStream();
+			stream.open(file, FileMode.WRITE);
+			stream.writeUTFBytes(stringifyPretty(list));
+			stream.close();
+			costumesDictionary[statsName] = list;
 		}
 
 		/** Picked partner palette stored on the opened costume at this game index. */

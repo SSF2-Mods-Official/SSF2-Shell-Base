@@ -70,6 +70,44 @@ package com.sbxmod.paletteMaker
 		 * Color Vault merge drops a repeated info name. A pairBase slot shares the name Base
 		 * with every other empty pair slot, and each of those slots stays.
 		 */
+		/** An empty pairBase slot is a no-recolor. It still needs the stock base palette. */
+		public static function pairBaseNeedsRecolor(entry:Object):Boolean
+		{
+			var colors:Array;
+			if (!entry || entry.pairBase != true)
+			{
+				return false;
+			};
+			colors = (entry.paletteSwap && entry.paletteSwap.colors is Array) ? entry.paletteSwap.colors as Array : null;
+			return !colors || colors.length == 0;
+		}
+
+		/** Copy the stock base costume's blocks onto an empty pairBase slot. */
+		public static function assignPairBaseRecolor(entry:Object, baseCostume:Object):Boolean
+		{
+			var block:Object;
+			var pa:Object;
+			if (!pairBaseNeedsRecolor(entry) || !baseCostume)
+			{
+				return false;
+			};
+			block = baseCostume.paletteSwap;
+			if (!block || !(block.colors is Array) || (block.colors as Array).length == 0)
+			{
+				return false;
+			};
+			pa = baseCostume.paletteSwapPA ? baseCostume.paletteSwapPA : block;
+			entry.paletteSwap = {
+				colors: (block.colors as Array).concat(),
+				replacements: (block.replacements is Array) ? (block.replacements as Array).concat() : []
+			};
+			entry.paletteSwapPA = {
+				colors: (pa.colors is Array) ? (pa.colors as Array).concat() : [],
+				replacements: (pa.replacements is Array) ? (pa.replacements as Array).concat() : []
+			};
+			return true;
+		}
+
 		public static function shouldKeepVaultEntry(entry:Object, key:String, seenKeys:Object):Boolean
 		{
 			if (entry && entry.pairBase == true)
