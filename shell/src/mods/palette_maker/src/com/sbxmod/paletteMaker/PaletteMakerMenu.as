@@ -236,6 +236,19 @@ package com.sbxmod.paletteMaker
 
         private function showStudio():void
         {
+			// Vault (character grid) stays live until removed — it was still clickable over the studio.
+			try
+			{
+				if (Ssf2.MenuController && Ssf2.MenuController.vaultMenu)
+				{
+					Ssf2.MenuController.vaultMenu.removeSelf();
+					Ssf2.gameLog("[Palette Maker] vault closed");
+				};
+			}
+			catch (vaultErr:Error)
+			{
+				Ssf2.gameLog("[Palette Maker] vault close fail " + vaultErr.message);
+			};
             super.show();
 			loadToolSettings();
 			CostumePackIO.ensureColorSheetsExtracted();
@@ -7246,6 +7259,7 @@ package com.sbxmod.paletteMaker
 			if (!partner)
 			{
 				pendingSaveAfterPair = false;
+				pendingExportAfterPair = false;
 				Ssf2.MultiplayerManager.notify("This character has no paired form");
 				return;
 			};
@@ -7253,6 +7267,7 @@ package com.sbxmod.paletteMaker
 			if (!locker)
 			{
 				pendingSaveAfterPair = false;
+				pendingExportAfterPair = false;
 				Ssf2.gameLog("[Palette Maker] pair menu err no locker");
 				Ssf2.MultiplayerManager.notify("Palette menu unavailable");
 				return;
@@ -7267,13 +7282,26 @@ package com.sbxmod.paletteMaker
 			locker.returnToLocalListOnVaultExit = false;
 			locker.onClickContainer = _onPairingClickContainer;
 			locker.onCloseMenu = _onPairingCloseMenu;
+			if (PaletteMakerUtils.isLinkedFormPair(statsName))
+			{
+				locker.pairOnlyFileIndexes = PaletteMakerUtils.openPairFileIndexes(statsName);
+				locker.offerPairBaseChoice = pendingSaveAfterPair;
+			}
+			else
+			{
+				locker.pairOnlyFileIndexes = null;
+				locker.offerPairBaseChoice = false;
+			};
 			locker.setCharacter(partner, 0, true, true);
-			pendingSaveAfterPair = true;
-			pendingSaveName = readPendingSaveName();
+			// Caller sets pendingSaveAfterPair / pendingExportAfterPair before openPairList.
+			if (!pendingSaveName)
+			{
+				pendingSaveName = readPendingSaveName();
+			};
 			freezeKeys(true);
-			Ssf2.gameLog("[Palette Maker] pair flag=1 name=" + (pendingSaveName ? pendingSaveName.length : 0));
+			Ssf2.gameLog("[Palette Maker] pair flag save=" + (pendingSaveAfterPair ? 1 : 0) + " export=" + (pendingExportAfterPair ? 1 : 0) + " name=" + (pendingSaveName ? pendingSaveName.length : 0));
 			Ssf2.gameLog("[Palette Maker] pair menu partner=" + partner);
-			Ssf2.MultiplayerManager.notify("Pick a " + PaletteMakerUtils.displayNameFor(partner) + " costume");
+			Ssf2.MultiplayerManager.notify(locker.offerPairBaseChoice ? ("Pick an open " + PaletteMakerUtils.displayNameFor(partner) + " costume, or Base") : (locker.pairOnlyFileIndexes ? ("Pick an open " + PaletteMakerUtils.displayNameFor(partner) + " costume") : ("Pick a " + PaletteMakerUtils.displayNameFor(partner) + " costume")));
 			Ssf2.SoundQueue.instance.playSoundEffect("menu_select");
 		}
 
@@ -7297,6 +7325,23 @@ package com.sbxmod.paletteMaker
 			}
 			else
 			{
+				loadedCostume = Ssf2.MenuController.costumeSelectorDisplay.getSelectedCostumeData();
+				if (loadedCostume && loadedCostume.pairChooseBase == true)
+				{
+					Ssf2.gameLog("[Palette Maker] pair base choice");
+					pendingSaveAfterPair = false;
+					pendingExportAfterPair = false;
+					saveWithTemporaryBase();
+					try
+					{
+						Ssf2.MenuController.costumeSelectorDisplay.closeAfterPick();
+					}
+					catch (baseCloseErr:Error)
+					{
+					};
+					endPartnerPairing();
+					return;
+				};
 				loadedCostume = Ssf2.MenuController.costumeSelectorDisplay.getSelectedCostumeData();
 				sourceIndex = Ssf2.MenuController.costumeSelectorDisplay.getSelectedCostume();
 				if (!loadedCostume)
@@ -7325,6 +7370,10 @@ package com.sbxmod.paletteMaker
 				Ssf2.SoundQueue.instance.playSoundEffect("menu_error");
 				return;
 			};
+			if (loadedCostume && loadedCostume.hasOwnProperty("_catalogIndex"))
+			{
+				fillingOpenFileIndex = int(loadedCostume._catalogIndex);
+			};
 			partnerPaletteData = Ssf2.Utils.cloneObject(loadedCostume);
 			partnerPaletteData.paletteSwap = normalizePaletteBlock(partnerPaletteData.paletteSwap);
 			partnerPaletteData.paletteSwapPA = normalizePaletteBlock(partnerPaletteData.paletteSwapPA);
@@ -7334,10 +7383,15 @@ package com.sbxmod.paletteMaker
 			Ssf2.gameLog("[Palette Maker] pair partner=" + partner + " from=" + sourceIndex + " to=" + pairingOpenedIndex);
 			doSave = pendingSaveAfterPair;
 			pendingSaveAfterPair = false;
-			Ssf2.gameLog("[Palette Maker] pair save do=" + (doSave ? 1 : 0) + " name=" + (pendingSaveName ? pendingSaveName.length : 0));
+			Ssf2.gameLog("[Palette Maker] pair save do=" + (doSave ? 1 : 0) + " export=" + (pendingExportAfterPair ? 1 : 0) + " name=" + (pendingSaveName ? pendingSaveName.length : 0));
 			if (doSave)
 			{
 				performSaveCostume();
+			}
+			else if (pendingExportAfterPair)
+			{
+				pendingExportAfterPair = false;
+				performExportCostume();
 			}
 			else
 			{
@@ -7359,6 +7413,7 @@ package com.sbxmod.paletteMaker
 		{
 			Ssf2.gameLog("[Palette Maker] pair flag clear");
 			pendingSaveAfterPair = false;
+			pendingExportAfterPair = false;
 			pendingSaveName = "";
 			endPartnerPairing();
 			_onCloseMenu();
@@ -7374,6 +7429,8 @@ package com.sbxmod.paletteMaker
 				locker = Ssf2.MenuController.costumeSelectorDisplay;
 				if (locker)
 				{
+					locker.pairOnlyFileIndexes = null;
+					locker.offerPairBaseChoice = false;
 					locker.onClickContainer = _onClickContainer;
 					locker.onCloseMenu = _onCloseMenu;
 				};

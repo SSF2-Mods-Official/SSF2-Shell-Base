@@ -82,6 +82,9 @@ package
 			expect("filled base stays", CostumeNetIndex.pairBaseNeedsRecolor(baseSlot) == false, "");
 			var vaultShown:Array = CostumeNetIndex.visibleVaultCostumes([{info: "Kumi"}, {info: "Base", pairBase: true}, {info: "Noelle"}]);
 			expect("vault hides base", vaultShown.length == 2 && vaultShown[0].info == "Kumi" && vaultShown[1].info == "Noelle", String(vaultShown.length));
+			expect("vault index is not a pair target", CostumeNetIndex.isVaultPairIndex(11, 28) == true, "");
+			expect("local index can pair", CostumeNetIndex.isVaultPairIndex(28, 28) == false, "");
+			expect("no online catalog", CostumeNetIndex.isVaultPairIndex(0, 0) == false, "");
 		}
 
 		private function expect(name:String, ok:Boolean, why:String):void

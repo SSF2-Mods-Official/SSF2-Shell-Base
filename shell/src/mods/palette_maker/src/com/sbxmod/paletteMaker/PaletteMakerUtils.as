@@ -623,8 +623,8 @@ package com.sbxmod.paletteMaker
 		}
 
 		/**
-		 * Indexes where the partner has a real costume and this form is still a base slot.
-		 * Saving fills one of these. An empty list means append both sides.
+		 * Local indexes where the partner has a real costume and this form is still a base slot.
+		 * Vault indexes are left out. The save list also offers Base, which appends a new slot.
 		 */
 		public static function openPairFileIndexes(statsName:String):Array
 		{
@@ -634,6 +634,7 @@ package com.sbxmod.paletteMaker
 			var n:int;
 			var i:int;
 			var out:Array;
+			var online:int;
 			partner = getLinkedFormPartner(statsName);
 			out = [];
 			if (!partner || !isLinkedFormPair(statsName))
@@ -652,17 +653,27 @@ package com.sbxmod.paletteMaker
 			{
 				theirs = [];
 			};
+			online = getOnlineCostumeCount(statsName);
+			if (getOnlineCostumeCount(partner) > online)
+			{
+				online = getOnlineCostumeCount(partner);
+			};
 			n = mine.length > theirs.length ? mine.length : theirs.length;
 			i = 0;
 			while (i < n)
 			{
+				if (CostumeNetIndex.isVaultPairIndex(i, online))
+				{
+					i++;
+					continue;
+				};
 				if ((i >= mine.length || isPairBase(mine[i])) && i < theirs.length && theirs[i] && !isPairBase(theirs[i]))
 				{
 					out.push(i);
 				};
 				i++;
 			};
-			trace("[Palette Maker] pair open=" + statsName + " n=" + out.length);
+			trace("[Palette Maker] pair open=" + statsName + " n=" + out.length + " online=" + online);
 			return out;
 		}
 

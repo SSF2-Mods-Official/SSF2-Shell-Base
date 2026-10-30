@@ -65,6 +65,9 @@ package com.sbxmod.paletteMaker
 		/** Declared here (Studio), not on leaf Menu — performSaveCostume reads these; leaf-only slots are Error #1065. */
 		protected var pendingSaveAfterPair:Boolean = false;
 
+		/** Clipboard export waits for the same partner pick as save. */
+		protected var pendingExportAfterPair:Boolean = false;
+
 		protected var pendingSaveName:String = "";
 
 		protected var partnerPaletteData:Object = null;
@@ -72,6 +75,7 @@ package com.sbxmod.paletteMaker
 		protected var pairingPickMode:Boolean = false;
 
 		protected var pairingOpenedIndex:int = 0;
+		protected var fillingOpenFileIndex:int = -1;
 
 		protected var partnerPairIndex:int = -1;
 
@@ -910,8 +914,11 @@ package com.sbxmod.paletteMaker
 			};
 			Ssf2.gameLog("[Palette Maker] save click v4");
 			// Next frame: the save button is a timeline clip. Opening UI in its click was Error #1065.
-			if (PaletteMakerUtils.isFormLinked(statsName))
+			if (PaletteMakerUtils.isLinkedFormPair(statsName))
 			{
+				pendingSaveName = costumeName;
+				pendingExportAfterPair = false;
+				pendingSaveAfterPair = true;
 				setTimeout(function():void
 				{
 					try
@@ -938,7 +945,69 @@ package com.sbxmod.paletteMaker
 				}, 1);
 				return;
 			};
+			if (PaletteMakerUtils.isFormLinked(statsName))
+			{
+				pendingSaveAfterPair = true;
+				pendingExportAfterPair = false;
+				pendingSaveName = costumeName;
+				setTimeout(function():void
+				{
+					try
+					{
+						if (openPairList != null)
+						{
+							openPairList();
+						};
+					}
+					catch (pairErr:Error)
+					{
+						pendingSaveAfterPair = false;
+						Ssf2.MultiplayerManager.notify("Pair list failed");
+					};
+				}, 1);
+				return;
+			};
 			performSaveCostume();
+		}
+
+		/** New Zelda or Sheik with no open partner slot. The partner index is a temporary base. */
+		protected function saveWithTemporaryBase():void
+		{
+			var costumeName:String;
+			var toSave:Object;
+			var saveIndex:int;
+			var partner:String;
+			var displayName:String;
+			costumeName = pendingSaveName;
+			pendingSaveName = "";
+			if (!costumeName)
+			{
+				Ssf2.MultiplayerManager.notify("Rename costume before saving");
+				Ssf2.SoundQueue.instance.playSoundEffect("menu_error");
+				return;
+			};
+			try
+			{
+				toSave = Ssf2.Utils.cloneObject(currentPaletteData);
+				applySelectedMcNameToCostumeData(toSave);
+				delete toSave["pairedPalette"];
+				saveIndex = PaletteMakerUtils.saveCostume(statsName, costumeName, toSave, getAuthorNameText(), false, false);
+				partner = PaletteMakerUtils.getLinkedFormPartner(statsName);
+				if (partner && saveIndex >= 0)
+				{
+					PaletteMakerUtils.writePairBaseSlot(partner, saveIndex);
+				};
+				displayName = PaletteMakerUtils.formatCostumeDisplayName(costumeName, getAuthorNameText());
+				SkinDraft.clear(statsName);
+				Ssf2.MultiplayerManager.notify(displayName + " saved with base costume used temporarily for pair");
+				Ssf2.SoundQueue.instance.playSoundEffect("menu_select");
+			}
+			catch (baseErr:Error)
+			{
+				Ssf2.gameLog("[Palette Maker] pair base err=" + baseErr.message);
+				Ssf2.MultiplayerManager.notify("Save failed");
+				Ssf2.SoundQueue.instance.playSoundEffect("menu_error");
+			};
 		}
 
 		/** Writes the opened form (and partner palette when set). Called after pairing when linked. */
@@ -983,6 +1052,21 @@ package com.sbxmod.paletteMaker
 				toSave = Ssf2.Utils.cloneObject(currentPaletteData);
 				applySelectedMcNameToCostumeData(toSave);
 				isNewCostume = !PaletteMakerUtils.costumeProfileExists(statsName, costumeName);
+				if (fillingOpenFileIndex >= 0)
+				{
+					delete toSave["pairedPalette"];
+					saveIndex = PaletteMakerUtils.saveCostume(statsName, costumeName, toSave, getAuthorNameText(), false, false, fillingOpenFileIndex);
+					Ssf2.gameLog("[Palette Maker] pair fill index=" + fillingOpenFileIndex);
+					fillingOpenFileIndex = -1;
+					partnerPaletteData = null;
+					applySelectedMcNameToCostumeData(currentPaletteData);
+					author = getAuthorNameText();
+					displayName = PaletteMakerUtils.formatCostumeDisplayName(costumeName, author);
+					SkinDraft.clear(statsName);
+					Ssf2.MultiplayerManager.notify(displayName + " paired");
+					Ssf2.SoundQueue.instance.playSoundEffect("menu_select");
+					return;
+				};
 				if (partnerPaletteData && PaletteMakerUtils.isFormLinked(statsName))
 				{
 					toSave.pairedPalette = {
@@ -1003,6 +1087,7 @@ package com.sbxmod.paletteMaker
 					{
 						PaletteMakerUtils.saveCostume(partnerStats, costumeName, partnerSave, getAuthorNameText(), false, false, partnerAt);
 					};
+					PaletteMakerUtils.ensureLinkedFormParity(statsName);
 				};
 				applySelectedMcNameToCostumeData(currentPaletteData);
 				author = getAuthorNameText();
@@ -1025,6 +1110,7 @@ package com.sbxmod.paletteMaker
 			}
 			catch (err:Error)
 			{
+				fillingOpenFileIndex = -1;
 				Ssf2.gameLog("[Palette Maker] save click err=" + err);
 				Ssf2.MultiplayerManager.notify("Save failed");
 				trace("[Palette Maker] Save failed:", err.message);
@@ -1035,14 +1121,77 @@ package com.sbxmod.paletteMaker
 		protected function exportCostume_CLICK(e:MouseEvent):void
 		{
 			var costumeName:String = m_subMenu.slotName.text;
-			var toExport:Object;
 			if (!costumeName || costumeName.length == 0)
 			{
 				costumeName = "Custom Costume";
 			};
+			pendingSaveName = costumeName;
+			if (PaletteMakerUtils.isFormLinked(statsName))
+			{
+				pendingExportAfterPair = true;
+				pendingSaveAfterPair = false;
+				setTimeout(function():void
+				{
+					try
+					{
+						if (openPairList != null)
+						{
+							openPairList();
+						}
+						else
+						{
+							pendingExportAfterPair = false;
+							Ssf2.MultiplayerManager.notify("Pair list failed");
+						};
+					}
+					catch (pairErr:Error)
+					{
+						pendingExportAfterPair = false;
+						Ssf2.gameLog("[Palette Maker] export pair err=" + pairErr.message);
+						Ssf2.MultiplayerManager.notify("Pair list failed");
+						Ssf2.SoundQueue.instance.playSoundEffect("menu_error");
+					};
+				}, 1);
+				return;
+			};
+			performExportCostume();
+		}
+
+		/** Packs the opened form (and partner palette when set) onto the clipboard. */
+		protected function performExportCostume():void
+		{
+			var costumeName:String;
+			var toExport:Object;
+			var partnerStats:String;
+			costumeName = pendingSaveName;
+			if (!costumeName && m_subMenu && m_subMenu.slotName)
+			{
+				costumeName = String(m_subMenu.slotName.text || "");
+			};
+			if (!costumeName || costumeName.length == 0)
+			{
+				costumeName = "Custom Costume";
+			};
+			pendingSaveName = "";
 			toExport = Ssf2.Utils.cloneObject(currentPaletteData);
 			applySelectedMcNameToCostumeData(toExport);
-			CostumePackIO.copyCostumeToClipboard(costumeName, toExport, getAuthorNameText(), statsName);
+			partnerStats = null;
+			if (partnerPaletteData && PaletteMakerUtils.isFormLinked(statsName))
+			{
+				partnerStats = PaletteMakerUtils.getLinkedFormPartner(statsName);
+				toExport.pairedPalette = {
+					"paletteSwap": Ssf2.Utils.cloneObject(partnerPaletteData.paletteSwap),
+					"paletteSwapPA": Ssf2.Utils.cloneObject(partnerPaletteData.paletteSwapPA ? partnerPaletteData.paletteSwapPA : partnerPaletteData.paletteSwap),
+					"profile": partnerPaletteData.profile ? String(partnerPaletteData.profile) : ""
+				};
+			};
+			CostumePackIO.copyCostumeToClipboard(
+				costumeName,
+				toExport,
+				getAuthorNameText(),
+				statsName,
+				partnerPaletteData && partnerStats ? Ssf2.Utils.cloneObject(partnerPaletteData) : null,
+				partnerStats);
 			Ssf2.MultiplayerManager.notify(PaletteMakerUtils.formatCostumeDisplayName(costumeName, getAuthorNameText()) + " code copied to clipboard");
 			Ssf2.SoundQueue.instance.playSoundEffect("menu_select");
 			PaletteMakerAchievements.unlock("ritual_clipboard_export");

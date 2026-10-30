@@ -127,6 +127,12 @@ package com.sbxmod.paletteMaker
 			return out;
 		}
 
+		/** A file index already in the Color Vault catalog. Those are not offered as pair targets. */
+		public static function isVaultPairIndex(fileIndex:int, onlineCount:int):Boolean
+		{
+			return fileIndex >= 0 && onlineCount > 0 && fileIndex < onlineCount;
+		}
+
 		public static function shouldKeepVaultEntry(entry:Object, key:String, seenKeys:Object):Boolean
 		{
 			if (entry && entry.pairBase == true)

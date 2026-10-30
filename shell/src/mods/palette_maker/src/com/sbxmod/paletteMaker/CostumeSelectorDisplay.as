@@ -128,6 +128,7 @@ package com.sbxmod.paletteMaker
 			onClickContainer = null;
 			m_cssPick = false;
 			pairOnlyFileIndexes = null;
+			offerPairBaseChoice = false;
 			// Leftover statsName makes a later MENU_SHOW reopen the palette (match-load flash).
 			m_statsName = null;
 		}
@@ -219,7 +220,7 @@ package com.sbxmod.paletteMaker
 				{
 					allCostumes = importPendingCostumes.concat();
 				}
-				else if (pairOnlyFileIndexes && pairOnlyFileIndexes.length > 0)
+				else if (pairOnlyFileIndexes)
 				{
 					allCostumes = buildOpenPairList();
 				}

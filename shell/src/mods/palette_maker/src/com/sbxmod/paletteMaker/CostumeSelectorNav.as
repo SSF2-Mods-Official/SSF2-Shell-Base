@@ -40,6 +40,10 @@ package com.sbxmod.paletteMaker
 		private static const ALPHA_TAKEN:Number = 0.28;
 
 		protected var selectedIndices:Array = [];
+		/** When set, the list is only these partner file indexes. An empty array is still that list. */
+		public var pairOnlyFileIndexes:Array = null;
+		/** Zelda/Sheik save adds a Base tile. Choosing it saves this costume for the other form to pair. */
+		public var offerPairBaseChoice:Boolean = false;
 
 		protected var includeNoRecolorSlot:Boolean = false;
 
@@ -391,6 +395,65 @@ package com.sbxmod.paletteMaker
 			return out;
 		}
 
+		/** Partner costumes that still need a pair. File index is `_catalogIndex`. */
+		protected function buildOpenPairList():Array
+		{
+			var catalog:Array;
+			var out:Array;
+			var i:int;
+			var fileIndex:int;
+			var costume:Object;
+			var tagged:Object;
+			catalog = PaletteMakerUtils.getCostume(m_statsName);
+			out = [];
+			if (offerPairBaseChoice)
+			{
+				out.push(buildPairBaseChoice());
+			};
+			i = 0;
+			while (pairOnlyFileIndexes && i < pairOnlyFileIndexes.length)
+			{
+				fileIndex = int(pairOnlyFileIndexes[i]);
+				costume = (catalog && fileIndex >= 0 && fileIndex < catalog.length) ? catalog[fileIndex] : null;
+				if (costume && !PaletteMakerUtils.isPairBase(costume))
+				{
+					tagged = Ssf2.Utils.cloneObject(costume);
+					tagged._catalogIndex = fileIndex;
+					tagged._gameCostumeIndex = fileIndex;
+					out.push(tagged);
+				};
+				i++;
+			};
+			return out;
+		}
+
+		/** First tile on a Zelda/Sheik save. Picking it stores this costume for the other form to pair. */
+		protected function buildPairBaseChoice():Object
+		{
+			var baseCostume:Object;
+			var block:Object;
+			var pa:Object;
+			try
+			{
+				baseCostume = Ssf2.ResourceManager.getCostume(m_statsName, null, -1);
+			}
+			catch (err:Error)
+			{
+				baseCostume = null;
+			};
+			block = (baseCostume && baseCostume.paletteSwap) ? Ssf2.Utils.cloneObject(baseCostume.paletteSwap) : {"colors": [], "replacements": []};
+			pa = (baseCostume && baseCostume.paletteSwapPA) ? Ssf2.Utils.cloneObject(baseCostume.paletteSwapPA) : block;
+			return {
+				"profile": "Base",
+				"info": "Base",
+				"character": m_statsName,
+				"pairChooseBase": true,
+				"paletteSwap": block,
+				"paletteSwapPA": pa,
+				"_gameCostumeIndex": -1
+			};
+		}
+
 		/** Palette menu customs, in favorites-file order. Each tile keeps the shared-list costume number. */
 		private function appendFavoriteCostumes(dest:Array, raw:Array, hasBase:Boolean):void
 		{
@@ -414,6 +477,11 @@ package com.sbxmod.paletteMaker
 					continue;
 				};
 				costume = catalog[catIndex];
+				if (PaletteMakerUtils.isPairBase(costume))
+				{
+					fi++;
+					continue;
+				};
 				tagged = Ssf2.Utils.cloneObject(costume);
 				tagged._catalogIndex = catIndex;
 				rawIndex = -1;
