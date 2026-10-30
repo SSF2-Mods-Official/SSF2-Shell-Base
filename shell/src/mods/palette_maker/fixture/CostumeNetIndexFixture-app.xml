@@ -2,7 +2,7 @@
 <application xmlns="http://ns.adobe.com/air/application/32.0">
   <id>CostumeNetIndexFixture</id>
   <filename>CostumeNetIndexFixture</filename>
-  <name>compile</name>
+  <name>CostumeNetIndexFixture</name>
   <versionNumber>1.0.0</versionNumber>
   <initialWindow>
     <content>CostumeNetIndexFixture.swf</content>

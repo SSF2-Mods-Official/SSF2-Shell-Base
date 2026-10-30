@@ -60,8 +60,20 @@ package
 			expect("same stock origin", CostumeNetIndex.partnerFileIndex(26, 8, 8) == 26, String(CostumeNetIndex.partnerFileIndex(26, 8, 8)));
 			expect("partner has more alts", CostumeNetIndex.partnerFileIndex(26, 8, 12) == 22, String(CostumeNetIndex.partnerFileIndex(26, 8, 12)));
 			expect("pair lands on a builtin", CostumeNetIndex.partnerFileIndex(0, 8, 12) == -4, String(CostumeNetIndex.partnerFileIndex(0, 8, 12)));
+			// Same game index: fileA + originA == fileB + originB
+			expect("same game index",
+				26 + 8 == CostumeNetIndex.partnerFileIndex(26, 8, 8) + 8,
+				String(CostumeNetIndex.partnerFileIndex(26, 8, 8) + 8));
+			expect("same game index uneven origins",
+				26 + 8 == CostumeNetIndex.partnerFileIndex(26, 8, 12) + 12,
+				String(CostumeNetIndex.partnerFileIndex(26, 8, 12) + 12));
 			expect("partner colors remain", LinkedFormSprite.formForRemainingColors(false, true) == "partner", "");
 			expect("no colors remain", LinkedFormSprite.formForRemainingColors(false, false) == "", "");
+			var seen:Object = {};
+			expect("first base kept", CostumeNetIndex.shouldKeepVaultEntry({info: "Base", pairBase: true}, "base", seen) == true, "");
+			expect("second base kept", CostumeNetIndex.shouldKeepVaultEntry({info: "Base", pairBase: true}, "base", seen) == true, "");
+			expect("named costume kept", CostumeNetIndex.shouldKeepVaultEntry({info: "Elsa"}, "elsa", seen) == true, "");
+			expect("repeat name dropped", CostumeNetIndex.shouldKeepVaultEntry({info: "Elsa"}, "elsa", seen) == false, "");
 		}
 
 		private function expect(name:String, ok:Boolean, why:String):void

@@ -1127,11 +1127,10 @@ package com.sbxmod.paletteMaker
 				{
 					entry = list[i];
 					key = costumeMergeKey(entry);
-					if (!key || seenKeys[key])
+					if (!CostumeNetIndex.shouldKeepVaultEntry(entry, key, seenKeys))
 					{
 						continue;
 					};
-					seenKeys[key] = true;
 					delete entry["colorVaultId"];
 					delete entry["_vaultFile"];
 					merged.push(entry);
@@ -1239,6 +1238,24 @@ package com.sbxmod.paletteMaker
 			i = 0;
 			while (i < existing.length)
 			{
+				if (PaletteMakerUtils.isPairBase(existing[i]))
+				{
+					if (i < online.length && PaletteMakerUtils.isPairBase(online[i]))
+					{
+						retarget[i] = i;
+					}
+					else
+					{
+						entry = stripCatalogMeta(existing[i]);
+						entry["character"] = statsName;
+						kept.push({
+							"oldIndex": i,
+							"costume": entry
+						});
+					};
+					i++;
+					continue;
+				};
 				sig = PaletteMakerUtils.paletteSignature(existing[i]);
 				hash = PaletteMakerUtils.fnv1aHex(sig);
 				match = -1;

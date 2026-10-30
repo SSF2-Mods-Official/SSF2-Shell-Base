@@ -65,5 +65,26 @@ package com.sbxmod.paletteMaker
 			};
 			return costume;
 		}
+
+		/**
+		 * Color Vault merge drops a repeated info name. A pairBase slot shares the name Base
+		 * with every other empty pair slot, and each of those slots stays.
+		 */
+		public static function shouldKeepVaultEntry(entry:Object, key:String, seenKeys:Object):Boolean
+		{
+			if (entry && entry.pairBase == true)
+			{
+				return true;
+			};
+			if (!key || (seenKeys && seenKeys[key]))
+			{
+				return false;
+			};
+			if (seenKeys)
+			{
+				seenKeys[key] = true;
+			};
+			return true;
+		}
 	}
 }
