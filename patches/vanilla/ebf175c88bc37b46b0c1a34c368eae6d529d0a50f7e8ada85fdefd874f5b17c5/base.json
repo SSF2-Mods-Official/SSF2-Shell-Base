@@ -631,7 +631,7 @@
   "com/mcleodgaming/ssf2/platforms/PlatformMovement.as": "45fc5e5a3d1877cdb0663119d08ceb11aa74166764e51babe497d9fff1cbc3ff",
   "com/mcleodgaming/ssf2/util/Base64.as": "75058484aed046d7d7b5f04fc2099dc7d19cbac1dda74ab94b3f66117b7eef91",
   "com/mcleodgaming/ssf2/util/CharacterAlts.as": "b1eab12852a69038761d0d0822d3c16fd2237ae53885d0c5cc0ae49e2e7f1d4e",
-  "com/mcleodgaming/ssf2/util/Controller.as": "c310d462cffc3495c9cfd0837723815e4a42f850482217c6ce2ca182c7570ccd",
+  "com/mcleodgaming/ssf2/util/Controller.as": "a42b4450b4873afc09dd675c5953ad7353d43fca3d5a2b7ef090a2dcae041f0e",
   "com/mcleodgaming/ssf2/util/ControlsObject.as": "8d6f00741cb7770a337b769a0063da1ffbb1946edf915cc4d1247de2226c126c",
   "com/mcleodgaming/ssf2/util/CountryRegionData.as": "67f000eb006066c83068996e91cf05f0b37ba454013e6a691e4e3934642fd877",
   "com/mcleodgaming/ssf2/util/CountryRegionData_countryRegionDataJSON.as": "60b730323420dc65671ec0ceb6782eae8b38d31e19ab5c53f39ed5789ab0f5ff",

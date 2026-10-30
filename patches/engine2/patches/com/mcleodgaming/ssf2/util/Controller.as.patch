@@ -5,18 +5,24 @@
 +   import com.mcleodgaming.ssf2.input.*;
 +   import com.mcleodgaming.ssf2.modhost.*;
 ## public function getControlStatus() : ControlsObject
-## why: Palette Maker can point another fighter at player 1. Menus still call IsDown.
-@@ 119 0 da39a3ee5e6b4b0d 4
+## why: Palette Maker copies player 1's pad onto the partner and leaves start on player 1.
+@@ 119 0 da39a3ee5e6b4b0d 6
 +         if(ModHost.mirrorInput != null && this != ModHost.mirrorInput)
 =101
-+            return ModHost.mirrorInput.getControlStatus();
++            var mirrored:ControlsObject = ModHost.mirrorInput.getControlStatus();
++            mirrored.START = false;
++            return mirrored;
 =105
 ## public function IsDown(_:String, _:Boolean = false) : Boolean
-## why: ModHost: IsDown returns false while a mod blocks input unless the caller forces it
+## why: A blocked mod returns false. The Palette Maker partner also returns false for start.
 @@ 202 1 2b4f35a9a697fc30 1
 +      public function IsDown(param1:String, param2:Boolean = false) : Boolean
-@@ 204 0 da39a3ee5e6b4b0d 4
+@@ 204 0 da39a3ee5e6b4b0d 8
 +         if(!param2 && Boolean(ModHost.isInputBlocked()))
+=101
++            return false;
+=105
++         if(ModHost.mirrorInput != null && this != ModHost.mirrorInput && param1 == this._START)
 =101
 +            return false;
 =105

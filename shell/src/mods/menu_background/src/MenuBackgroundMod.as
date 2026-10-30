@@ -42,6 +42,8 @@ package
 		private var m_awaitingPick:Boolean;
 		/** Last unknown backdrop id already written to the log. */
 		private var m_skipLogged:String;
+		/** One delayed paint after a stage file loads before its clips exist. */
+		private var m_paintRetry:Function;
 
 		public function MenuBackgroundMod()
 		{
@@ -85,6 +87,7 @@ package
 		public function onBootEnd():void
 		{
 			disposeLiveClips();
+			cancelPaintRetry();
 			disarmStage();
 			disarmPickPoll();
 			m_awaitingPick = false;
@@ -752,6 +755,7 @@ package
 		{
 			var RM:*;
 			var known:Boolean;
+			var mustLoad:Boolean;
 			if (m_matchSuspended)
 			{
 				defaultMenuBg(fallbackId, container);
@@ -803,16 +807,19 @@ package
 				defaultMenuBg(fallbackId, container);
 				return;
 			};
+			mustLoad = true;
+			try
+			{
+				RM = EngineRefs.ResourceManager;
+				mustLoad = !RM || !RM.getResourceByID(stageId, true);
+			}
+			catch (loadedErr:*)
+			{
+				mustLoad = true;
+			};
 			m_host.ensureResourcesLoaded([stageId], function():void
 			{
-				if (m_matchSuspended)
-				{
-					return;
-				};
-				if (!paintStageBackgrounds(stageId, container))
-				{
-					defaultMenuBg(fallbackId, container);
-				};
+				finishPaint(stageId, container, fallbackId, mustLoad);
 			}, function():void
 			{
 				if (!m_matchSuspended)
@@ -820,6 +827,60 @@ package
 					defaultMenuBg(fallbackId, container);
 				};
 			});
+		}
+
+		/** A stage file can finish loading a frame before its camera clips exist. */
+		private function finishPaint(stageId:String, container:*, fallbackId:*, allowRetry:Boolean):void
+		{
+			var painted:Boolean;
+			if (m_matchSuspended)
+			{
+				return;
+			};
+			painted = paintStageBackgrounds(stageId, container);
+			if (allowRetry)
+			{
+				schedulePaintRetry(stageId, container, fallbackId);
+				return;
+			};
+			if (!painted)
+			{
+				defaultMenuBg(fallbackId, container);
+			};
+		}
+
+		private function schedulePaintRetry(stageId:String, container:*, fallbackId:*):void
+		{
+			var root:*;
+			cancelPaintRetry();
+			root = EngineRefs.Main ? EngineRefs.Main["Root"] : null;
+			if (!root)
+			{
+				defaultMenuBg(fallbackId, container);
+				return;
+			};
+			m_paintRetry = function(e:Event):void
+			{
+				cancelPaintRetry();
+				EngineRefs.gameLog("[menu_background] repaint id=" + stageId);
+				finishPaint(stageId, container, fallbackId, false);
+			};
+			root.addEventListener(Event.ENTER_FRAME, m_paintRetry, false, 0, true);
+		}
+
+		private function cancelPaintRetry():void
+		{
+			var root:*;
+			if (m_paintRetry == null)
+			{
+				return;
+			};
+			root = EngineRefs.Main ? EngineRefs.Main["Root"] : null;
+			if (root)
+			{
+				root.removeEventListener(Event.ENTER_FRAME, m_paintRetry);
+			};
+			m_paintRetry = null;
 		}
 
 		private function paintStageBackgrounds(stageId:String, container:*):Boolean
