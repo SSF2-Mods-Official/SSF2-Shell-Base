@@ -560,6 +560,7 @@ package com.sbxmod.paletteMaker
 				};
 				maintainGigaStudioForm();
 				syncStudioPartnerCostume(player);
+				syncStudioPartnerBody(player);
 				if (pendingSkipCountdown)
 				{
 					trySkipPostEntranceCountdown();
@@ -1203,10 +1204,12 @@ package com.sbxmod.paletteMaker
 			return out;
 		}
 
-		/** Player 2 reads player 1's pad. IsDown on pad 2 stays the real pad, so menus do not double-fire. */
+		/** Pad 2 uses pad 1's bindings for this match. Leaving the studio puts pad 2 back. */
 		private function bindStudioMirrorInput():void
 		{
 			var pads:*;
+			var leadPad:*;
+			var followPad:*;
 			try
 			{
 				pads = Ssf2.SaveData.Controllers;
@@ -1214,7 +1217,23 @@ package com.sbxmod.paletteMaker
 				{
 					return;
 				};
-				Ssf2.ModHost.mirrorInput = pads[0];
+				leadPad = pads[0];
+				Ssf2.ModHost.mirrorInput = leadPad;
+				if (pads.length < 2 || !pads[1])
+				{
+					Ssf2.gameLog("[Palette Maker] pair puppet pad n=0");
+					return;
+				};
+				followPad = pads[1];
+				if (!studioPad2Saved)
+				{
+					studioPadBackup = followPad.getControls();
+					studioPad2Gamepad = followPad.GamepadInstance;
+					studioPad2Saved = true;
+				};
+				followPad.setControls(leadPad.getControls());
+				followPad.GamepadInstance = leadPad.GamepadInstance;
+				Ssf2.gameLog("[Palette Maker] pair puppet pad n=" + pads.length);
 			}
 			catch (err:Error)
 			{
@@ -1224,6 +1243,7 @@ package com.sbxmod.paletteMaker
 
 		private function clearStudioMirrorInput():void
 		{
+			var pads:*;
 			try
 			{
 				Ssf2.ModHost.mirrorInput = null;
@@ -1231,6 +1251,25 @@ package com.sbxmod.paletteMaker
 			catch (err:Error)
 			{
 			};
+			if (!studioPad2Saved)
+			{
+				return;
+			};
+			try
+			{
+				pads = Ssf2.SaveData.Controllers;
+				if (pads && pads.length > 1 && pads[1])
+				{
+					pads[1].setControls(studioPadBackup);
+					pads[1].GamepadInstance = studioPad2Gamepad;
+				};
+			}
+			catch (err2:Error)
+			{
+			};
+			studioPadBackup = null;
+			studioPad2Gamepad = null;
+			studioPad2Saved = false;
 		}
 
 		/** Same costume index on the partner is that form's side of the pair. */
@@ -1265,6 +1304,71 @@ package com.sbxmod.paletteMaker
 				Ssf2.gameLog("[Palette Maker] pair puppet costume=" + slot);
 			}
 			catch (err:Error)
+			{
+			};
+		}
+
+		/** Training puts player 2 on team 2 at a different spawn. Both stay on team 1 at player 1's spot. */
+		private function syncStudioPartnerBody(lead:*):void
+		{
+			var stageData:*;
+			var partner:*;
+			var settings:*;
+			if (!lead || !LinkedFormPaint.studioMirrorPartner(statsName))
+			{
+				return;
+			};
+			stageData = Ssf2.GameController.stageData;
+			if (!stageData || !stageData.Players || stageData.Players.length < 2)
+			{
+				return;
+			};
+			partner = stageData.Players[1];
+			if (!partner || partner == lead)
+			{
+				return;
+			};
+			try
+			{
+				if (int(lead.Team) != 1)
+				{
+					lead.Team = 1;
+				};
+				if (int(partner.Team) != 1)
+				{
+					partner.Team = 1;
+				};
+				if (m_game && m_game.LevelData)
+				{
+					m_game.LevelData.teamDamage = false;
+				};
+				if (m_game && m_game.PlayerSettings && m_game.PlayerSettings.length > 1)
+				{
+					m_game.PlayerSettings[0].team = 1;
+					m_game.PlayerSettings[1].team = 1;
+					settings = m_game.PlayerSettings;
+				};
+				if (!studioPartnerTeamLogged)
+				{
+					studioPartnerTeamLogged = true;
+					Ssf2.gameLog("[Palette Maker] pair puppet team=1 attack=0");
+				};
+				if (!studioPartnerSpawned)
+				{
+					partner.setX(lead.getX());
+					partner.setY(lead.getY());
+					if (settings)
+					{
+						settings[1].x_start = settings[0].x_start;
+						settings[1].y_start = settings[0].y_start;
+						settings[1].x_respawn = settings[0].x_respawn;
+						settings[1].y_respawn = settings[0].y_respawn;
+					};
+					studioPartnerSpawned = true;
+					Ssf2.gameLog("[Palette Maker] pair puppet spawn");
+				};
+			}
+			catch (bodyErr:Error)
 			{
 			};
 		}
@@ -1321,11 +1425,16 @@ package com.sbxmod.paletteMaker
 			Ssf2.Utils.setRandSeed(m_game.LevelData.randSeed);
 			m_game.PlayerSettings[0].character = LinkedFormPaint.spawnStatsName(statsName);
 			m_game.PlayerSettings[0].costume = -1;
+			m_game.PlayerSettings[0].team = 1;
+			m_game.LevelData.teamDamage = false;
+			studioPartnerSpawned = false;
+			studioPartnerTeamLogged = false;
 			if (mirrorPartner)
 			{
 				m_game.PlayerSettings[1].character = mirrorPartner;
 				m_game.PlayerSettings[1].costume = -1;
 				m_game.PlayerSettings[1].human = true;
+				m_game.PlayerSettings[1].team = 1;
 				bindStudioMirrorInput();
 				Ssf2.gameLog("[Palette Maker] pair puppet partner=" + mirrorPartner);
 			}

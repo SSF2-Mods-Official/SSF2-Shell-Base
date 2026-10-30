@@ -120,6 +120,17 @@ package com.sbxmod.paletteMaker
 
 		protected var m_game:*;
 
+		/** Pad 2's bindings before a Zelda/Sheik studio copies pad 1 onto it. */
+		protected var studioPadBackup:Object = null;
+
+		protected var studioPad2Gamepad:* = null;
+
+		protected var studioPad2Saved:Boolean = false;
+
+		protected var studioPartnerSpawned:Boolean = false;
+
+		protected var studioPartnerTeamLogged:Boolean = false;
+
 		protected var toolSettingsPopup:ToolSettingsPopup = null;
 
 		protected var shortcutsPopup:ShortcutsPopup = null;

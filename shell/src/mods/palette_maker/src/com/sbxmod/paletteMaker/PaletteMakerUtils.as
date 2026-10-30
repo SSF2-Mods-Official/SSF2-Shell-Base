@@ -865,6 +865,9 @@ package com.sbxmod.paletteMaker
 			var list:Array;
 			var at:int;
 			var item:Object;
+			var partner:String;
+			var pAt:int;
+			var theirs:Array;
 			if (!statsName || gameSlot < 0)
 			{
 				return null;
@@ -880,6 +883,22 @@ package com.sbxmod.paletteMaker
 			if (item && item.pairedPalette && item.pairedPalette.paletteSwap)
 			{
 				return item.pairedPalette;
+			};
+			partner = getLinkedFormPartner(statsName);
+			if (!partner)
+			{
+				return null;
+			};
+			ensureCostumeFileLoaded(partner);
+			pAt = partnerSaveFileIndex(statsName, at, partner);
+			theirs = getCostume(partner);
+			if (!theirs || pAt < 0 || pAt >= theirs.length || !theirs[pAt] || isPairBase(theirs[pAt]))
+			{
+				return null;
+			};
+			if (theirs[pAt].paletteSwap)
+			{
+				return theirs[pAt];
 			};
 			return null;
 		}
