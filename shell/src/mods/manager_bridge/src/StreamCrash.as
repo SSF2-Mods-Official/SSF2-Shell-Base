@@ -187,12 +187,23 @@ package
 			};
 		}
 
+		/** Leaving results unloads the winner, then the same frame still plays the win clip. */
+		private function isResultsWinClip(stack:String):Boolean
+		{
+			if (!stack || stack.length < 1)
+			{
+				return false;
+			};
+			return stack.indexOf("MatchResultsMenu") >= 0 && stack.indexOf("playSound") >= 0;
+		}
+
 		/**
 		 * Crash policy:
 		 *  1) Uncaught while a live match is running → log only (stay in match)
-		 *  2) Menu/replay/load errors, or #1069 sealed-property, or no UI left → recover now
+		 *  2) Results win-clip playSound after the character file unloads → log only
+		 *  3) Menu/replay/load errors, or #1069 sealed-property, or no UI left → recover now
 		 *     (tolerate here = black screen after ReplaySelectMenu tears down)
-		 *  3) If errors keep coming after recover → quit the game
+		 *  4) If errors keep coming after recover → quit the game
 		 */
 		private function handleUncaughtStorm(head:String, errorId:String, stack:String):void
 		{
@@ -207,6 +218,11 @@ package
 				m_uncaughtRecoverAttempted = false;
 			};
 			m_uncaughtStormCount++;
+			if (errorId == "1009" && isResultsWinClip(stack))
+			{
+				log("uncaught tolerate — results win clip");
+				return;
+			};
 			inLiveMatch = isLiveMatchContext();
 			fatalNow = !inLiveMatch
 				|| errorId == "1069"

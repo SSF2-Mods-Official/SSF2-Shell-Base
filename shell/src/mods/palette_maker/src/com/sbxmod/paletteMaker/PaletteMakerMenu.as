@@ -1348,10 +1348,11 @@ package com.sbxmod.paletteMaker
 					m_game.PlayerSettings[1].team = 1;
 					settings = m_game.PlayerSettings;
 				};
+				partner.setHumanControl(true, 1);
 				if (!studioPartnerTeamLogged)
 				{
 					studioPartnerTeamLogged = true;
-					Ssf2.gameLog("[Palette Maker] pair puppet team=1 attack=0");
+					Ssf2.gameLog("[Palette Maker] pair puppet team=1 attack=0 human=1");
 				};
 				if (!studioPartnerSpawned)
 				{

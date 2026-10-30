@@ -16,6 +16,21 @@
 ## why: modhost: RESULTS_SHOW hook when the results screen opens
 @@ 59 0 da39a3ee5e6b4b0d 1
 +         ModHost.runHook(ModHooks.RESULTS_SHOW,{"menu":this});
+## private function updatePalettes() : void
+## why: A win clip can call playSound after its character file is unloaded. That must not leave the results screen.
+@@ 167 1 e0a30f3bc6ea7baa 8
++            try
++            {
++               Utils.recursiveMovieClipPlay(mc,true,false);
++            }
++            catch(winErr:Error)
++            {
++               GameLog.write("[MatchResults] win clip");
++            }
+## private function onEnterFrame(e:Event) : void
+## why: Leaving results unloads the character file. Do not play the win clip on that same frame.
+@@ 204 0 da39a3ee5e6b4b0d 1
++                        return;
 ## private function gotoCharScreen(_:MouseEvent) : void
 ## why: modhost: tear down ModAPI/ModHost match state when returning to CSS
 @@ 266 0 da39a3ee5e6b4b0d 2
