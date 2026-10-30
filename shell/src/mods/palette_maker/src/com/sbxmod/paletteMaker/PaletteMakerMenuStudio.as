@@ -970,7 +970,12 @@ package com.sbxmod.paletteMaker
 			performSaveCostume();
 		}
 
-		/** New Zelda or Sheik with no open partner slot. The partner index is a temporary base. */
+		/** Subclasses set CostumeID from the saved file slot so a transform is not the base. */
+		protected function applySavedCostumeSlot(fileIndex:int):void
+		{
+		}
+
+		/** New Zelda or Sheik saved against Base. The partner index is a temporary base. */
 		protected function saveWithTemporaryBase():void
 		{
 			var costumeName:String;
@@ -997,6 +1002,7 @@ package com.sbxmod.paletteMaker
 				{
 					PaletteMakerUtils.writePairBaseSlot(partner, saveIndex);
 				};
+				applySavedCostumeSlot(saveIndex);
 				displayName = PaletteMakerUtils.formatCostumeDisplayName(costumeName, getAuthorNameText());
 				SkinDraft.clear(statsName);
 				Ssf2.MultiplayerManager.notify(displayName + " saved with base costume used temporarily for pair");
@@ -1057,6 +1063,7 @@ package com.sbxmod.paletteMaker
 					delete toSave["pairedPalette"];
 					saveIndex = PaletteMakerUtils.saveCostume(statsName, costumeName, toSave, getAuthorNameText(), false, false, fillingOpenFileIndex);
 					Ssf2.gameLog("[Palette Maker] pair fill index=" + fillingOpenFileIndex);
+					applySavedCostumeSlot(saveIndex);
 					fillingOpenFileIndex = -1;
 					partnerPaletteData = null;
 					applySelectedMcNameToCostumeData(currentPaletteData);
@@ -1089,6 +1096,7 @@ package com.sbxmod.paletteMaker
 					};
 					PaletteMakerUtils.ensureLinkedFormParity(statsName);
 				};
+				applySavedCostumeSlot(saveIndex);
 				applySelectedMcNameToCostumeData(currentPaletteData);
 				author = getAuthorNameText();
 				displayName = PaletteMakerUtils.formatCostumeDisplayName(costumeName, author);
@@ -1121,6 +1129,8 @@ package com.sbxmod.paletteMaker
 		protected function exportCostume_CLICK(e:MouseEvent):void
 		{
 			var costumeName:String = m_subMenu.slotName.text;
+			var savedPartner:Object;
+			var previousPartner:Object;
 			if (!costumeName || costumeName.length == 0)
 			{
 				costumeName = "Custom Costume";
@@ -1128,6 +1138,23 @@ package com.sbxmod.paletteMaker
 			pendingSaveName = costumeName;
 			if (PaletteMakerUtils.isFormLinked(statsName))
 			{
+				savedPartner = PaletteMakerUtils.savedPartnerCostume(statsName, costumeName);
+				if (savedPartner)
+				{
+					previousPartner = partnerPaletteData;
+					if (savedPartner.pairChooseBase == true)
+					{
+						partnerPaletteData = null;
+					}
+					else
+					{
+						partnerPaletteData = Ssf2.Utils.cloneObject(savedPartner);
+					};
+					Ssf2.gameLog("[Palette Maker] pair export saved");
+					performExportCostume();
+					partnerPaletteData = previousPartner;
+					return;
+				};
 				pendingExportAfterPair = true;
 				pendingSaveAfterPair = false;
 				setTimeout(function():void

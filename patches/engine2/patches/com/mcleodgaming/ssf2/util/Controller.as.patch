@@ -4,6 +4,13 @@
 @@ 4 0 da39a3ee5e6b4b0d 2
 +   import com.mcleodgaming.ssf2.input.*;
 +   import com.mcleodgaming.ssf2.modhost.*;
+## public function getControlStatus() : ControlsObject
+## why: Palette Maker can point another fighter at player 1. Menus still call IsDown.
+@@ 119 0 da39a3ee5e6b4b0d 4
++         if(ModHost.mirrorInput != null && this != ModHost.mirrorInput)
+=101
++            return ModHost.mirrorInput.getControlStatus();
+=105
 ## public function IsDown(_:String, _:Boolean = false) : Boolean
 ## why: ModHost: IsDown returns false while a mod blocks input unless the caller forces it
 @@ 202 1 2b4f35a9a697fc30 1

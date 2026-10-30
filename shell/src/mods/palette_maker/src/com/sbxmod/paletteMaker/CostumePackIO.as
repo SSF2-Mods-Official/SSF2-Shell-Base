@@ -340,30 +340,17 @@ package com.sbxmod.paletteMaker
 		 */
 		public static function deleteCostumeObjects(statsName:String, costumes:Array):void
 		{
-			var list:Array;
 			var onlineCount:int;
 			var dropLocal:Object;
 			var unfav:Object;
 			var idx:int;
 			var target:Object;
-			var newList:Array;
-			var i:int;
-			var favs:Array;
-			var outFav:Array;
-			var shift:int;
-			var n:int;
-			var key:String;
-			var removed:Boolean;
+			var partner:String;
 			if (!statsName || !costumes || costumes.length == 0)
 			{
 				return;
 			};
 			PaletteMakerUtils.ensureCostumeFileLoaded(statsName);
-			list = PaletteMakerUtils.getCostume(statsName);
-			if (!list)
-			{
-				list = [];
-			};
 			onlineCount = PaletteMakerUtils.getOnlineCostumeCount(statsName);
 			dropLocal = {};
 			unfav = {};
@@ -386,6 +373,33 @@ package com.sbxmod.paletteMaker
 				{
 					dropLocal[idx] = true;
 				};
+			};
+			applyIndexRemoval(statsName, unfav, dropLocal);
+			partner = PaletteMakerUtils.getLinkedFormPartner(statsName);
+			if (partner && partner != statsName)
+			{
+				applyIndexRemoval(partner, unfav, dropLocal);
+				trace("[Palette Maker] pair remove " + statsName + " " + partner);
+			};
+		}
+
+		/** Drop the same catalog indexes on one form. Online indexes are unfavorited. Local indexes are deleted. */
+		private static function applyIndexRemoval(statsName:String, unfav:Object, dropLocal:Object):void
+		{
+			var list:Array;
+			var newList:Array;
+			var i:int;
+			var favs:Array;
+			var outFav:Array;
+			var shift:int;
+			var n:int;
+			var key:String;
+			var removed:Boolean;
+			PaletteMakerUtils.ensureCostumeFileLoaded(statsName);
+			list = PaletteMakerUtils.getCostume(statsName);
+			if (!list)
+			{
+				list = [];
 			};
 			newList = [];
 			removed = false;

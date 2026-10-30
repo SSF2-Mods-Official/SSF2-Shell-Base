@@ -25,6 +25,22 @@ package com.sbxmod.paletteMaker
 			return openedName;
 		}
 
+		/** Zelda and Sheik studio spawn this form as player 2. Other forms stay a one-player match. */
+		public static function studioMirrorPartner(openedName:String):String
+		{
+			var opened:String;
+			opened = openedName ? openedName.toLowerCase() : "";
+			if (opened == "zelda")
+			{
+				return "sheik";
+			};
+			if (opened == "sheik")
+			{
+				return "zelda";
+			};
+			return null;
+		}
+
 		/** Drops the other linked form. Giga Bowser keeps a Giga name only. An unprefixed prop stays on Zelda and Kirby. */
 		public static function filterCoverToForm(cover:Array, formName:String):Array
 		{

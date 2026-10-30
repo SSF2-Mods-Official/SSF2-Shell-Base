@@ -559,6 +559,7 @@ package com.sbxmod.paletteMaker
 				{
 				};
 				maintainGigaStudioForm();
+				syncStudioPartnerCostume(player);
 				if (pendingSkipCountdown)
 				{
 					trySkipPostEntranceCountdown();
@@ -1202,9 +1203,76 @@ package com.sbxmod.paletteMaker
 			return out;
 		}
 
+		/** Player 2 reads player 1's pad. IsDown on pad 2 stays the real pad, so menus do not double-fire. */
+		private function bindStudioMirrorInput():void
+		{
+			var pads:*;
+			try
+			{
+				pads = Ssf2.SaveData.Controllers;
+				if (!pads || pads.length < 1 || !pads[0])
+				{
+					return;
+				};
+				Ssf2.ModHost.mirrorInput = pads[0];
+			}
+			catch (err:Error)
+			{
+				Ssf2.gameLog("[Palette Maker] pair puppet mirror missing");
+			};
+		}
+
+		private function clearStudioMirrorInput():void
+		{
+			try
+			{
+				Ssf2.ModHost.mirrorInput = null;
+			}
+			catch (err:Error)
+			{
+			};
+		}
+
+		/** Same costume index on the partner is that form's side of the pair. */
+		private function syncStudioPartnerCostume(lead:*):void
+		{
+			var stageData:*;
+			var partner:*;
+			var slot:int;
+			if (!lead || !LinkedFormPaint.studioMirrorPartner(statsName))
+			{
+				return;
+			};
+			stageData = Ssf2.GameController.stageData;
+			if (!stageData || !stageData.Players || stageData.Players.length < 2)
+			{
+				return;
+			};
+			partner = stageData.Players[1];
+			if (!partner || partner == lead)
+			{
+				return;
+			};
+			try
+			{
+				slot = int(lead.CostumeID);
+				if (int(partner.CostumeID) == slot)
+				{
+					return;
+				};
+				partner.setCostumeAPI(slot);
+				partner.CostumeID = slot;
+				Ssf2.gameLog("[Palette Maker] pair puppet costume=" + slot);
+			}
+			catch (err:Error)
+			{
+			};
+		}
+
 		private function startGame(e:MouseEvent):void
 		{
-			m_game = new (Ssf2.Game as Class)(1, Ssf2.Mode.TRAINING);
+			var mirrorPartner:String = LinkedFormPaint.studioMirrorPartner(statsName);
+			m_game = new (Ssf2.Game as Class)(mirrorPartner ? 2 : 1, Ssf2.Mode.TRAINING);
 			loadToolSettings();
 			if (settingRestAreaMusicIndex >= 0 && settingRestAreaMusicIndex < REST_AREA_MUSIC.length)
 			{
@@ -1253,6 +1321,18 @@ package com.sbxmod.paletteMaker
 			Ssf2.Utils.setRandSeed(m_game.LevelData.randSeed);
 			m_game.PlayerSettings[0].character = LinkedFormPaint.spawnStatsName(statsName);
 			m_game.PlayerSettings[0].costume = -1;
+			if (mirrorPartner)
+			{
+				m_game.PlayerSettings[1].character = mirrorPartner;
+				m_game.PlayerSettings[1].costume = -1;
+				m_game.PlayerSettings[1].human = true;
+				bindStudioMirrorInput();
+				Ssf2.gameLog("[Palette Maker] pair puppet partner=" + mirrorPartner);
+			}
+			else
+			{
+				clearStudioMirrorInput();
+			};
 			gigaStudioFinal = false;
 			gigaPrevInRevival = false;
 			gigaFinalDelayFrames = 0;
@@ -2883,6 +2963,7 @@ package com.sbxmod.paletteMaker
 
 		private function back_CLICK(e:MouseEvent = null):void
 		{
+			clearStudioMirrorInput();
 			sessionActive = false;
 			destroyMcNameDropdown();
 			ColorSquare.onSelectionChanged = null;
@@ -4153,6 +4234,18 @@ package com.sbxmod.paletteMaker
 			catch (idErr:*)
 			{
 			};
+		}
+
+		override protected function applySavedCostumeSlot(fileIndex:int):void
+		{
+			var gameIndex:int;
+			if (fileIndex < 0)
+			{
+				return;
+			};
+			gameIndex = PaletteMakerUtils.gameSlotForFileIndex(statsName, fileIndex);
+			rememberStudioCostumeIndex(gameIndex);
+			Ssf2.gameLog("[Palette Maker] pair slot id=" + gameIndex + " file=" + fileIndex);
 		}
 
 		private function studioCostumeSlot():int

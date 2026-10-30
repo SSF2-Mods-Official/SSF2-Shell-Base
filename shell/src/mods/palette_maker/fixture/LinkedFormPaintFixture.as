@@ -78,6 +78,9 @@ package
 			expect("giga paints its own palette", LinkedFormPaint.blockForLiveForm(true, openedBlock, gigaBlock) == gigaBlock, "");
 			expect("bowser paints the opened palette", LinkedFormPaint.blockForLiveForm(false, openedBlock, gigaBlock) == openedBlock, "");
 			expect("giga match stays stock", LinkedFormPaint.matchUsesStockTransform("bowser") && LinkedFormPaint.matchUsesStockTransform("gigabowser") && LinkedFormPaint.matchUsesStockTransform("zelda") == false, "");
+			expect("zelda studio spawns sheik", LinkedFormPaint.studioMirrorPartner("zelda") == "sheik", String(LinkedFormPaint.studioMirrorPartner("zelda")));
+			expect("sheik studio spawns zelda", LinkedFormPaint.studioMirrorPartner("sheik") == "zelda", String(LinkedFormPaint.studioMirrorPartner("sheik")));
+			expect("bowser studio stays one player", LinkedFormPaint.studioMirrorPartner("bowser") == null && LinkedFormPaint.studioMirrorPartner("gigabowser") == null, String(LinkedFormPaint.studioMirrorPartner("bowser")));
 			var identityBlock:Object = { colors: [0xFF112233], replacements: [0xFF112233] };
 			var partnerRecolor:Object = { colors: [0xFF112233], replacements: [0xFF00FF00] };
 			expect("partner transform keeps its recolor", LinkedFormPaint.livePaintBlock(true, identityBlock, partnerRecolor) == partnerRecolor, "");

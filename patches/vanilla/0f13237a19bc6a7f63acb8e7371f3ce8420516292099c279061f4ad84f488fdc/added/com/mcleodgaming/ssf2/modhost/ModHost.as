@@ -24,6 +24,9 @@ package com.mcleodgaming.ssf2.modhost
       
       public static const HOST_ABI:String = "1.1";
       
+      /** Palette Maker sets this to player 1 so another fighter reads that pad. Menus still use IsDown. */
+      public static var mirrorInput:* = null;
+      
       private static var m_booted:Boolean = false;
       
       private static var m_mods:Object = {};

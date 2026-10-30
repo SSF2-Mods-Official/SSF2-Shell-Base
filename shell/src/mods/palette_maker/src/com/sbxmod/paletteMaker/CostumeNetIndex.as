@@ -127,7 +127,16 @@ package com.sbxmod.paletteMaker
 			return out;
 		}
 
-		/** A file index already in the Color Vault catalog. Those are not offered as pair targets. */
+		/** Game costume index for a documents file slot. -1 is the base. */
+		public static function gameSlotForFileIndex(fileIndex:int, origin:int):int
+		{
+			if (fileIndex < 0)
+			{
+				return -1;
+			};
+			return fileIndex + origin;
+		}
+
 		public static function isVaultPairIndex(fileIndex:int, onlineCount:int):Boolean
 		{
 			return fileIndex >= 0 && onlineCount > 0 && fileIndex < onlineCount;

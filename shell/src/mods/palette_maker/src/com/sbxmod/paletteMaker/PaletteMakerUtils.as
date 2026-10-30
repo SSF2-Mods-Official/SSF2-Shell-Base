@@ -603,6 +603,12 @@ package com.sbxmod.paletteMaker
 			return gameSlot - catalogSlotOrigin(statsName);
 		}
 
+		/** Game costume index for a saved file slot. The transform uses this, and -1 is the base. */
+		public static function gameSlotForFileIndex(statsName:String, fileIndex:int):int
+		{
+			return CostumeNetIndex.gameSlotForFileIndex(fileIndex, catalogSlotOrigin(statsName));
+		}
+
 		/** Partner file slot that shares the opened costume's game index. -1 means that slot is a builtin alt. */
 		public static function partnerSaveFileIndex(openedStats:String, openedFileIndex:int, partnerStats:String):int
 		{
@@ -828,6 +834,59 @@ package com.sbxmod.paletteMaker
 				};
 			};
 			return false;
+		}
+
+		/**
+		 * Partner palette already stored for this saved name.
+		 * A real partner costume is returned. A pairBase slot returns pairChooseBase.
+		 * Null means this name has not been paired yet.
+		 */
+		public static function savedPartnerCostume(statsName:String, costumeName:String):Object
+		{
+			var list:Array;
+			var i:int;
+			var item:Object;
+			var partner:String;
+			var at:int;
+			var theirs:Array;
+			costumeName = trimString(costumeName);
+			if (!statsName || !costumeName || !isFormLinked(statsName))
+			{
+				return null;
+			};
+			ensureCostumeFileLoaded(statsName);
+			list = getCostume(statsName);
+			i = 0;
+			while (list && i < list.length)
+			{
+				item = list[i];
+				if (item && String(item.profile || "") == costumeName)
+				{
+					if (item.pairedPalette && item.pairedPalette.paletteSwap)
+					{
+						return item.pairedPalette;
+					};
+					partner = getLinkedFormPartner(statsName);
+					if (!partner)
+					{
+						return null;
+					};
+					ensureCostumeFileLoaded(partner);
+					at = partnerSaveFileIndex(statsName, i, partner);
+					theirs = getCostume(partner);
+					if (!theirs || at < 0 || at >= theirs.length || !theirs[at])
+					{
+						return null;
+					};
+					if (isPairBase(theirs[at]))
+					{
+						return {"pairChooseBase": true};
+					};
+					return theirs[at];
+				};
+				i++;
+			};
+			return null;
 		}
 
 		/**
