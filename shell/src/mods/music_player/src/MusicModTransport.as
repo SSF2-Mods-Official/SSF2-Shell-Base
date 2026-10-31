@@ -151,6 +151,7 @@ package
 			var prevId:String;
 			var superseded:String;
 			var gen:int;
+			mod.m_menuPlayback = false;
 			announce = mod.m_announceHud;
 			mod.m_announceHud = false;
 			trackId = MusicPacks.canonicalTrackId(trackId);
@@ -518,6 +519,12 @@ package
 
 		internal function onMusicStop(ctx:Object):void
 		{
+			var stopped:String;
+			stopped = ctx && ctx.songId ? String(ctx.songId) : "";
+			if (mod.m_menuPlayback && stopped && (stopped == mod.m_pinnedMenuId || MenuReplay.isStockMenu(stopped)))
+			{
+				return;
+			};
 			if (mod.m_holdAdvance || mod.m_localChannel || !mod.m_expectAdvance || mod.m_repeatOne || mod.m_paused)
 			{
 				return;

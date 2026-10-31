@@ -37,6 +37,10 @@ package
 		internal var m_expectAdvance:Boolean;
 		/** Match-end / results: keep the current song; do not treat scene MUSIC_STOP as skip. */
 		internal var m_holdAdvance:Boolean;
+		/** Menu BGM stays on this track. A later menumusic request does not pick another one. */
+		internal var m_pinnedMenuId:String;
+		/** The live BGM is menu music, so the song ending restarts it. */
+		internal var m_menuPlayback:Boolean;
 		/** Flash in-game music_info HUD on playlist auto-advance (jukebox UI closed). */
 		internal var m_announceHud:Boolean;
 		internal var m_localSound:Sound;
@@ -87,6 +91,8 @@ package
 			m_loadedMusicIds = [];
 			m_expectAdvance = false;
 			m_holdAdvance = false;
+			m_pinnedMenuId = "";
+			m_menuPlayback = false;
 			m_announceHud = false;
 			m_soundsMenu = null;
 			m_sssMenu = null;
@@ -468,6 +474,10 @@ package
 				{
 					SQ.instance.playMusicStock(soundName, loopLoc);
 				};
+				if (isMenuBgm(soundName))
+				{
+					pinMenuFromQueue(SQ);
+				};
 			}
 			catch (err:*)
 			{
@@ -524,7 +534,6 @@ package
 			var SQ:*;
 			var inst:*;
 			var current:String;
-			var i:int;
 			var tid:String;
 			var hold:*;
 			if (!m_store)
@@ -546,42 +555,105 @@ package
 			{
 			};
 			m_store.syncMenuMusicFromDisk();
+			songs = m_store.songsForPlaylist(MusicPlaylistStore.MENU_PLAYLIST_ID);
 			if (!m_store.menuMusicEnabled())
 			{
-				return (false);
-			};
-			songs = m_store.songsForPlaylist(MusicPlaylistStore.MENU_PLAYLIST_ID);
-			if (!songs || songs.length < 1)
-			{
-				return (false);
+				songs = null;
 			};
 			try
 			{
 				SQ = EngineRefs.ssf2("audio.SoundQueue");
 				inst = SQ ? SQ.instance : null;
 				current = inst && inst.CurrentSongID ? String(inst.CurrentSongID) : "";
-				i = 0;
-				while (i < songs.length)
+			}
+			catch (curErr:*)
+			{
+				current = "";
+				inst = null;
+			};
+			if (!songs || songs.length < 1)
+			{
+				tid = MenuReplay.keepId(current, m_pinnedMenuId, null);
+				if (!tid)
 				{
-					if (String(songs[i]) == current)
-					{
-						return (true);
-					};
-					i++;
+					return (false);
 				};
+				if (tid == current)
+				{
+					noteMenuPlaying(tid);
+					return (true);
+				};
+				return (playPinnedMenu(inst, tid));
+			};
+			tid = MenuReplay.keepId(current, m_pinnedMenuId, songs);
+			if (!tid)
+			{
 				tid = String(songs[int(Math.random() * songs.length)]);
-				trace("[music_player] menu playlist id=" + tid);
+			};
+			if (tid == current)
+			{
+				noteMenuPlaying(tid);
+				return (true);
+			};
+			return (playPinnedMenu(inst, tid));
+		}
+
+		/** Stock menumusic just started. Remember which of the three is up so the next request keeps it. */
+		private function pinMenuFromQueue(SQ:*):void
+		{
+			var id:String;
+			try
+			{
+				id = (SQ && SQ.instance && SQ.instance.CurrentSongID) ? String(SQ.instance.CurrentSongID) : "";
+			}
+			catch (err:*)
+			{
+				id = "";
+			};
+			if (MenuReplay.isStockMenu(id) && id != "menumusic")
+			{
+				noteMenuPlaying(id);
+			};
+		}
+
+		private function playPinnedMenu(inst:*, id:String):Boolean
+		{
+			var loop:Number;
+			if (!id)
+			{
+				return (false);
+			};
+			loop = 0;
+			if (m_catalog)
+			{
+				loop = m_catalog.loopMs(id);
+			};
+			if (!(loop >= 0))
+			{
+				loop = 0;
+			};
+			trace("[music_player] menu playlist id=" + id);
+			try
+			{
 				if (inst && inst.playMusicStock)
 				{
-					inst.playMusicStock(tid, 0);
+					inst.playMusicStock(id, loop);
 				};
-				return (true);
 			}
 			catch (err:*)
 			{
 				trace("[music_player] menu playlist failed: " + err);
+				return (false);
 			};
-			return (false);
+			noteMenuPlaying(id);
+			return (true);
+		}
+
+		private function noteMenuPlaying(id:String):void
+		{
+			m_pinnedMenuId = id;
+			m_menuPlayback = true;
+			m_expectAdvance = false;
 		}
 
 		/** Same value the Sounds menu writes: SaveData.BGVolumeLevel plus SoundQueue.setMusicVolume. */

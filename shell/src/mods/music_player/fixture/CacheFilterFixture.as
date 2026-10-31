@@ -51,6 +51,12 @@ package
 			expect("removed song drops", !MusicCacheFilter.listed(false, false, false));
 			expect("song file stays", MusicCacheFilter.listed(true, false, false));
 			expect("loaded library sound stays", MusicCacheFilter.listed(false, true, false));
+			expect("stock menu stays on the pinned track", MenuReplay.keepId("", "menumusic2", null) == "menumusic2");
+			expect("stock menu stays on the live track", MenuReplay.keepId("meleemenu2", "", null) == "meleemenu2");
+			expect("first stock menu pick is open", MenuReplay.keepId("", "", null) == "");
+			expect("playlist stays on the pinned song", MenuReplay.keepId("bgm_b", "bgm_a", ["bgm_a", "bgm_b"]) == "bgm_a");
+			expect("playlist keeps the song already up", MenuReplay.keepId("bgm_b", "", ["bgm_a", "bgm_b"]) == "bgm_b");
+			expect("playlist ignores a stock pin", MenuReplay.keepId("", "menumusic1", ["bgm_a"]) == "");
 		}
 
 		private function write(rel:String, text:String):File

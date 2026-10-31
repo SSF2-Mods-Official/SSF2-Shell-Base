@@ -323,7 +323,7 @@ package
 			{
 				return;
 			};
-			if (mod.m_repeatOne)
+			if (mod.m_repeatOne || menuSongRestarts())
 			{
 				if (mod.m_localSound)
 				{
@@ -348,6 +348,18 @@ package
 			};
 			mod.m_announceHud = true;
 			mod.m_transport.playNext();
+		}
+
+		/** Menu BGM restarts the song that just ended. A jukebox pick still advances. */
+		private function menuSongRestarts():Boolean
+		{
+			var id:String;
+			if (!mod.m_menuPlayback)
+			{
+				return (false);
+			};
+			id = mod.m_currentMusicId ? String(mod.m_currentMusicId) : "";
+			return (id.length > 0 && (id == mod.m_pinnedMenuId || MenuReplay.isStockMenu(id)));
 		}
 
 		/** Start a local BGM Sound at startMs on the bgm transform; SOUND_COMPLETE drives playlist advance / loop. */
