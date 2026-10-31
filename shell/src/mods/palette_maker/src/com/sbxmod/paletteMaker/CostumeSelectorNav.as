@@ -434,13 +434,17 @@ package com.sbxmod.paletteMaker
 			var baseCostume:Object;
 			var block:Object;
 			var pa:Object;
-			try
+			baseCostume = FormPair.baseCostume(m_statsName);
+			if (!baseCostume)
 			{
-				baseCostume = Ssf2.ResourceManager.getCostume(m_statsName, null, -1);
-			}
-			catch (err:Error)
-			{
-				baseCostume = null;
+				try
+				{
+					baseCostume = Ssf2.ResourceManager.getCostume(m_statsName, null, -1);
+				}
+				catch (err:Error)
+				{
+					baseCostume = null;
+				};
 			};
 			block = (baseCostume && baseCostume.paletteSwap) ? Ssf2.Utils.cloneObject(baseCostume.paletteSwap) : {"colors": [], "replacements": []};
 			pa = (baseCostume && baseCostume.paletteSwapPA) ? Ssf2.Utils.cloneObject(baseCostume.paletteSwapPA) : block;

@@ -83,6 +83,8 @@ package
 			expect("sheik studio spawns zelda", LinkedFormPaint.studioMirrorPartner("sheik") == "zelda", String(LinkedFormPaint.studioMirrorPartner("sheik")));
 			expect("bowser studio stays one player", LinkedFormPaint.studioMirrorPartner("bowser") == null && LinkedFormPaint.studioMirrorPartner("gigabowser") == null, String(LinkedFormPaint.studioMirrorPartner("bowser")));
 			expect("bowser opens the pair list", FormPair.opensPairList("bowser") && FormPair.opensPairList("gigabowser"), String(FormPair.opensPairList("bowser")));
+			var gigaBase:Object = FormPair.baseCostume("gigabowser");
+			expect("giga base is palette 0", gigaBase != null && uint(gigaBase.paletteSwap.replacements[0]) == uint(GigaStockPalettes.costume(0).paletteSwap.replacements[0]) && uint(gigaBase.paletteSwap.replacements[0]) != uint(GigaStockPalettes.costume(1).paletteSwap.replacements[0]) && FormPair.baseCostume("zelda") == null, "");
 			expect("wario does not open the pair list", !FormPair.opensPairList("wario") && !FormPair.opensPairList("sonic"), String(FormPair.opensPairList("wario")));
 			var identityBlock:Object = { colors: [0xFF112233], replacements: [0xFF112233] };
 			var partnerRecolor:Object = { colors: [0xFF112233], replacements: [0xFF00FF00] };
@@ -102,6 +104,9 @@ package
 			expect("giga portrait uses the source pixel", portraitPx.getPixel32(0, 0) == 0xFF8B4513, portraitPx.getPixel32(0, 0).toString(16));
 			var portraitPasses:int = LinkedFormPaint.portraitApplyCount;
 			expect("second giga paint skips the bitmap", LinkedFormPaint.paintLivePortrait("gigabowser", portrait, gigaPa) == 1 && LinkedFormPaint.portraitApplyCount == portraitPasses && portraitPx.getPixel32(0, 0) == 0xFF8B4513, String(LinkedFormPaint.portraitApplyCount));
+			portraitPx.setPixel32(0, 0, 0xFF00FF00);
+			portraitPasses = LinkedFormPaint.portraitApplyCount;
+			expect("replaced portrait art is recolored", LinkedFormPaint.paintLivePortrait("gigabowser", portrait, gigaPa) == 1 && LinkedFormPaint.portraitApplyCount == portraitPasses + 1 && portraitPx.getPixel32(0, 0) == 0xFF8B4513, portraitPx.getPixel32(0, 0).toString(16));
 			expect("giga linkage is not bowser", LinkedFormSprite.matchesForm("giga_bowser_idle0", "bowser") == false && LinkedFormSprite.matchesForm("giga_bowser_idle0", "gigabowser") == true, "");
 			expect("gbow is giga", LinkedFormSprite.matchesForm("gbow_fair3", "gigabowser") == true && LinkedFormSprite.matchesForm("gbow_fair3", "bowser") == false, "");
 			expect("bowser extra does not steal bowser", LinkedFormSprite.matchesForm("bowser_flying1", "gigabowser", ["bowser"]) == false && LinkedFormSprite.matchesForm("bowser_flying1", "bowser") == true, "");

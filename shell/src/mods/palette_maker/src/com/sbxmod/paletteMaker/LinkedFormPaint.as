@@ -15,6 +15,7 @@ package com.sbxmod.paletteMaker
 		private static var portraitPixelCache:Dictionary = new Dictionary(true);
 		/** BitmapData already painted with this palette block. A later stance paint leaves it. */
 		private static var portraitAppliedBlock:Dictionary = new Dictionary(true);
+		private static var portraitStamp:Dictionary = new Dictionary(true);
 		/** Times a portrait bitmap was passed to threshold. A repeat of the same block does not increment. */
 		public static var portraitApplyCount:int = 0;
 		/** Giga opens from the stock grid but the match must spawn Bowser for the linked form. */
@@ -1165,7 +1166,7 @@ package com.sbxmod.paletteMaker
 					bitmap = child as Bitmap;
 					if (bitmap.bitmapData)
 					{
-						if (portraitAppliedBlock[bitmap.bitmapData] == block)
+						if (portraitAppliedBlock[bitmap.bitmapData] == block && uint(portraitStamp[bitmap.bitmapData]) == bitmap.bitmapData.getPixel32(0, 0))
 						{
 							painted++;
 						}
@@ -1177,7 +1178,7 @@ package com.sbxmod.paletteMaker
 								cache = new Dictionary(true);
 								portraitPixelCache[mc] = cache;
 							};
-							if (!cache[bitmap.bitmapData])
+							if (!cache[bitmap.bitmapData] || uint(portraitStamp[bitmap.bitmapData]) != bitmap.bitmapData.getPixel32(0, 0))
 							{
 								cache[bitmap.bitmapData] = bitmap.bitmapData.clone();
 							}
@@ -1187,6 +1188,7 @@ package com.sbxmod.paletteMaker
 							};
 							applyHelper(bitmap.bitmapData, block);
 							portraitAppliedBlock[bitmap.bitmapData] = block;
+							portraitStamp[bitmap.bitmapData] = bitmap.bitmapData.getPixel32(0, 0);
 							portraitApplyCount++;
 							bitmap.smoothing = true;
 							painted++;

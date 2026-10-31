@@ -42,7 +42,7 @@ package
 		private var m_applyingFormCostume:Boolean = false;
 		private var m_stockPaintErrLogged:Boolean = false;
 		private var m_stanceErrLogged:Boolean = false;
-		private var m_formHudKey:String = "";
+		private var m_formApplyKey:Dictionary = new Dictionary(true);
 		private var m_stockHudBlock:Dictionary = new Dictionary(true);
 
 		public function onBoot(host:*):void
@@ -160,11 +160,12 @@ package
 				{
 				};
 				key = "apply:" + toName + ":" + index + ":" + swapCount + ":" + stance;
-				if (key != m_formHudKey)
+				if (m_formApplyKey[character] == key)
 				{
-					m_formHudKey = key;
-					Ssf2.gameLog("[Palette Maker] costume apply stats=" + toName + " slot=" + index + " swap=" + swapCount + " stance=" + stance);
+					return;
 				};
+				m_formApplyKey[character] = key;
+				Ssf2.gameLog("[Palette Maker] costume apply stats=" + toName + " slot=" + index + " swap=" + swapCount + " stance=" + stance);
 				if (costume && PaletteMakerUtils.isPairBase(costume))
 				{
 					PaletteMakerUtils.fillPairBaseRecolors(toName, [costume]);
@@ -207,9 +208,9 @@ package
 			};
 			paCount = (costume && costume.paletteSwapPA && costume.paletteSwapPA.colors) ? costume.paletteSwapPA.colors.length : 0;
 			key = toName + ":" + costumeName + ":" + index + ":" + (list ? list.length : 0) + ":" + paCount;
-			if (key != m_formHudKey)
+			if (m_formApplyKey[character] != key)
 			{
-				m_formHudKey = key;
+				m_formApplyKey[character] = key;
 				Ssf2.gameLog("[Palette Maker] form hud stats=" + toName + " costumeName=" + costumeName + " slot=" + index + " file=" + (list ? list.length : 0) + " pa=" + paCount + " linked=1 carry=0");
 			};
 			if (costume && PaletteMakerUtils.isPairBase(costume))

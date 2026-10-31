@@ -247,9 +247,16 @@ package com.sbxmod.paletteMaker
 
 		private static function stockBaseCostume(statsName:String):Object
 		{
+			var gigaBase:Object;
 			if (m_stockBase.hasOwnProperty(statsName))
 			{
 				return m_stockBase[statsName];
+			};
+			gigaBase = FormPair.baseCostume(statsName);
+			if (gigaBase)
+			{
+				m_stockBase[statsName] = gigaBase;
+				return gigaBase;
 			};
 			try
 			{
