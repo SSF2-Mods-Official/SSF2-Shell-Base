@@ -11,7 +11,7 @@
 			"id": "stageId",
 			"label": "Stage",
 			"type": "dropdown",
-			"value": "battlefield22",
+			"value": "battlefield2",
 			"optionsSource": "stages"
 		}
 	]

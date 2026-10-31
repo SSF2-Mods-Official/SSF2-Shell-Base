@@ -761,6 +761,7 @@ package
 				defaultMenuBg(fallbackId, container);
 				return;
 			};
+			stageId = trimKnownStageId(stageId);
 			known = false;
 			try
 			{
@@ -827,6 +828,85 @@ package
 					defaultMenuBg(fallbackId, container);
 				};
 			});
+		}
+
+		/** battlefield22 is battlefield2. Extra trailing digits are not a different stage. */
+		private function trimKnownStageId(stageId:String):String
+		{
+			var RM:*;
+			var cut:String;
+			var ch:String;
+			if (!stageId || stageId.length == 0)
+			{
+				return stageId;
+			};
+			try
+			{
+				RM = EngineRefs.ResourceManager;
+			}
+			catch (rmErr:*)
+			{
+				return stageId;
+			};
+			if (stageResourceKnown(RM, stageId))
+			{
+				return stageId;
+			};
+			cut = stageId;
+			while (cut.length > 1)
+			{
+				ch = cut.charAt(cut.length - 1);
+				if (ch < "0" || ch > "9")
+				{
+					break;
+				};
+				cut = cut.substr(0, cut.length - 1);
+				if (!stageResourceKnown(RM, cut))
+				{
+					continue;
+				};
+				EngineRefs.gameLog("[menu_background] stage id " + stageId + " -> " + cut);
+				if (m_stageId == stageId)
+				{
+					m_stageId = cut;
+					if (m_host)
+					{
+						try
+						{
+							m_host.saveExtSet(SAVE_KEY, cut);
+						}
+						catch (saveErr:*)
+						{
+						};
+					};
+				};
+				return cut;
+			};
+			return stageId;
+		}
+
+		private function stageResourceKnown(RM:*, stageId:String):Boolean
+		{
+			if (!RM || !stageId)
+			{
+				return false;
+			};
+			try
+			{
+				if (RM.getResourceByID(stageId, true))
+				{
+					return true;
+				};
+				if (RM.getResourceByID(stageId, false))
+				{
+					return true;
+				};
+			}
+			catch (err:*)
+			{
+				return true;
+			};
+			return false;
 		}
 
 		/** A stage file can finish loading a frame before its camera clips exist. */
