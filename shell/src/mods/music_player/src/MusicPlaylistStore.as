@@ -3,6 +3,7 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import ssf2mm.shared.EngineRefs;
 	import ssf2mm.shared.UserStateFile;
 
 	/** Per-stage playlists, custom playlists, song frequencies — JSON on disk + saveExt mirror. */
@@ -17,6 +18,7 @@ package
 
 		private var m_host:*;
 		private var m_catalog:MusicCatalog;
+		private var m_menuMusicOn:Boolean;
 		private var m_data:Object;
 
 		public function MusicPlaylistStore(host:*, catalog:MusicCatalog)
@@ -795,7 +797,7 @@ package
 			ensureMenuMusicPlaylist();
 		}
 
-		/** Keep a default Playlists entry synced to data/ssf2mm/state/menu-music.json. */
+		/** Keep a default Playlists entry synced to expansions/user/menu-music.json. */
 		private function ensureMenuMusicPlaylist():void
 		{
 			var songs:Array;
@@ -854,10 +856,11 @@ package
 			var id:String;
 			var out:Array;
 			out = [];
+			m_menuMusicOn = false;
 			try
 			{
 				file = UserStateFile.readFile(MENU_MUSIC_NAME);
-				if (!file.exists)
+				if (!file || !file.exists)
 				{
 					return (out);
 				};
@@ -881,6 +884,7 @@ package
 				{
 					out.push(String(data.id));
 				};
+				m_menuMusicOn = data && data.enabled !== false && out.length > 0;
 			}
 			catch (err:*)
 			{
@@ -926,6 +930,8 @@ package
 					};
 				};
 				data.playlist = songs ? songs.concat() : [];
+				data.enabled = songs && songs.length > 0;
+				m_menuMusicOn = data.enabled;
 				if ((!data.id || String(data.id).length < 1) && songs && songs.length > 0)
 				{
 					data.id = String(songs[0]);
@@ -945,7 +951,7 @@ package
 				raw = "{\"id\":\"" + jsonEscape(String(data.id || ""))
 					+ "\",\"name\":\"" + jsonEscape(String(data.name || "Menu Music"))
 					+ "\",\"loop\":" + Number(data.loop || 0)
-					+ ",\"enabled\":" + (data.enabled === false ? "false" : "true")
+					+ ",\"enabled\":" + (data.enabled ? "true" : "false")
 					+ ",\"playlist\":[" + parts.join(",") + "]}";
 				file = UserStateFile.writeFile(MENU_MUSIC_NAME);
 				if (file.parent && !file.parent.exists)
@@ -956,6 +962,7 @@ package
 				stream.open(file, FileMode.WRITE);
 				stream.writeUTFBytes(raw);
 				stream.close();
+				signalMenuMusic(data);
 			}
 			catch (err:*)
 			{
@@ -969,6 +976,33 @@ package
 				catch (closeErr:*)
 				{
 				};
+			};
+		}
+
+		public function menuMusicEnabled():Boolean
+		{
+			return (m_menuMusicOn);
+		}
+
+		private function signalMenuMusic(data:Object):void
+		{
+			var MH:*;
+			try
+			{
+				MH = EngineRefs.ssf2("modhost.ModHost");
+				if (MH && MH["runHook"] is Function)
+				{
+					MH["runHook"]("MENU_MUSIC", {
+						"playlist": data.playlist,
+						"id": data.id,
+						"musicId": data.id,
+						"enabled": data.enabled,
+						"loop": data.loop
+					});
+				};
+			}
+			catch (err:*)
+			{
 			};
 		}
 

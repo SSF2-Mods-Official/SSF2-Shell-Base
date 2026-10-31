@@ -12,9 +12,7 @@ package
 	{
 		public static const STATE_REL:String = "expansions/user/controller_profiles.json";
 		public static const LEGACY_RELS:Array = [
-			"data/ssf2mm/state/controller_profiles.json",
-			"expansions/mods/controller_profiles/profiles.json",
-			"data/ssf2mm/controller_profiles/profiles.json"
+			"expansions/mods/controller_profiles/profiles.json"
 		];
 		public static const STORE_REL:String = "controller_profiles/profiles.json";
 

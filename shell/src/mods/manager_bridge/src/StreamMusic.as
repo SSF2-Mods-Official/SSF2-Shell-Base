@@ -9,6 +9,7 @@ package
 
 	import ssf2mm.shared.EngineRefs;
 	import ssf2mm.shared.JsonFile;
+	import ssf2mm.shared.UserStateFile;
 
 	/**
 	 * Music: now-playing.json, menu-music.json, menu playlist patch, forced match
@@ -326,7 +327,7 @@ package
 			var data:Object;
 			try
 			{
-				file = core.bridgeFile("menu-music.json");
+				file = UserStateFile.readFile("menu-music.json");
 				data = JsonFile.read(file);
 				if (!data)
 				{
@@ -402,7 +403,7 @@ package
 						i++;
 					};
 				};
-				file = core.bridgeFile("menu-music.json");
+				file = UserStateFile.writeFile("menu-music.json");
 				if (!file)
 				{
 					return;
@@ -424,33 +425,19 @@ package
 			};
 		}
 
+		internal function onMenuMusicHook(ctx:Object):void
+		{
+			applyMenuMusicCmd(ctx);
+		}
+
 		internal function armMenuMusicPatch():void
 		{
 			var hasMenu:Boolean;
 			hasMenu = m_menuMusicEnabled && ((m_menuMusicId && m_menuMusicId.length > 0)
 				|| (m_menuPlaylist && m_menuPlaylist.length > 0));
-			if (!core.m_host)
+			if (!core.m_host || !hasMenu)
 			{
 				return;
-			};
-			if (!hasMenu)
-			{
-				try
-				{
-					core.m_host.unpatch("playMusic");
-				}
-				catch (unErr:*)
-				{
-				};
-				return;
-			};
-			try
-			{
-				core.m_host.patch("playMusic", onMenuPlayMusic);
-			}
-			catch (err:*)
-			{
-				log("menu music patch: " + err);
 			};
 			try
 			{

@@ -4,13 +4,11 @@ package ssf2mm.shared
 
 	/**
 	 * The player's own data (controller profiles, playlists, menu music, song cache) lives in
-	 * expansions/user so it moves with the expansions folder. Older builds kept it in
-	 * data/ssf2mm/state; reads fall back there until the next save writes the new copy.
+	 * expansions/user. Nothing is read from or written under data/.
 	 */
 	public class UserStateFile
 	{
 		public static const USER_DIR:String = "expansions/user/";
-		public static const LEGACY_DIR:String = "data/ssf2mm/state/";
 
 		public static function writeFile(name:String, appDir:File = null):File
 		{
@@ -19,14 +17,7 @@ package ssf2mm.shared
 
 		public static function readFile(name:String, appDir:File = null):File
 		{
-			var user:File = writeFile(name, appDir);
-			var legacy:File;
-			if (user && user.exists)
-			{
-				return (user);
-			};
-			legacy = resolve(LEGACY_DIR + name, appDir);
-			return (legacy && legacy.exists ? legacy : user);
+			return (writeFile(name, appDir));
 		}
 
 		private static function resolve(rel:String, appDir:File):File

@@ -68,7 +68,7 @@ package
 			JsonFile.write(app.resolvePath("data/ssf2mm/state/controller_profiles.json"), {"names": ["Older"]});
 			JsonFile.write(app.resolvePath("expansions/mods/controller_profiles/profiles.json"), {"names": ["Oldest"]});
 			got = ProfileStore.load(app, store);
-			expect("data/ssf2mm/state copy is read before the pack file", got.data.names[0] == "Older", JSON.stringify(got.data));
+			expect("data/ssf2mm/state is ignored", got.data.names[0] == "Oldest", JSON.stringify(got.data));
 			expect("save moves it to expansions/user", ProfileStore.save(app, got.data) && ProfileStore.stateFile(app).exists, "no user file");
 		}
 

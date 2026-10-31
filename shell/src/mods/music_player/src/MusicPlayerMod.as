@@ -120,7 +120,8 @@ package
 				"preview": m_transport.playTrack,
 				"seek": m_transport.seekRatio,
 				"registerUpload": m_loader.registerUploadResource,
-				"registerFolders": m_loader.registerKnownFolders
+				"registerFolders": m_loader.registerKnownFolders,
+				"applyBgmVolume": applyBgmVolume
 			});
 			try
 			{
@@ -434,6 +435,10 @@ package
 			{
 				soundName = m_armUploadId;
 			};
+			if (isMenuBgm(soundName) && playMenuPlaylist())
+			{
+				return;
+			};
 			try
 			{
 				path = m_local.localFileFor(soundName);
@@ -508,6 +513,77 @@ package
 			};
 		}
 
+		private function isMenuBgm(id:String):Boolean
+		{
+			return (id == "menumusic" || id == "menumusic1" || id == "menumusic2" || id == "meleemenu2");
+		}
+
+		private function playMenuPlaylist():Boolean
+		{
+			var songs:Array;
+			var SQ:*;
+			var inst:*;
+			var current:String;
+			var i:int;
+			var tid:String;
+			var hold:*;
+			if (!m_store)
+			{
+				return (false);
+			};
+			try
+			{
+				if (m_host && m_host.getSessionFlag is Function)
+				{
+					hold = m_host.getSessionFlag("music_player.bgm_hold", null);
+					if (hold === true || hold === 1 || hold === "true")
+					{
+						return (true);
+					};
+				};
+			}
+			catch (holdErr:*)
+			{
+			};
+			m_store.syncMenuMusicFromDisk();
+			if (!m_store.menuMusicEnabled())
+			{
+				return (false);
+			};
+			songs = m_store.songsForPlaylist(MusicPlaylistStore.MENU_PLAYLIST_ID);
+			if (!songs || songs.length < 1)
+			{
+				return (false);
+			};
+			try
+			{
+				SQ = EngineRefs.ssf2("audio.SoundQueue");
+				inst = SQ ? SQ.instance : null;
+				current = inst && inst.CurrentSongID ? String(inst.CurrentSongID) : "";
+				i = 0;
+				while (i < songs.length)
+				{
+					if (String(songs[i]) == current)
+					{
+						return (true);
+					};
+					i++;
+				};
+				tid = String(songs[int(Math.random() * songs.length)]);
+				trace("[music_player] menu playlist id=" + tid);
+				if (inst && inst.playMusicStock)
+				{
+					inst.playMusicStock(tid, 0);
+				};
+				return (true);
+			}
+			catch (err:*)
+			{
+				trace("[music_player] menu playlist failed: " + err);
+			};
+			return (false);
+		}
+
 		/** Same value the Sounds menu writes: SaveData.BGVolumeLevel plus SoundQueue.setMusicVolume. */
 		public function applyBgmVolume(vol:Number, save:Boolean = false):void
 		{
@@ -520,6 +596,10 @@ package
 			if (vol > 1)
 			{
 				vol = 1;
+			};
+			if (save)
+			{
+				trace("[music_player] volume=" + vol);
 			};
 			try
 			{

@@ -236,6 +236,7 @@ package
 					host.addHook("MATCH_END", cursorCtl.onMatchEndCursor);
 					host.addHook("BEFORE_INITIAL_MENU", introCtl.onBeforeInitialMenu);
 					host.addHook("MENU_SHOW", onMenuShow);
+					host.addHook("MENU_MUSIC", musicCtl.onMenuMusicHook);
 				}
 				catch (bootHookErr:*)
 				{
@@ -270,6 +271,7 @@ package
 				{
 					m_host["removeHook"]("AFTER_BOOT", onAfterBoot);
 					m_host["removeHook"]("MENU_SHOW", onMenuShow);
+					m_host["removeHook"]("MENU_MUSIC", musicCtl.onMenuMusicHook);
 					m_host["removeHook"]("MODE_START", musicCtl.onModeStart);
 					m_host["removeHook"]("MATCH_END", musicCtl.onMatchEndMusic);
 					m_host["removeHook"]("MATCH_START", uncaughtCtl.onMatchStartUncaught);
@@ -440,19 +442,19 @@ package
 			return ("?");
 		}
 
-		/** Writable ssf2mm dir via absolute path (AIR blocks writes under applicationDirectory). */
+		/** Writable expansions/state via absolute path (AIR blocks writes under applicationDirectory). */
 		private function bridgeDir():File
 		{
 			var dir:File;
 			var rel:File;
 			try
 			{
-				if (m_logFileAbs && m_logFileAbs.length > 0)
+				if (m_logFileAbs && m_logFileAbs.length > 0 && !pathIsUnderData(m_logFileAbs))
 				{
 					dir = new File(m_logFileAbs).parent;
 					if (dir)
 					{
-						return (dir.resolvePath("state"));
+						return (dir);
 					};
 				};
 			}
@@ -471,14 +473,18 @@ package
 			catch (nativeErr:*)
 			{
 			};
-			try
-			{
-				return (File.applicationStorageDirectory.resolvePath("ssf2mm/state"));
-			}
-			catch (storeErr:*)
-			{
-			};
 			return (null);
+		}
+
+		private function pathIsUnderData(path:String):Boolean
+		{
+			var flat:String;
+			if (!path)
+			{
+				return (false);
+			};
+			flat = path.split("\\").join("/").toLowerCase();
+			return (flat.indexOf("/data/") >= 0);
 		}
 
 		internal function bridgeFile(name:String):File
@@ -511,30 +517,13 @@ package
 
 		internal function resolveSsf2mmFile(name:String):File
 		{
-			var file:File;
-			var parent:File;
-			try
+			var dir:File;
+			dir = bridgeDir();
+			if (!dir)
 			{
-				if (m_logFileAbs && m_logFileAbs.length > 0)
-				{
-					parent = new File(m_logFileAbs).parent;
-					if (parent)
-					{
-						return parent.resolvePath(name);
-					};
-				};
-			}
-			catch (absErr:*)
-			{
+				return (null);
 			};
-			try
-			{
-				return File.applicationDirectory.resolvePath("data/ssf2mm/" + name);
-			}
-			catch (relErr:*)
-			{
-			};
-			return null;
+			return (dir.resolvePath(name));
 		}
 
 		/** Discord updateActivity throws #3500 when the debugger's extension has no such method. titleMenu calls it before returning. */
