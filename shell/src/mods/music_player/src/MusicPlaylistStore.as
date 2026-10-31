@@ -724,7 +724,7 @@ package
 			{
 				return (false);
 			};
-			if (list.length <= 1)
+			if (list.length <= 1 && id != MENU_PLAYLIST_ID)
 			{
 				return (false);
 			};
@@ -880,7 +880,7 @@ package
 						out.push(id);
 					};
 				};
-				if (out.length < 1 && data && data.id)
+				if (out.length < 1 && data && data.id && data.enabled !== false)
 				{
 					out.push(String(data.id));
 				};
@@ -930,11 +930,21 @@ package
 					};
 				};
 				data.playlist = songs ? songs.concat() : [];
-				data.enabled = songs && songs.length > 0;
-				m_menuMusicOn = data.enabled;
-				if ((!data.id || String(data.id).length < 1) && songs && songs.length > 0)
+				if (songs && songs.length > 0)
 				{
-					data.id = String(songs[0]);
+					data.enabled = true;
+					m_menuMusicOn = true;
+					if (!data.id || String(data.id).length < 1)
+					{
+						data.id = String(songs[0]);
+					};
+				}
+				else
+				{
+					data.id = "";
+					data.enabled = false;
+					m_menuMusicOn = false;
+					trace("[music_player] menu playlist default");
 				};
 				parts = [];
 				i = 0;
