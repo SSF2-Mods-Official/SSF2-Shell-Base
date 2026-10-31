@@ -2,6 +2,7 @@ package
 {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.utils.Dictionary;
 	import com.sbxmod.paletteMaker.PaletteMakerUtils;
 	import com.sbxmod.paletteMaker.LinkedFormPaint;
 	import com.sbxmod.paletteMaker.GigaStockPalettes;
@@ -42,7 +43,7 @@ package
 		private var m_stockPaintErrLogged:Boolean = false;
 		private var m_stanceErrLogged:Boolean = false;
 		private var m_formHudKey:String = "";
-		private var m_stockHudMark:String = "";
+		private var m_stockHudBlock:Dictionary = new Dictionary(true);
 
 		public function onBoot(host:*):void
 		{
@@ -291,7 +292,6 @@ package
 			var box:*;
 			var head:*;
 			var painted:int;
-			var mark:String;
 			var first:String;
 			if (!character || !LinkedFormPaint.matchUsesStockTransform(statsName))
 			{
@@ -326,10 +326,9 @@ package
 			{
 				first = String(uint(paletteSwapPA.replacements[0]));
 			};
-			mark = statsName + ":" + first + ":" + painted;
-			if (mark != m_stockHudMark)
+			if (m_stockHudBlock[character] != paletteSwapPA)
 			{
-				m_stockHudMark = mark;
+				m_stockHudBlock[character] = paletteSwapPA;
 				Ssf2.gameLog("[Palette Maker] form hud pa stats=" + statsName + " first=" + first + " painted=" + painted);
 			};
 		}

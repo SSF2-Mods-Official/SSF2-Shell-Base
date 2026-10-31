@@ -97,6 +97,8 @@ package
 			expect("bowser portrait pixel", portraitPx.getPixel32(0, 0) == 0xFFFF0000, portraitPx.getPixel32(0, 0).toString(16));
 			expect("giga portrait paints", LinkedFormPaint.paintLivePortrait("gigabowser", portrait, gigaPa) == 1, "");
 			expect("giga portrait uses the source pixel", portraitPx.getPixel32(0, 0) == 0xFF8B4513, portraitPx.getPixel32(0, 0).toString(16));
+			var portraitPasses:int = LinkedFormPaint.portraitApplyCount;
+			expect("second giga paint skips the bitmap", LinkedFormPaint.paintLivePortrait("gigabowser", portrait, gigaPa) == 1 && LinkedFormPaint.portraitApplyCount == portraitPasses && portraitPx.getPixel32(0, 0) == 0xFF8B4513, String(LinkedFormPaint.portraitApplyCount));
 			expect("giga linkage is not bowser", LinkedFormSprite.matchesForm("giga_bowser_idle0", "bowser") == false && LinkedFormSprite.matchesForm("giga_bowser_idle0", "gigabowser") == true, "");
 			expect("gbow is giga", LinkedFormSprite.matchesForm("gbow_fair3", "gigabowser") == true && LinkedFormSprite.matchesForm("gbow_fair3", "bowser") == false, "");
 			expect("bowser extra does not steal bowser", LinkedFormSprite.matchesForm("bowser_flying1", "gigabowser", ["bowser"]) == false && LinkedFormSprite.matchesForm("bowser_flying1", "bowser") == true, "");

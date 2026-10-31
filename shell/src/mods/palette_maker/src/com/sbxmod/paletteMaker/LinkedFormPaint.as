@@ -13,6 +13,10 @@ package com.sbxmod.paletteMaker
 	{
 		/** Sealed portrait subclasses throw Error #1065 for a missing __cachedPalette. */
 		private static var portraitPixelCache:Dictionary = new Dictionary(true);
+		/** BitmapData already painted with this palette block. A later stance paint leaves it. */
+		private static var portraitAppliedBlock:Dictionary = new Dictionary(true);
+		/** Times a portrait bitmap was passed to threshold. A repeat of the same block does not increment. */
+		public static var portraitApplyCount:int = 0;
 		/** Giga opens from the stock grid but the match must spawn Bowser for the linked form. */
 		public static function spawnStatsName(openedName:String):String
 		{
@@ -1161,23 +1165,32 @@ package com.sbxmod.paletteMaker
 					bitmap = child as Bitmap;
 					if (bitmap.bitmapData)
 					{
-						cache = portraitPixelCache[mc] as Dictionary;
-						if (!cache)
+						if (portraitAppliedBlock[bitmap.bitmapData] == block)
 						{
-							cache = new Dictionary(true);
-							portraitPixelCache[mc] = cache;
-						};
-						if (!cache[bitmap.bitmapData])
-						{
-							cache[bitmap.bitmapData] = bitmap.bitmapData.clone();
+							painted++;
 						}
 						else
 						{
-							bitmap.bitmapData.draw(cache[bitmap.bitmapData] as BitmapData);
+							cache = portraitPixelCache[mc] as Dictionary;
+							if (!cache)
+							{
+								cache = new Dictionary(true);
+								portraitPixelCache[mc] = cache;
+							};
+							if (!cache[bitmap.bitmapData])
+							{
+								cache[bitmap.bitmapData] = bitmap.bitmapData.clone();
+							}
+							else
+							{
+								bitmap.bitmapData.draw(cache[bitmap.bitmapData] as BitmapData);
+							};
+							applyHelper(bitmap.bitmapData, block);
+							portraitAppliedBlock[bitmap.bitmapData] = block;
+							portraitApplyCount++;
+							bitmap.smoothing = true;
+							painted++;
 						};
-						applyHelper(bitmap.bitmapData, block);
-						bitmap.smoothing = true;
-						painted++;
 					};
 				}
 				else if ((child is MovieClip) && depth > 0)
