@@ -107,6 +107,16 @@ package
 			portraitPx.setPixel32(0, 0, 0xFF00FF00);
 			portraitPasses = LinkedFormPaint.portraitApplyCount;
 			expect("replaced portrait art is recolored", LinkedFormPaint.paintLivePortrait("gigabowser", portrait, gigaPa) == 1 && LinkedFormPaint.portraitApplyCount == portraitPasses + 1 && portraitPx.getPixel32(0, 0) == 0xFF8B4513, portraitPx.getPixel32(0, 0).toString(16));
+			var hudBlock:Object = LinkedFormPaint.portraitPaintBlock(
+				{ colors: [0xFF00FF00, 0xFF0000FF], replacements: [0xFF111111, 0xFF222222] },
+				{ colors: [0xFF00FF00], replacements: [0xFF333333] });
+			var hudPx:BitmapData = new BitmapData(2, 1, true, 0);
+			var hudClip:MovieClip = new MovieClip();
+			hudPx.setPixel32(0, 0, 0xFF00FF00);
+			hudPx.setPixel32(1, 0, 0xFF0000FF);
+			hudClip.addChild(new Bitmap(hudPx));
+			expect("hud uses the portrait pair and the body-only pair", LinkedFormPaint.paintLivePortrait("bowser", hudClip, hudBlock) == 1 && hudPx.getPixel32(0, 0) == 0xFF333333 && hudPx.getPixel32(1, 0) == 0xFF222222, hudPx.getPixel32(0, 0).toString(16) + " " + hudPx.getPixel32(1, 0).toString(16));
+			hudPx.dispose();
 			expect("giga linkage is not bowser", LinkedFormSprite.matchesForm("giga_bowser_idle0", "bowser") == false && LinkedFormSprite.matchesForm("giga_bowser_idle0", "gigabowser") == true, "");
 			expect("gbow is giga", LinkedFormSprite.matchesForm("gbow_fair3", "gigabowser") == true && LinkedFormSprite.matchesForm("gbow_fair3", "bowser") == false, "");
 			expect("bowser extra does not steal bowser", LinkedFormSprite.matchesForm("bowser_flying1", "gigabowser", ["bowser"]) == false && LinkedFormSprite.matchesForm("bowser_flying1", "bowser") == true, "");

@@ -934,6 +934,61 @@ package com.sbxmod.paletteMaker
 			return { "colors": colors, "replacements": replacements };
 		}
 
+		/** Portrait pairs win on a shared source. Body-only sources stay in the block. */
+		public static function portraitPaintBlock(body:Object, portrait:Object):Object
+		{
+			var seen:Object;
+			var order:Array;
+			var colors:Array;
+			var replacements:Array;
+			var key:String;
+			var i:int;
+			seen = {};
+			order = [];
+			notePortraitPair(body, seen, order);
+			notePortraitPair(portrait, seen, order);
+			colors = [];
+			replacements = [];
+			i = 0;
+			while (i < order.length)
+			{
+				key = String(order[i]);
+				colors.push(uint(key));
+				replacements.push(uint(seen[key]));
+				i++;
+			};
+			if (colors.length == 0)
+			{
+				return portrait ? portrait : body;
+			};
+			return { "colors": colors, "replacements": replacements };
+		}
+
+		private static function notePortraitPair(block:Object, seen:Object, order:Array):void
+		{
+			var src:Array;
+			var repl:Array;
+			var i:int;
+			var key:String;
+			if (!block || !(block.colors is Array) || !(block.replacements is Array))
+			{
+				return;
+			};
+			src = block.colors as Array;
+			repl = block.replacements as Array;
+			i = 0;
+			while (i < src.length && i < repl.length)
+			{
+				key = String(uint(src[i]));
+				if (!seen.hasOwnProperty(key))
+				{
+					order.push(key);
+				};
+				seen[key] = uint(repl[i]);
+				i++;
+			};
+		}
+
 		private static function appendPaintPairs(block:Object, colors:Array, replacements:Array, seen:Object):void
 		{
 			var src:Array;
@@ -1252,10 +1307,12 @@ package com.sbxmod.paletteMaker
 		private static function applyHelper(bitmapData:BitmapData, paletteData:Object):void
 		{
 			var rect:Rectangle;
+			var source:BitmapData;
 			var i:int;
 			var color:uint;
 			var replacement:uint;
 			rect = new Rectangle(0, 0, bitmapData.width, bitmapData.height);
+			source = bitmapData.clone();
 			i = 0;
 			while (i < paletteData.colors.length && i < paletteData.replacements.length)
 			{
@@ -1263,10 +1320,11 @@ package com.sbxmod.paletteMaker
 				replacement = uint(paletteData.replacements[i]);
 				if (color != replacement)
 				{
-					bitmapData.threshold(bitmapData, rect, new flash.geom.Point(0, 0), "==", color, replacement, 0xFFFFFFFF, true);
+					bitmapData.threshold(source, rect, new Point(0, 0), "==", color, replacement, 0xFFFFFFFF, false);
 				};
 				i++;
 			};
+			source.dispose();
 		}
 
 		/** Middle value of the sprite sides. Empty input is 0. */

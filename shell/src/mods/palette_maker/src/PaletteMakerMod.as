@@ -44,6 +44,8 @@ package
 		private var m_stanceErrLogged:Boolean = false;
 		private var m_formApplyKey:Dictionary = new Dictionary(true);
 		private var m_stockHudBlock:Dictionary = new Dictionary(true);
+		private var m_stockHudBody:Dictionary = new Dictionary(true);
+		private var m_stockHudMerged:Dictionary = new Dictionary(true);
 
 		public function onBoot(host:*):void
 		{
@@ -99,7 +101,7 @@ package
 			toName = String(ctx.statsName);
 			character = ctx.character;
 			trace("[palette_maker] stance enter stats=" + toName);
-			paintStockPortrait(character, toName, ctx.paletteSwapPAData);
+			paintStockPortrait(character, toName, ctx.paletteSwapData, ctx.paletteSwapPAData);
 			if (LinkedFormPaint.matchUsesStockTransform(toName))
 			{
 				return;
@@ -288,15 +290,30 @@ package
 			};
 		}
 
-		private function paintStockPortrait(character:*, statsName:String, paletteSwapPA:Object):void
+		private function paintStockPortrait(character:*, statsName:String, paletteSwap:Object, paletteSwapPA:Object):void
 		{
 			var box:*;
 			var head:*;
 			var painted:int;
 			var first:String;
+			var block:Object;
+			var changed:Boolean;
 			if (!character || !LinkedFormPaint.matchUsesStockTransform(statsName))
 			{
 				return;
+			};
+			changed = false;
+			if (m_stockHudBody[character] == paletteSwap && m_stockHudBlock[character] == paletteSwapPA)
+			{
+				block = m_stockHudMerged[character];
+			}
+			else
+			{
+				block = LinkedFormPaint.portraitPaintBlock(paletteSwap, paletteSwapPA);
+				m_stockHudBody[character] = paletteSwap;
+				m_stockHudBlock[character] = paletteSwapPA;
+				m_stockHudMerged[character] = block;
+				changed = true;
 			};
 			box = null;
 			head = null;
@@ -312,7 +329,7 @@ package
 			painted = 0;
 			try
 			{
-				painted = LinkedFormPaint.paintLivePortrait(statsName, head as MovieClip, paletteSwapPA);
+				painted = LinkedFormPaint.paintLivePortrait(statsName, head as MovieClip, block);
 			}
 			catch (paintErr:*)
 			{
@@ -327,9 +344,8 @@ package
 			{
 				first = String(uint(paletteSwapPA.replacements[0]));
 			};
-			if (m_stockHudBlock[character] != paletteSwapPA)
+			if (changed)
 			{
-				m_stockHudBlock[character] = paletteSwapPA;
 				Ssf2.gameLog("[Palette Maker] form hud pa stats=" + statsName + " first=" + first + " painted=" + painted);
 			};
 		}
