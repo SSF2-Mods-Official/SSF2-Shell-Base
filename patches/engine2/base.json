@@ -690,7 +690,7 @@
   "com/mcleodgaming/ssf2/assists/AssistTrophy.as": "0a19abff2b08b67e9ce2fe86fe93973070751457d571b069388e7175ed0edaf2",
   "com/mcleodgaming/ssf2/audio/SoundObject.as": "5af47b10497db715d96442ddda02863fcdc24ebb7883215cf99c909782941c55",
   "com/mcleodgaming/ssf2/audio/SoundQueue.as": "51bbda390e4808878057f0dd524949206ec4e198feb6c95c71afbe8dcb6437ae",
-  "com/mcleodgaming/ssf2/controllers/Chip.as": "af752a1b5711e9f4d45d6da32e6483f620d977ff8bb79d06d6a9b7ea817027a8",
+  "com/mcleodgaming/ssf2/controllers/Chip.as": "fa8c2f1bd055a09c6ac70e762901220fd8c5106de4a469f5545a4739e713e097",
   "com/mcleodgaming/ssf2/controllers/ControlsButton.as": "e38bf33d443d206fd2e591b73f2af413f4263e486795c23fd436986d4900850b",
   "com/mcleodgaming/ssf2/controllers/ControlsSelectHand.as": "8aaeaca27e6dbe4d9f0b0f25df22f47a46a2eec564d750918a3b5c7cea737ee4",
   "com/mcleodgaming/ssf2/controllers/DataButton.as": "d8519fd7dfb92561d008c1638ca40bcf51ad3a420fc5a6018361e2536eed9080",

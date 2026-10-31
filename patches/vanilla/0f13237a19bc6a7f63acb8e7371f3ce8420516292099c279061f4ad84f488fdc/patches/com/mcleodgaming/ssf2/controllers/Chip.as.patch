@@ -185,6 +185,9 @@
 +            return;
 =203
 +         if(!(MenuController.rulesMenu && MenuController.rulesMenu.isOnscreen()) && !(MenuController.controlsMenu && MenuController.controlsMenu.isOnscreen()) && !MenuController.paletteUiBlocksCss())
+@@ 271 1 10f6a22bd0cf0196 2
++                  trace("[css] back hold " + this.m_characterSelectMenu);
++                  this.m_characterSelectMenu.backMain_CLICK(null);
 @@ 286 1 72e9a35b0ab2e646 3
 +            nameKeyPad = this.chipNameKeyPad();
 +            nameDisplay = this.chipNameDisplay();
