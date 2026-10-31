@@ -1817,7 +1817,7 @@ package com.sbxmod.paletteMaker
 
 		/**
 		 * Linked / transform form registry.
-		 * shareBoth + cssSelectable: palette-maker dual PA / discover (Zelda↔Sheik only).
+		 * cssSelectable opens the Zelda-style pair list. Bowser and Giga use it. shareBoth stays off for Giga.
 		 * carryOnTransform: in-match replaceCharacter / FS form swap palette carry.
 		 * Do NOT set shareBoth for FS giants (Giga Bowser) — discover would pixel-scan enormous art.
 		 * Explicit entries always win over AUTO_FORM_LINKS (see getFormLink).
@@ -1825,8 +1825,8 @@ package com.sbxmod.paletteMaker
 		private static const LINKED_FORM_LINKS:Object = {
 			"zelda": { partner: "sheik", scanStatsName: "zelda", shareBoth: false, carryOnTransform: false, combinePalette: false, cssSelectable: true },
 			"sheik": { partner: "zelda", scanStatsName: "zelda", shareBoth: false, carryOnTransform: false, combinePalette: false, cssSelectable: true },
-			"bowser": { partner: "gigabowser", scanStatsName: "bowser", shareBoth: false, carryOnTransform: false, combinePalette: false, cssSelectable: false },
-			"gigabowser": { partner: "bowser", scanStatsName: "bowser", shareBoth: false, carryOnTransform: false, combinePalette: false, cssSelectable: false },
+			"bowser": { partner: "gigabowser", scanStatsName: "bowser", shareBoth: false, carryOnTransform: false, combinePalette: false, cssSelectable: true },
+			"gigabowser": { partner: "bowser", scanStatsName: "bowser", shareBoth: false, carryOnTransform: false, combinePalette: false, cssSelectable: true },
 			"wario": { partner: "Wario_Man", scanStatsName: "wario", shareBoth: false, carryOnTransform: true, combinePalette: false, cssSelectable: false },
 			"Wario_Man": { partner: "wario", scanStatsName: "wario", shareBoth: false, carryOnTransform: true, combinePalette: false, cssSelectable: false },
 			"sonic": { partner: "supersonic", scanStatsName: "sonic", shareBoth: false, carryOnTransform: true, combinePalette: false, cssSelectable: false },
@@ -2092,7 +2092,12 @@ package com.sbxmod.paletteMaker
 		/** CSS dual-portrait linked forms (Zelda↔Sheik). Customs stay per-form JSON; pair by slot index. */
 		public static function isLinkedFormPair(statsName:String):Boolean
 		{
-			var link:Object = getFormLink(statsName);
+			var link:Object;
+			if (FormPair.opensPairList(statsName))
+			{
+				return true;
+			};
+			link = getFormLink(statsName);
 			return link != null && link.cssSelectable == true;
 		}
 

@@ -3,6 +3,7 @@ package
 	import com.sbxmod.paletteMaker.GigaStockPalettes;
 	import com.sbxmod.paletteMaker.HoverDim;
 	import com.sbxmod.paletteMaker.SkinDraft;
+	import com.sbxmod.paletteMaker.FormPair;
 	import com.sbxmod.paletteMaker.LinkedFormPaint;
 	import com.sbxmod.paletteMaker.LinkedFormSprite;
 	import com.sbxmod.paletteMaker.StudioHomeStages;
@@ -81,6 +82,8 @@ package
 			expect("zelda studio spawns sheik", LinkedFormPaint.studioMirrorPartner("zelda") == "sheik", String(LinkedFormPaint.studioMirrorPartner("zelda")));
 			expect("sheik studio spawns zelda", LinkedFormPaint.studioMirrorPartner("sheik") == "zelda", String(LinkedFormPaint.studioMirrorPartner("sheik")));
 			expect("bowser studio stays one player", LinkedFormPaint.studioMirrorPartner("bowser") == null && LinkedFormPaint.studioMirrorPartner("gigabowser") == null, String(LinkedFormPaint.studioMirrorPartner("bowser")));
+			expect("bowser opens the pair list", FormPair.opensPairList("bowser") && FormPair.opensPairList("gigabowser"), String(FormPair.opensPairList("bowser")));
+			expect("wario does not open the pair list", !FormPair.opensPairList("wario") && !FormPair.opensPairList("sonic"), String(FormPair.opensPairList("wario")));
 			var identityBlock:Object = { colors: [0xFF112233], replacements: [0xFF112233] };
 			var partnerRecolor:Object = { colors: [0xFF112233], replacements: [0xFF00FF00] };
 			expect("partner transform keeps its recolor", LinkedFormPaint.livePaintBlock(true, identityBlock, partnerRecolor) == partnerRecolor, "");
